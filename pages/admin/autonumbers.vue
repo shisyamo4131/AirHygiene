@@ -17,7 +17,10 @@ export default {
 </script>
 
 <template>
-  <g-collection-controller-autonumbers :items="items" :actions="['edit']" />
+  <g-collection-controller-autonumbers
+    :items="items"
+    :actions="['edit', 'delete']"
+  />
 </template>
 
 <style></style>
