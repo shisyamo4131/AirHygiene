@@ -132,6 +132,13 @@ export default {
       required
       @input="$emit('update:deadline', $event)"
     />
+    <g-select
+      :value="rounding"
+      label="端数処理"
+      :items="$ROUNDING_ARRAY"
+      required
+      @input="$emit('update:rounding', $event)"
+    />
     <v-row>
       <v-col cols="6">
         <g-numeric

@@ -23,7 +23,7 @@ export default {
       {{ item.name1 }}
     </v-card-title>
     <v-card-subtitle>{{ item.name2 }}</v-card-subtitle>
-    <v-tabs v-model="tab">
+    <v-tabs v-model="tab" fixed-tabs>
       <v-tab>基本情報</v-tab>
       <v-tab>請求情報</v-tab>
     </v-tabs>
@@ -57,6 +57,9 @@ export default {
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-card-text v-if="item.remarks">
+          {{ item.remarks }}
+        </v-card-text>
       </v-tab-item>
       <v-tab-item>
         <v-list-item>
@@ -78,6 +81,14 @@ export default {
               {{ $DEADLINE[item.deadline] }}締め
               {{ `${item.depositMonth}ヶ月後` }}
               {{ `${$DEADLINE[item.depositDay]}回収` }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-subtitle> 端数処理 </v-list-item-subtitle>
+            <v-list-item-title>
+              {{ $ROUNDING[item.rounding] }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
