@@ -1,0 +1,33 @@
+[
+  {
+    "name": "TOP",
+    "icon": "mdi-home",
+    "to": "/",
+    "lists": []
+  },
+  {
+    "name": "マスタ管理",
+    "icon": "mdi-cube",
+    "lists": [
+      { "name": "会社", "to": "/companies", "icon": "mdi-domain" },
+      { "name": "会員", "to": "/members", "icon": "mdi-domain" }
+    ]
+  },
+  {
+    "name": "管理",
+    "icon": "mdi-wrench-cog",
+    "lists": [
+      { "name": "自動採番", "to": "/admin/autonumbers" },
+      { "name": "インポート", "to": "/admin/imports" }
+    ]
+  },
+  {
+    "name": "開発",
+    "icon": "mdi-wrench-cog",
+    "lists": [
+      { "name": "モデル", "to": "/developments/models" },
+      { "name": "Components", "to": "/developments/components" },
+      { "name": "コンポーネントテスト", "to": "/developments/sandbox" }
+    ]
+  }
+]
