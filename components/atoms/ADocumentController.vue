@@ -4,8 +4,12 @@ export default {
    * PROPS
    ***************************************************************************/
   props: {
+    /* An object priveded to the table component. */
+    actions: { type: Array, default: () => [], required: false },
     /* An object provided to the table component. */
     cardProps: { type: Object, default: () => ({}), required: false },
+    /* An object provided to the dialog component. */
+    dialogProps: { type: Object, default: () => ({}), required: false },
     /* A string used to specified the document. */
     docId: { type: String, required: true },
     /* A function used to different process from default submit. */
@@ -145,6 +149,7 @@ export default {
             label: this.label,
             loading: this.loading,
             value: this.dialog,
+            ...this.dialogProps,
           },
           on: {
             input: (v) => (this.dialog = v),
@@ -158,7 +163,7 @@ export default {
         },
         model: this.model,
         card: {
-          attrs: { item: this.model, ...this.cardProps },
+          attrs: { item: this.model, actions: this.actions, ...this.cardProps },
           on: {
             'click:edit': this.onClickEdit,
             'click:delete': this.onClickDelete,

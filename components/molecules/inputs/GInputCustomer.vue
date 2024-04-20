@@ -7,6 +7,7 @@ import GTextField from './GTextField.vue'
 import GTextarea from './GTextarea.vue'
 import GSelect from './GSelect.vue'
 import GNumeric from './GNumeric.vue'
+import GSwitch from './GSwitch.vue'
 import ARenderlessZipcode from '~/components/atoms/renderless/ARenderlessZipcode.vue'
 import { props } from '~/models/Customer'
 import GMixinInput from '~/components/mixins/GMixinInput'
@@ -20,6 +21,7 @@ export default {
     GTextarea,
     GSelect,
     GNumeric,
+    GSwitch,
   },
   /***************************************************************************
    * MIXINS
@@ -33,6 +35,11 @@ export default {
       this.$emit('update:pref', e.pref)
       this.$emit('update:city', e.city)
       this.$emit('update:address1', e.addr)
+    },
+    sendToLoaded(e) {
+      this.$emit('update:sendToPref', e.pref)
+      this.$emit('update:sendToCity', e.city)
+      this.$emit('update:sendToAddress1', e.addr)
     },
   },
 }
@@ -146,6 +153,47 @@ export default {
         />
       </v-col>
     </v-row>
+    <g-switch
+      :input-value="hasSendTo"
+      :label="`請求書の宛先`"
+      @change="$emit('update:hasSendTo', $event)"
+    />
+    <v-expand-transition>
+      <div v-show="hasSendTo">
+        <a-renderless-zipcode
+          :value="sendToZipcode"
+          @input="$emit('update:sendToZipcode', $event)"
+          @loaded="sendToLoaded"
+        >
+          <template #default="{ attrs, on }">
+            <g-text-field v-bind="attrs" label="郵便番号" v-on="on" />
+          </template>
+        </a-renderless-zipcode>
+        <g-text-field
+          :value="sendToPref"
+          label="都道府県"
+          :required="hasSendTo"
+          @input="$emit('update:sendToPref', $event)"
+        />
+        <g-text-field
+          :value="sendToCity"
+          label="市区町村"
+          :required="hasSendTo"
+          @input="$emit('update:sendToCity', $event)"
+        />
+        <g-text-field
+          :value="sendToAddress1"
+          label="住所"
+          :required="hasSendTo"
+          @input="$emit('update:sendToAddress1', $event)"
+        />
+        <g-text-field
+          :value="sendToAddress2"
+          label="建物名・階数"
+          @input="$emit('update:sendToAddress2', $event)"
+        />
+      </div>
+    </v-expand-transition>
     <g-textarea
       :value="remarks"
       label="備考"

@@ -1,18 +1,20 @@
 <script>
 import ACollectionController from '../atoms/ACollectionController.vue'
 import AIconRegist from '../atoms/icons/AIconRegist.vue'
+import GActionCardSimpleCustomer from '../molecules/cards/GActionCardSimpleCustomer.vue'
 import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
 import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
 import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-import GDataTable from '../molecules/tables/GDataTable.vue'
+import GDataIterator from '../molecules/tables/GDataIterator.vue'
 export default {
   components: {
     ACollectionController,
     GTextFieldSearch,
     GDialogEditor,
     AIconRegist,
-    GDataTable,
     GInputCustomer,
+    GDataIterator,
+    GActionCardSimpleCustomer,
   },
   props: {
     label: { type: String, default: '取引先', required: false },
@@ -29,14 +31,7 @@ export default {
   <a-collection-controller
     v-bind="{ ...$attrs, ...$props }"
     model-id="Customer"
-    :table-props="{
-      'disable-sort': true,
-      headers: [
-        { text: 'CODE', value: 'code' },
-        { text: '取引先名', value: 'name' },
-        { text: '状態', value: 'status' },
-      ],
-    }"
+    v-on="$listeners"
   >
     <template #default="{ dialog, table, model, search }">
       <v-toolbar dense flat>
@@ -52,14 +47,13 @@ export default {
           </template>
         </g-dialog-editor>
       </v-toolbar>
-      <g-data-table v-bind="table.attrs" v-on="table.on">
-        <template #[`item.name`]="{ item }">
-          <div>{{ item.name1 }}</div>
-          <div class="text-caption grey--text text--darken-1">
-            {{ item.name2 }}
-          </div>
-        </template>
-      </g-data-table>
+      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }">
+        <g-data-iterator v-bind="table.attrs" v-on="table.on">
+          <template #col="{ attrs, on }">
+            <g-action-card-simple-customer v-bind="attrs" v-on="on" />
+          </template>
+        </g-data-iterator>
+      </slot>
     </template>
   </a-collection-controller>
 </template>

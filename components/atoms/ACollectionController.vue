@@ -8,9 +8,8 @@ export default {
    * PROPS
    ***************************************************************************/
   props: {
+    /* An object priveded to the table component. */
     actions: { type: Array, default: () => [], required: false },
-    /* An object provided to the VCol included in VContainer. */
-    cols: { type: Object, default: () => ({}), required: false },
     /* A function used to different process from default submit. */
     customSubmit: { type: Function, default: undefined, required: false },
     /* An object used to initialize the model when edit-mode is 'REGIST'. */

@@ -17,6 +17,12 @@ const props = {
     deadline: { type: String, default: '99', required: false },
     depositMonth: { type: Number, default: 1, required: false },
     depositDay: { type: String, default: '99', required: false },
+    hasSendTo: { type: Boolean, default: false, required: false },
+    sendToZipcode: { type: String, default: '', required: false },
+    sendToPref: { type: String, default: '', required: false },
+    sendToCity: { type: String, default: '', required: false },
+    sendToAddress1: { type: String, default: '', required: false },
+    sendToAddress2: { type: String, default: '', required: false },
     status: { type: String, default: 'active', required: false },
     remarks: { type: String, default: '', required: false },
   },
@@ -41,6 +47,13 @@ export default class Customer extends FireModel {
         },
         set(v) {},
       },
+      sendToFullAddress: {
+        enumerable: true,
+        get() {
+          return this.sendToPref + this.sendToCity + this.sendToAddress1
+        },
+        set(v) {},
+      },
     })
   }
 
@@ -51,5 +64,31 @@ export default class Customer extends FireModel {
         typeof propDefault === 'function' ? propDefault() : propDefault
     })
     super.initialize(item)
+  }
+
+  beforeCreate() {
+    return new Promise((resolve) => {
+      if (!this.hasSendTo) {
+        this.sendToZipcode = this.zipcode
+        this.sendToPref = this.pref
+        this.sendToCity = this.city
+        this.sendToAddress1 = this.address1
+        this.sendToAddress2 = this.address2
+      }
+      resolve()
+    })
+  }
+
+  beforeUpdate() {
+    return new Promise((resolve) => {
+      if (!this.hasSendTo) {
+        this.sendToZipcode = this.zipcode
+        this.sendToPref = this.pref
+        this.sendToCity = this.city
+        this.sendToAddress1 = this.address1
+        this.sendToAddress2 = this.address2
+      }
+      resolve()
+    })
   }
 }

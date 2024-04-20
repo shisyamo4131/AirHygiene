@@ -294,7 +294,6 @@ export default class FireModel {
       this.updateAt = this.dateUtc.getTime()
       this.updateDate = this.dateJst.toLocaleString()
       this.uid = this.#auth?.currentUser?.uid || 'unknown'
-      const { ...item } = this
       await this.beforeCreate().catch((err) => {
         this.sendConsole({
           message: 'An error has occured at beforeCreate() in create().',
@@ -302,6 +301,7 @@ export default class FireModel {
         })
         throw err
       })
+      const { ...item } = this
       await runTransaction(this.#firestore, async (transaction) => {
         const autonumRef = doc(
           this.#firestore,
@@ -411,7 +411,6 @@ export default class FireModel {
       this.updateAt = this.dateUtc.getTime()
       this.updateDate = this.dateJst.toLocaleString()
       this.uid = this.#auth?.currentUser?.uid || 'unknown'
-      const { createAt, createDate, ...item } = this
       await this.beforeUpdate().catch((err) => {
         this.sendConsole({
           message: 'An error has occured at beforeUpdate() in update().',
@@ -419,6 +418,7 @@ export default class FireModel {
         })
         throw err
       })
+      const { createAt, createDate, ...item } = this
       await updateDoc(docRef, item).catch((err) => {
         this.sendConsole({
           message: 'An error has occured at update().',
