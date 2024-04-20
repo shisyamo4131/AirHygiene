@@ -5,6 +5,8 @@
  */
 import GTextField from './GTextField.vue'
 import GTextarea from './GTextarea.vue'
+import GSelect from './GSelect.vue'
+import GNumeric from './GNumeric.vue'
 import ARenderlessZipcode from '~/components/atoms/renderless/ARenderlessZipcode.vue'
 import { props } from '~/models/Customer'
 import GMixinInput from '~/components/mixins/GMixinInput'
@@ -16,6 +18,8 @@ export default {
     GTextField,
     ARenderlessZipcode,
     GTextarea,
+    GSelect,
+    GNumeric,
   },
   /***************************************************************************
    * MIXINS
@@ -37,10 +41,15 @@ export default {
 <template>
   <div>
     <g-text-field
-      :value="name"
-      label="会社名"
+      :value="name1"
+      label="取引先名1"
       required
-      @input="$emit('update:name', $event)"
+      @input="$emit('update:name1', $event)"
+    />
+    <g-text-field
+      :value="name2"
+      label="取引先名2"
+      @input="$emit('update:name2', $event)"
     />
     <g-text-field
       :value="abbr"
@@ -106,6 +115,34 @@ export default {
           label="FAX番号"
           input-type="tel"
           @input="$emit('update:fax', $event)"
+        />
+      </v-col>
+    </v-row>
+    <g-select
+      :value="deadline"
+      label="締日"
+      :items="$DEADLINE_ARRAY"
+      required
+      @input="$emit('update:deadline', $event)"
+    />
+    <v-row>
+      <v-col cols="6">
+        <g-numeric
+          class="right-input"
+          :value="depositMonth"
+          label="回収月"
+          required
+          suffix="ヶ月後"
+          @input="$emit('update:depositMonth', $event)"
+        />
+      </v-col>
+      <v-col cols="6">
+        <g-select
+          :value="depositDay"
+          label="回収日"
+          :items="$DEADLINE_ARRAY"
+          required
+          @input="$emit('update:depositDay', $event)"
         />
       </v-col>
     </v-row>

@@ -32,7 +32,7 @@ export default {
     './plugins/firebase.js',
     './plugins/firebase.auth.js',
     './plugins/models.js',
-    // './plugins/constants.js',
+    './plugins/constants.js',
     './plugins/dayjs.js',
   ],
 

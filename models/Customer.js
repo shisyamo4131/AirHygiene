@@ -3,7 +3,8 @@ import FireModel from './FireModel'
 const props = {
   props: {
     code: { type: String, default: '', required: false },
-    name: { type: String, default: '', required: false },
+    name1: { type: String, default: '', required: false },
+    name2: { type: String, default: '', required: false },
     abbr: { type: String, default: '', required: false },
     abbrKana: { type: String, default: '', required: false },
     zipcode: { type: String, default: '', required: false },
@@ -14,6 +15,8 @@ const props = {
     tel: { type: String, default: '', required: false },
     fax: { type: String, default: '', required: false },
     deadline: { type: String, default: '99', required: false },
+    depositMonth: { type: Number, default: 1, required: false },
+    depositDay: { type: String, default: '99', required: false },
     status: { type: String, default: 'active', required: false },
     remarks: { type: String, default: '', required: false },
   },

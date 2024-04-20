@@ -9,7 +9,7 @@
     "name": "マスタ管理",
     "icon": "mdi-cube",
     "lists": [
-      { "name": "会社", "to": "/companies", "icon": "mdi-domain" },
+      { "name": "取引先", "to": "/customers", "icon": "mdi-domain" },
       { "name": "会員", "to": "/members", "icon": "mdi-domain" }
     ]
   },
