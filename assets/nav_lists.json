@@ -24,10 +24,6 @@
   {
     "name": "開発",
     "icon": "mdi-wrench-cog",
-    "lists": [
-      { "name": "モデル", "to": "/developments/models" },
-      { "name": "Components", "to": "/developments/components" },
-      { "name": "コンポーネントテスト", "to": "/developments/sandbox" }
-    ]
+    "lists": [{ "name": "sandbox", "to": "/developments/sandbox" }]
   }
 ]

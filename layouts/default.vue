@@ -65,4 +65,8 @@ export default {
 .center-input input {
   text-align: center;
 }
+
+.right-input input {
+  text-align: right;
+}
 </style>
