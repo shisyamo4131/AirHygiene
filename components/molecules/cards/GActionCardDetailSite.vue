@@ -5,14 +5,22 @@
  */
 import GActionCard from './GActionCard.vue'
 export default {
-  /***************************************************************************
-   * COMPONENTS
-   ***************************************************************************/
   components: { GActionCard },
   data() {
     return {
+      customer: this.$Customer(),
       tab: null,
     }
+  },
+  watch: {
+    '$attrs.item.customerId': {
+      handler(v) {
+        this.customer.initialize()
+        if (!v) return
+        this.customer.fetch(v)
+      },
+      immediate: true,
+    },
   },
 }
 </script>
@@ -22,6 +30,7 @@ export default {
     <v-card-title class="justify-space-between">
       {{ item.name }}
     </v-card-title>
+    <v-card-subtitle>{{ customer.abbr }}</v-card-subtitle>
     <v-tabs v-model="tab" fixed-tabs>
       <v-tab>基本情報</v-tab>
     </v-tabs>

@@ -43,7 +43,7 @@ export default {
 <template>
   <div>
     <v-breadcrumbs :items="breadcrumbs" />
-    <v-container>
+    <v-container fluid>
       <v-row>
         <v-col cols="12" md="4">
           <g-document-controller-customer
@@ -60,7 +60,10 @@ export default {
               <g-collection-controller-sites
                 :default-item="{ customerId: docId }"
                 :items="sites"
-                :actions="['edit', 'delete']"
+                :actions="['edit', 'delete', 'detail']"
+                @click:detail="
+                  $router.push(`/customers/${docId}/${$event.docId}`)
+                "
               >
                 <template #table="{ attrs, on }">
                   <g-data-table

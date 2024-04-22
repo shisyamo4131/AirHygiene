@@ -1,17 +1,8 @@
 <template>
   <v-app dark>
-    <g-navigation-drawer
-      v-model="drawer"
-      app
-      fixed
-      bottom
-      :permanent="!$vuetify.breakpoint.mobile"
-    />
+    <g-navigation-drawer v-model="drawer" app fixed bottom />
     <v-app-bar app color="primary" dark dense fixed flat>
-      <v-app-bar-nav-icon
-        v-show="$vuetify.breakpoint.mobile"
-        @click.stop="drawer = !drawer"
-      />
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Air Hygiene</v-toolbar-title>
       <v-spacer />
     </v-app-bar>
