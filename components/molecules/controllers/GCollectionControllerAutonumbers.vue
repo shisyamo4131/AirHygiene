@@ -1,10 +1,9 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import AIconRegist from '../atoms/icons/AIconRegist.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputAutonumber from '../molecules/inputs/GInputAutonumber.vue'
-import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-import GDataTable from '../molecules/tables/GDataTable.vue'
+import ACollectionController from '../../atoms/ACollectionController.vue'
+import AIconRegist from '../../atoms/icons/AIconRegist.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GInputAutonumber from '../inputs/GInputAutonumber.vue'
+import GTextFieldSearch from '../inputs/GTextFieldSearch.vue'
 export default {
   components: {
     ACollectionController,
@@ -12,7 +11,6 @@ export default {
     GDialogEditor,
     AIconRegist,
     GInputAutonumber,
-    GDataTable,
   },
   props: {
     label: { type: String, default: '自動採番', required: false },
@@ -29,16 +27,7 @@ export default {
   <a-collection-controller
     v-bind="{ ...$attrs, ...$props }"
     model-id="Autonumber"
-    :table-props="{
-      'disable-sort': true,
-      headers: [
-        { text: 'コレクション名', value: 'collectionId' },
-        { text: 'フィールド', value: 'field' },
-        { text: '現在値', value: 'current' },
-        { text: '桁数', value: 'length' },
-        { text: '状態', value: 'status' },
-      ],
-    }"
+    v-on="$listeners"
   >
     <template #default="{ dialog, table, model, search }">
       <v-toolbar dense flat>
@@ -54,7 +43,7 @@ export default {
           </template>
         </g-dialog-editor>
       </v-toolbar>
-      <g-data-table v-bind="table.attrs" v-on="table.on" />
+      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }" />
     </template>
   </a-collection-controller>
 </template>

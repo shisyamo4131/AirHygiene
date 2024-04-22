@@ -1,14 +1,12 @@
 <script>
-import ADocumentController from '../atoms/ADocumentController.vue'
-import GActionCardDetailCustomer from '../molecules/cards/GActionCardDetailCustomer.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
+import ADocumentController from '../../atoms/ADocumentController.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GInputCustomer from '../inputs/GInputCustomer.vue'
 export default {
   components: {
     ADocumentController,
     GDialogEditor,
     GInputCustomer,
-    GActionCardDetailCustomer,
   },
 }
 </script>
@@ -26,9 +24,7 @@ export default {
           <g-input-customer v-bind="editor.attrs" v-on="editor.on" />
         </template>
       </g-dialog-editor>
-      <slot name="card" v-bind="{ attrs: card.attrs, on: card.on }">
-        <g-action-card-detail-customer v-bind="card.attrs" v-on="card.on" />
-      </slot>
+      <slot name="card" v-bind="{ attrs: card.attrs, on: card.on }" />
     </template>
   </a-document-controller>
 </template>

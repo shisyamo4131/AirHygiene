@@ -1,11 +1,9 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import AIconRegist from '../atoms/icons/AIconRegist.vue'
-// import GActionCardSimpleMunicipalContract from '../molecules/cards/GActionCardSimpleMunicipalContract.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputMunicipalContract from '../molecules/inputs/GInputMunicipalContract.vue'
-import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-// import GDataIterator from '../molecules/tables/GDataIterator.vue'
+import ACollectionController from '../../atoms/ACollectionController.vue'
+import AIconRegist from '../../atoms/icons/AIconRegist.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GInputMunicipalContract from '../inputs/GInputMunicipalContract.vue'
+import GTextFieldSearch from '../inputs/GTextFieldSearch.vue'
 export default {
   components: {
     ACollectionController,
@@ -13,8 +11,6 @@ export default {
     GDialogEditor,
     AIconRegist,
     GInputMunicipalContract,
-    // GDataIterator,
-    // GActionCardSimpleMunicipalContract,
   },
   props: {
     siteId: { type: String, required: true },
@@ -49,13 +45,7 @@ export default {
           </template>
         </g-dialog-editor>
       </v-toolbar>
-      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }">
-        <!-- <g-data-iterator v-bind="table.attrs" v-on="table.on">
-          <template #col="{ attrs, on }">
-            <g-action-card-simple-municipal-contract v-bind="attrs" v-on="on" />
-          </template>
-        </g-data-iterator> -->
-      </slot>
+      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }" />
     </template>
   </a-collection-controller>
 </template>

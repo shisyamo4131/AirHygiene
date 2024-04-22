@@ -1,11 +1,11 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import AIconRegist from '../atoms/icons/AIconRegist.vue'
-import GActionCardSimpleSite from '../molecules/cards/GActionCardSimpleSite.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputSite from '../molecules/inputs/GInputSite.vue'
-import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-import GDataIterator from '../molecules/tables/GDataIterator.vue'
+import ACollectionController from '~/components/atoms/ACollectionController.vue'
+import AIconRegist from '~/components/atoms/icons/AIconRegist.vue'
+import GActionCardSimpleSite from '~/components/molecules/cards/GActionCardSimpleSite.vue'
+import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
+import GInputSite from '~/components/molecules/inputs/GInputSite.vue'
+import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
+import GDataIterator from '~/components/molecules/tables/GDataIterator.vue'
 export default {
   components: {
     ACollectionController,

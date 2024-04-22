@@ -1,11 +1,9 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import AIconRegist from '../atoms/icons/AIconRegist.vue'
-import GActionCardSimpleCustomer from '../molecules/cards/GActionCardSimpleCustomer.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
-import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-import GDataIterator from '../molecules/tables/GDataIterator.vue'
+import ACollectionController from '../../atoms/ACollectionController.vue'
+import AIconRegist from '../../atoms/icons/AIconRegist.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GInputCustomer from '../inputs/GInputCustomer.vue'
+import GTextFieldSearch from '../inputs/GTextFieldSearch.vue'
 export default {
   components: {
     ACollectionController,
@@ -13,8 +11,6 @@ export default {
     GDialogEditor,
     AIconRegist,
     GInputCustomer,
-    GDataIterator,
-    GActionCardSimpleCustomer,
   },
   props: {
     label: { type: String, default: '取引先', required: false },
@@ -47,13 +43,7 @@ export default {
           </template>
         </g-dialog-editor>
       </v-toolbar>
-      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }">
-        <g-data-iterator v-bind="table.attrs" v-on="table.on">
-          <template #col="{ attrs, on }">
-            <g-action-card-simple-customer v-bind="attrs" v-on="on" />
-          </template>
-        </g-data-iterator>
-      </slot>
+      <slot name="table" v-bind="{ attrs: table.attrs, on: table.on }" />
     </template>
   </a-collection-controller>
 </template>
