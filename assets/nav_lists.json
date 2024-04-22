@@ -10,7 +10,8 @@
     "icon": "mdi-cube",
     "lists": [
       { "name": "取引先", "to": "/customers", "icon": "mdi-domain" },
-      { "name": "回収品目", "to": "/items", "icon": "mdi-domain" }
+      { "name": "回収品目", "to": "/items", "icon": "mdi-domain" },
+      { "name": "回収単位", "to": "/units", "icon": "mdi-domain" }
     ]
   },
   {
