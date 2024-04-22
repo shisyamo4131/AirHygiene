@@ -106,6 +106,7 @@ export default {
       this.editMode = 'DELETE'
       this.model.initialize(item)
       await this.submit('DELETE')
+      this.model.initialize()
       this.editMode = 'REGIST'
     },
     onClickDetail(item) {
