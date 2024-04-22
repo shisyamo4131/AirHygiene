@@ -31,6 +31,12 @@ export default {
       <v-tab-item>
         <v-list-item>
           <v-list-item-content>
+            <v-list-item-subtitle> CODE </v-list-item-subtitle>
+            <v-list-item-title> {{ item.code }} </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
             <v-list-item-subtitle> 住所 </v-list-item-subtitle>
             <v-list-item-title> 〒{{ item.zipcode }} </v-list-item-title>
             <v-list-item-title>

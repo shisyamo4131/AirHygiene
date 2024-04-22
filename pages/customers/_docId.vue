@@ -19,7 +19,10 @@ export default {
   },
   data() {
     return {
-      sitesHeaders: [{ text: '名称', value: 'name' }],
+      sitesHeaders: [
+        { text: 'CODE', value: 'code' },
+        { text: '名称', value: 'name' },
+      ],
     }
   },
   computed: {
