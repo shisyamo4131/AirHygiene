@@ -1,10 +1,16 @@
 <script>
+import { where } from 'firebase/firestore'
+import GCollectionControllerSites from '~/components/organisms/GCollectionControllerSites.vue'
 import GDocumentControllerCustomer from '~/components/organisms/GDocumentControllerCustomer.vue'
 export default {
-  components: { GDocumentControllerCustomer },
-  asyncData({ route }) {
+  components: { GDocumentControllerCustomer, GCollectionControllerSites },
+  asyncData({ app, route }) {
     const docId = route.params.docId
-    return { docId }
+    const sitesListener = app.$Site()
+    const sites = sitesListener.subscribe(undefined, [
+      where('customerId', '==', docId),
+    ])
+    return { docId, sitesListener, sites }
   },
   computed: {
     breadcrumbs() {
@@ -14,6 +20,9 @@ export default {
         { text: '取引先詳細', to: `/customers/${this.docId}` },
       ]
     },
+  },
+  destroyed() {
+    this.sitesListener.unsubscribe()
   },
 }
 </script>
@@ -30,6 +39,17 @@ export default {
             :actions="['edit', 'delete']"
             @submit:delete="$router.replace('/customers')"
           />
+        </v-col>
+        <v-col cols="12" md="8">
+          <v-card>
+            <v-card-title>排出場所一覧</v-card-title>
+            <v-container>
+              <g-collection-controller-sites
+                :default-item="{ customerId: docId }"
+                :items="sites"
+              />
+            </v-container>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>

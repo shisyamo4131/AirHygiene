@@ -55,6 +55,14 @@ export default class Customer extends FireModel {
     super(context, item)
     this.collection = 'Customers'
     this.tokenFields = ['abbr', 'abbrKana']
+    this.hasMany = [
+      {
+        collection: 'Sites',
+        field: 'customerId',
+        condition: '==',
+        type: 'collection',
+      },
+    ]
     Object.defineProperties(this, {
       fullAddress: {
         enumerable: true,
