@@ -2,8 +2,13 @@
 import { where } from 'firebase/firestore'
 import GCollectionControllerSites from '~/components/organisms/GCollectionControllerSites.vue'
 import GDocumentControllerCustomer from '~/components/organisms/GDocumentControllerCustomer.vue'
+import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 export default {
-  components: { GDocumentControllerCustomer, GCollectionControllerSites },
+  components: {
+    GDocumentControllerCustomer,
+    GCollectionControllerSites,
+    GDataTable,
+  },
   asyncData({ app, route }) {
     const docId = route.params.docId
     const sitesListener = app.$Site()
@@ -11,6 +16,11 @@ export default {
       where('customerId', '==', docId),
     ])
     return { docId, sitesListener, sites }
+  },
+  data() {
+    return {
+      sitesHeaders: [{ text: '名称', value: 'name' }],
+    }
   },
   computed: {
     breadcrumbs() {
@@ -47,7 +57,16 @@ export default {
               <g-collection-controller-sites
                 :default-item="{ customerId: docId }"
                 :items="sites"
-              />
+                :actions="['edit', 'delete']"
+              >
+                <template #table="{ attrs, on }">
+                  <g-data-table
+                    v-bind="attrs"
+                    :headers="sitesHeaders"
+                    v-on="on"
+                  />
+                </template>
+              </g-collection-controller-sites>
             </v-container>
           </v-card>
         </v-col>
