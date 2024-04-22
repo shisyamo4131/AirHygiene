@@ -63,18 +63,22 @@ export default {
         <v-col cols="12" md="8">
           <v-card>
             <v-card-title>一般廃棄物契約</v-card-title>
-            <g-collection-controller-municipal-contracts
-              :site-id="siteId"
-              :default-item="{ siteId: siteId }"
-              :items="municipalContracts"
-              :table-props="{
-                headers: [{ text: '契約日', value: 'startAt' }],
-              }"
-            >
-              <template #table="{ attrs, on }">
-                <g-data-table v-bind="attrs" v-on="on" />
-              </template>
-            </g-collection-controller-municipal-contracts>
+            <v-container fluid>
+              <g-collection-controller-municipal-contracts
+                :site-id="siteId"
+                :default-item="{ siteId: siteId }"
+                :items="municipalContracts"
+                :table-props="{
+                  headers: [{ text: '契約日', value: 'startAt' }],
+                  'sort-by': 'startAt',
+                  'sort-desc': true,
+                }"
+              >
+                <template #table="{ attrs, on }">
+                  <g-data-table v-bind="attrs" v-on="on" />
+                </template>
+              </g-collection-controller-municipal-contracts>
+            </v-container>
           </v-card>
         </v-col>
       </v-row>
