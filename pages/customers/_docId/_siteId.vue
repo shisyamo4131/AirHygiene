@@ -4,12 +4,14 @@ import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 import GCollectionControllerMunicipalContracts from '~/components/molecules/controllers/GCollectionControllerMunicipalContracts.vue'
 import GDocumentControllerSite from '~/components/molecules/controllers/GDocumentControllerSite.vue'
 import GActionCardDetailSite from '~/components/molecules/cards/GActionCardDetailSite.vue'
+import GCollectionControllerIndustrialContracts from '~/components/molecules/controllers/GCollectionControllerIndustrialContracts.vue'
 export default {
   components: {
     GDocumentControllerSite,
     GCollectionControllerMunicipalContracts,
     GDataTable,
     GActionCardDetailSite,
+    GCollectionControllerIndustrialContracts,
   },
   asyncData({ app, route }) {
     const customerId = route.params.docId
@@ -18,11 +20,18 @@ export default {
     const municipalContracts = municipalContractsListener.subscribe(undefined, [
       where('siteId', '==', siteId),
     ])
+    const industrialContractsListener = app.$IndustrialContract(siteId)
+    const industrialContracts = industrialContractsListener.subscribe(
+      undefined,
+      [where('siteId', '==', siteId)]
+    )
     return {
       customerId,
       siteId,
       municipalContractsListener,
       municipalContracts,
+      industrialContractsListener,
+      industrialContracts,
     }
   },
   computed: {
@@ -44,6 +53,7 @@ export default {
   },
   destroyed() {
     this.municipalContractsListener.unsubscribe()
+    this.industrialContractsListener.unsubscribe()
   },
 }
 </script>
@@ -61,25 +71,50 @@ export default {
           </g-document-controller-site>
         </v-col>
         <v-col cols="12" md="8">
-          <v-card>
-            <v-card-title>一般廃棄物契約</v-card-title>
-            <v-container fluid>
-              <g-collection-controller-municipal-contracts
-                :site-id="siteId"
-                :default-item="{ siteId: siteId }"
-                :items="municipalContracts"
-                :table-props="{
-                  headers: [{ text: '契約日', value: 'startAt' }],
-                  'sort-by': 'startAt',
-                  'sort-desc': true,
-                }"
-              >
-                <template #table="{ attrs, on }">
-                  <g-data-table v-bind="attrs" v-on="on" />
-                </template>
-              </g-collection-controller-municipal-contracts>
-            </v-container>
-          </v-card>
+          <v-row>
+            <v-col cols="12">
+              <v-card>
+                <v-card-title>一般廃棄物契約</v-card-title>
+                <v-container fluid>
+                  <g-collection-controller-municipal-contracts
+                    :site-id="siteId"
+                    :default-item="{ siteId: siteId }"
+                    :items="municipalContracts"
+                    :table-props="{
+                      headers: [{ text: '契約日', value: 'startAt' }],
+                      'sort-by': 'startAt',
+                      'sort-desc': true,
+                    }"
+                  >
+                    <template #table="{ attrs, on }">
+                      <g-data-table v-bind="attrs" v-on="on" />
+                    </template>
+                  </g-collection-controller-municipal-contracts>
+                </v-container>
+              </v-card>
+            </v-col>
+            <v-col cols="12">
+              <v-card>
+                <v-card-title>産業廃棄物契約</v-card-title>
+                <v-container fluid>
+                  <g-collection-controller-industrial-contracts
+                    :site-id="siteId"
+                    :default-item="{ siteId: siteId }"
+                    :items="industrialContracts"
+                    :table-props="{
+                      headers: [{ text: '契約日', value: 'startAt' }],
+                      'sort-by': 'startAt',
+                      'sort-desc': true,
+                    }"
+                  >
+                    <template #table="{ attrs, on }">
+                      <g-data-table v-bind="attrs" v-on="on" />
+                    </template>
+                  </g-collection-controller-industrial-contracts>
+                </v-container>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
