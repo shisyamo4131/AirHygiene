@@ -40,11 +40,11 @@ export default {
       @input="$emit('update:abbr', $event)"
     />
     <g-select
-      :value="type"
+      :value="group"
       label="種別"
-      :items="$ITEM_TYPE_ARRAY"
+      :items="$ITEM_GROUP_ARRAY"
       required
-      @input="$emit('update:type', $event)"
+      @input="$emit('update:group', $event)"
     />
   </div>
 </template>

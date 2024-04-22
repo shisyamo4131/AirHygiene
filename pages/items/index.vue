@@ -23,20 +23,31 @@ export default {
     :actions="['edit', 'delete']"
     :table-props="{
       'hide-pagination': true,
+      'group-by': 'group',
       headers: [
-        { text: 'CODE', value: 'code' },
-        { text: '品目名', value: 'name' },
-        { text: '種別', value: 'type' },
+        { text: 'CODE', value: 'code', groupable: false },
+        { text: '品目名', value: 'name', groupable: false },
+        { text: '種別', value: 'group' },
       ],
       'sort-by': 'code',
     }"
   >
     <template #table="{ attrs, on }">
-      <g-data-table v-bind="attrs" v-on="on">
-        <template #[`item.type`]="{ item }">
-          {{ $ITEM_TYPE[item.type] }}
-        </template>
-      </g-data-table>
+      <v-container fluid>
+        <g-data-table v-bind="attrs" v-on="on">
+          <template #[`group.header`]="{ headers, group, toggle, isOpen }">
+            <td :colspan="headers.length" class="text-start">
+              <v-btn icon small @click="toggle">
+                <v-icon>{{ `mdi-chevron-${isOpen ? 'up' : 'down'}` }}</v-icon>
+              </v-btn>
+              {{ $ITEM_GROUP[group] }}
+            </td>
+          </template>
+          <template #[`item.group`]="{ item }">
+            {{ $ITEM_GROUP[item.group] }}
+          </template>
+        </g-data-table>
+      </v-container>
     </template>
   </g-collection-controller-items>
 </template>

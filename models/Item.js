@@ -5,12 +5,7 @@ const props = {
     code: { type: String, default: '', required: false },
     name: { type: String, default: '', required: false },
     abbr: { type: String, default: '', required: false },
-    type: {
-      type: String,
-      default: 'else',
-      validator: (v) => ['municipal', 'industrial', 'else'].includes(v),
-      required: false,
-    },
+    group: { type: String, default: '', required: false },
   },
 }
 export { props }
