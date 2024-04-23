@@ -82,16 +82,17 @@ export default {
    ***************************************************************************/
   watch: {
     '$attrs.value'(v) {
-      if (!v) {
-        document.getElementById(`scroll-container-${this._uid}`).scrollTop = 0
-        this.$refs.form.resetValidation()
-      }
+      if (!v) this.reset()
     },
   },
   /***************************************************************************
    * METHODS
    ***************************************************************************/
   methods: {
+    reset() {
+      document.getElementById(`scroll-container-${this._uid}`).scrollTop = 0
+      this.$refs.form.resetValidation()
+    },
     validate() {
       const result = this.$refs.form.validate()
       if (!result) alert('入力に不備があります。')
