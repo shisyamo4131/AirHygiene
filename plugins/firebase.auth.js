@@ -21,12 +21,12 @@ export default (context) => {
     onAuthStateChanged(auth, async (user) => {
       if (user && ACTIVATE) {
         await context.store.dispatch(ACTIVATE, user)
-        // await context.store.dispatch('system/subscribe')
-        // await context.store.dispatch('companies/subscribe')
+        await context.store.dispatch('Items/subscribe')
+        await context.store.dispatch('Units/subscribe')
       } else if (!user && DISACTIVATE) {
         await context.store.dispatch(DISACTIVATE)
-        // await context.store.dispatch('system/unsubscribe')
-        // await context.store.dispatch('companies/unsubscribe')
+        await context.store.dispatch('Items/unsubscribe')
+        await context.store.dispatch('Units/unsubscribe')
       }
       resolve()
     })

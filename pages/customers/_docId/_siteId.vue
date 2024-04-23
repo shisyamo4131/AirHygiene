@@ -1,5 +1,4 @@
 <script>
-import { where } from 'firebase/firestore'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 import GCollectionControllerMunicipalContracts from '~/components/molecules/controllers/GCollectionControllerMunicipalContracts.vue'
 import GDocumentControllerSite from '~/components/molecules/controllers/GDocumentControllerSite.vue'
@@ -18,22 +17,21 @@ export default {
   asyncData({ app, route }) {
     const customerId = route.params.docId
     const siteId = route.params.siteId
+    const siteUnitPricesListener = app.$SiteUnitPrice(siteId)
+    const siteUnitPrices = siteUnitPricesListener.subscribe()
     const municipalContractsListener = app.$MunicipalContract(siteId)
-    const municipalContracts = municipalContractsListener.subscribe(undefined, [
-      where('siteId', '==', siteId),
-    ])
+    const municipalContracts = municipalContractsListener.subscribe()
     const industrialContractsListener = app.$IndustrialContract(siteId)
-    const industrialContracts = industrialContractsListener.subscribe(
-      undefined,
-      [where('siteId', '==', siteId)]
-    )
+    const industrialContracts = industrialContractsListener.subscribe()
     return {
       customerId,
       siteId,
-      municipalContractsListener,
+      siteUnitPrices,
+      siteUnitPricesListener,
       municipalContracts,
-      industrialContractsListener,
+      municipalContractsListener,
       industrialContracts,
+      industrialContractsListener,
     }
   },
   computed: {
@@ -54,6 +52,7 @@ export default {
     },
   },
   destroyed() {
+    this.siteUnitPricesListener.unsubscribe()
     this.municipalContractsListener.unsubscribe()
     this.industrialContractsListener.unsubscribe()
   },
@@ -81,12 +80,13 @@ export default {
                   <g-collection-controller-site-unit-prices
                     :site-id="siteId"
                     :default-item="{ siteId: siteId }"
-                    :items="[]"
+                    :items="siteUnitPrices"
                     :table-props="{
                       headers: [{ text: '適用開始日', value: 'startAt' }],
                       'sort-by': 'startAt',
                       'sort-desc': true,
                     }"
+                    :actions="['edit', 'delete']"
                   >
                     <template #table="{ attrs, on }">
                       <g-data-table v-bind="attrs" v-on="on" />

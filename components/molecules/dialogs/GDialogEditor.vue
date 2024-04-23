@@ -84,6 +84,9 @@ export default {
     '$attrs.value'(v) {
       if (!v) this.reset()
     },
+    editMode(v) {
+      this.reset()
+    },
   },
   /***************************************************************************
    * METHODS

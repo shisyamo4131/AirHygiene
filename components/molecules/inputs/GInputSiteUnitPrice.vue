@@ -4,12 +4,13 @@
  * @author shisyamo4131
  */
 import GDate from './GDate.vue'
-import GSelect from './GSelect.vue'
 import GNumeric from './GNumeric.vue'
+import GAutocompleteItem from './GAutocompleteItem.vue'
+import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import { props } from '~/models/SiteUnitPrice'
 import GMixinInput from '~/components/mixins/GMixinInput'
 export default {
-  components: { GDate, GSelect, GNumeric },
+  components: { GDate, GAutocompleteItem, GAutocompleteUnit, GNumeric },
   mixins: [props, GMixinInput],
 }
 </script>
@@ -22,13 +23,13 @@ export default {
       required
       @input="$emit('update:startAt', $event)"
     />
-    <g-select
+    <g-autocomplete-item
       :value="itemId"
       label="回収品目"
       required
       @input="$emit('update:itemId', $event)"
     />
-    <g-select
+    <g-autocomplete-unit
       :value="unitId"
       label="回収単位"
       required
