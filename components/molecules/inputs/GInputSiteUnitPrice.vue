@@ -3,15 +3,47 @@
  * ## GInputSiteUnitPrice
  * @author shisyamo4131
  */
+import GTreeviewUnitPrices from '../treeviews/GTreeviewUnitPrices.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
-import GAutocompleteItem from './GAutocompleteItem.vue'
-import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import { props } from '~/models/SiteUnitPrice'
 import GMixinInput from '~/components/mixins/GMixinInput'
 export default {
-  components: { GDate, GAutocompleteItem, GAutocompleteUnit, GNumeric },
+  components: { GDate, GTreeviewUnitPrices, GDialogEditor, GNumeric },
   mixins: [props, GMixinInput],
+  data() {
+    return {
+      dialog: false,
+      editItem: this.$UnitPrice(this.$store),
+      unitPricesRule: (v) => {
+        if (!v.length) return '単価が1つも設定されていません'
+        if (v.some((item) => !item.price && item.price !== 0)) {
+          return '単価の設定されていない回収品目があります'
+        }
+        return true
+      },
+    }
+  },
+  watch: {
+    dialog(v) {
+      if (!v) this.editItem.initialize()
+    },
+  },
+  methods: {
+    editPrice(e) {
+      this.editItem.initialize(e)
+      this.dialog = true
+    },
+    submitPrice() {
+      const result = this.unitPrices.map((unitPrice) => {
+        if (unitPrice.id !== this.editItem.id) return unitPrice
+        return JSON.parse(JSON.stringify(this.editItem))
+      })
+      this.$emit('update:unitPrices', result)
+      this.dialog = false
+    },
+  },
 }
 </script>
 
@@ -23,25 +55,34 @@ export default {
       required
       @input="$emit('update:startAt', $event)"
     />
-    <g-autocomplete-item
-      :value="itemId"
-      label="回収品目"
-      required
-      @input="$emit('update:itemId', $event)"
-    />
-    <g-autocomplete-unit
-      :value="unitId"
-      label="回収単位"
-      required
-      @input="$emit('update:unitId', $event)"
-    />
-    <g-numeric
-      class="right-input"
-      :value="price"
-      label="回収単価"
-      required
-      @input="$emit('update:price', $event)"
-    />
+    <v-input :value="unitPrices" :rules="[unitPricesRule]">
+      <g-treeview-unit-prices
+        :value="unitPrices"
+        dense
+        selection-type="leaf"
+        selectable
+        @input="$emit('update:unitPrices', $event)"
+        @click:priceSet="editPrice"
+      />
+    </v-input>
+    <g-dialog-editor
+      v-model="dialog"
+      label="単価"
+      :edit-mode="editItem.price ? 'UPDATE' : 'REGIST'"
+      max-width="360"
+      @click:submit="submitPrice"
+      @click:cancel="dialog = false"
+    >
+      <template #form>
+        <g-numeric
+          v-model="editItem.price"
+          class="right-input"
+          :label="editItem.name"
+          decimal-places="2"
+          suffix="円"
+        />
+      </template>
+    </g-dialog-editor>
   </div>
 </template>
 

@@ -93,8 +93,11 @@ export default {
    ***************************************************************************/
   methods: {
     reset() {
-      document.getElementById(`scroll-container-${this._uid}`).scrollTop = 0
-      this.$refs.form.resetValidation()
+      const el = document.getElementById(`scroll-container-${this._uid}`)
+      if (el) el.scrollTop = 0
+      // document.getElementById(`scroll-container-${this._uid}`).scrollTop = 0
+      if ('form' in this.$refs) this.$refs.form.resetValidation()
+      // this.$refs.form.resetValidation()
     },
     validate() {
       const result = this.$refs.form.validate()

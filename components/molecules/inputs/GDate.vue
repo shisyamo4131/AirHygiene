@@ -93,7 +93,7 @@ export default {
           <a-date
             v-model="date"
             readonly
-            v-bind="pickerAttrs"
+            v-bind="{ ...attrs, ...pickerAttrs }"
             v-on="pickerOn"
           ></a-date>
         </template>

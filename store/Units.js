@@ -10,6 +10,15 @@ export const getters = {
     const result = state.items.find((item) => item.docId === docId)
     return result || {}
   },
+  sorted(state) {
+    const result = state.items.map((item) => item)
+    result.sort((a, b) => {
+      if (a.code < b.code) return -1
+      if (a.code > b.code) return 1
+      return 0
+    })
+    return result
+  },
 }
 
 export const mutations = {

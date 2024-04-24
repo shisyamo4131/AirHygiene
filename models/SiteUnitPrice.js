@@ -4,9 +4,7 @@ const props = {
   props: {
     siteId: { type: String, default: '', required: false },
     startAt: { type: String, default: '', required: false },
-    itemId: { type: String, default: '', required: false },
-    unitId: { type: String, default: '', required: false },
-    price: { type: Number, default: null, required: false },
+    unitPrices: { type: Array, default: () => [], required: false },
   },
 }
 export { props }
@@ -20,7 +18,6 @@ export default class SiteUnitPrice extends FireModel {
   constructor(context, siteId, item) {
     super(context, item)
     this.collection = `Sites/${siteId}/SiteUnitPrices`
-    this.tokenFields = ['abbr', 'abbrKana']
   }
 
   initialize(item) {
