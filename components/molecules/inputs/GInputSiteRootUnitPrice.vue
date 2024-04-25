@@ -1,6 +1,6 @@
 <script>
 /**
- * ## GInputSiteUnitPrice
+ * ## GInputSiteRootUnitPrice
  * @author shisyamo4131
  */
 import GTreeviewUnitPrices from '../treeviews/GTreeviewUnitPrices.vue'
@@ -8,7 +8,7 @@ import GDialogEditor from '../dialogs/GDialogEditor.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
-import { props } from '~/models/SiteUnitPrice'
+import { props } from '~/models/SiteRootUnitPrice'
 import GMixinInput from '~/components/mixins/GMixinInput'
 export default {
   components: { GDate, GTreeviewUnitPrices, GDialogEditor, GNumeric, GSwitch },

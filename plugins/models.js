@@ -6,7 +6,7 @@ import Unit from '../models/Unit'
 import UnitPrice from '../models/UnitPrice'
 import IndustrialContract from '../models/IndustrialContract'
 import MunicipalContract from '../models/MunicipalContract'
-import SiteUnitPrice from '../models/SiteUnitPrice'
+import SiteRootUnitPrice from '../models/SiteRootUnitPrice'
 
 export default (context, inject) => {
   inject('Autonumber', (item) => new Autonumber(context, item))
@@ -24,7 +24,7 @@ export default (context, inject) => {
     (siteId, item) => new MunicipalContract(context, siteId, item)
   )
   inject(
-    'SiteUnitPrice',
-    (siteId, item) => new SiteUnitPrice(context, siteId, item)
+    'SiteRootUnitPrice',
+    (siteId, item) => new SiteRootUnitPrice(context, siteId, item)
   )
 }

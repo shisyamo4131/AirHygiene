@@ -2,7 +2,7 @@
 import ACollectionController from '../../atoms/ACollectionController.vue'
 import AIconRegist from '../../atoms/icons/AIconRegist.vue'
 import GDialogEditor from '../dialogs/GDialogEditor.vue'
-import GInputSiteUnitPrice from '../inputs/GInputSiteUnitPrice.vue'
+import GInputSiteRootUnitPrice from '../inputs/GInputSiteRootUnitPrice.vue'
 import GTextFieldSearch from '../inputs/GTextFieldSearch.vue'
 export default {
   components: {
@@ -10,7 +10,7 @@ export default {
     GTextFieldSearch,
     GDialogEditor,
     AIconRegist,
-    GInputSiteUnitPrice,
+    GInputSiteRootUnitPrice,
   },
   props: {
     siteId: { type: String, required: true },
@@ -27,7 +27,7 @@ export default {
 <template>
   <a-collection-controller
     v-bind="{ ...$attrs, ...$props }"
-    model-id="SiteUnitPrice"
+    model-id="SiteRootUnitPrice"
     :parent-id="siteId"
     v-on="$listeners"
   >
@@ -41,7 +41,10 @@ export default {
             </v-btn>
           </template>
           <template #form>
-            <g-input-site-unit-price v-bind="model.attrs" v-on="model.on" />
+            <g-input-site-root-unit-price
+              v-bind="model.attrs"
+              v-on="model.on"
+            />
           </template>
         </g-dialog-editor>
       </v-toolbar>
