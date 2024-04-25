@@ -14,7 +14,7 @@ export default {
   },
   props: {
     siteId: { type: String, required: true },
-    label: { type: String, default: '回収単価', required: false },
+    label: { type: String, default: '契約単価', required: false },
     dialogProps: {
       type: Object,
       default: () => ({ 'max-width': 600 }),

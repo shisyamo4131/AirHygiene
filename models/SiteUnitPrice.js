@@ -4,6 +4,9 @@ const props = {
   props: {
     siteId: { type: String, default: '', required: false },
     startAt: { type: String, default: '', required: false },
+    claimFixedCharge: { type: Boolean, default: false, required: false },
+    fixedCharge: { type: Number, default: null, required: false },
+    fixedChargeFirst: { type: Number, default: null, required: false },
     unitPrices: { type: Array, default: () => [], required: false },
   },
 }

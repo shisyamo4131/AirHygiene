@@ -62,6 +62,9 @@ class UnitPriceNode {
   }
 }
 export default {
+  props: {
+    ignorePrice: { type: Boolean, default: false, required: false },
+  },
   computed: {
     selectedItems: {
       get() {
@@ -71,6 +74,9 @@ export default {
         return result
       },
       set(v) {
+        // NOTE
+        // If props.ignorePrice is true, the price of the items is automatically
+        // set to 0, so there is no need to set it here.
         const result = v.map((item) => JSON.parse(JSON.stringify(item)))
         this.$emit('input', result)
       },
@@ -96,6 +102,8 @@ export default {
               ({ id }) => id === unitPriceNode.id
             )
             if (selectedItem) unitPriceNode.price = selectedItem.price
+            /* Set price to 0 if props.ignorePrice is true. */
+            if (this.ignorePrice) unitPriceNode.price = 0
             return unitPriceNode
           })
           /* Create ITEM-NODE with UNIT-NODES as own children. */
@@ -176,8 +184,10 @@ export default {
       </div>
     </template>
     <template #append="{ leaf, selected, item }">
+      <!-- Button for pricing -->
       <v-btn
         v-if="leaf && selected"
+        :disabled="ignorePrice"
         color="primary"
         text
         @click="$emit('click:priceSet', item)"
