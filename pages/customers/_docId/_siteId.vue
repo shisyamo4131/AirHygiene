@@ -4,7 +4,7 @@ import GCollectionControllerMunicipalContracts from '~/components/molecules/cont
 import GDocumentControllerSite from '~/components/molecules/controllers/GDocumentControllerSite.vue'
 import GActionCardDetailSite from '~/components/molecules/cards/GActionCardDetailSite.vue'
 import GCollectionControllerIndustrialContracts from '~/components/molecules/controllers/GCollectionControllerIndustrialContracts.vue'
-import GCollectionControllerSiteRootUnitPrices from '~/components/molecules/controllers/GCollectionControllerSiteRootUnitPrices.vue'
+import GCollectionControllerSiteRootContracts from '~/components/molecules/controllers/GCollectionControllerSiteRootContracts.vue'
 export default {
   components: {
     GDocumentControllerSite,
@@ -12,13 +12,13 @@ export default {
     GDataTable,
     GActionCardDetailSite,
     GCollectionControllerIndustrialContracts,
-    GCollectionControllerSiteRootUnitPrices,
+    GCollectionControllerSiteRootContracts,
   },
   asyncData({ app, route }) {
     const customerId = route.params.docId
     const siteId = route.params.siteId
-    const SiteRootUnitPricesListener = app.$SiteRootUnitPrice(siteId)
-    const SiteRootUnitPrices = SiteRootUnitPricesListener.subscribe()
+    const SiteRootContractsListener = app.$SiteRootContract(siteId)
+    const SiteRootContracts = SiteRootContractsListener.subscribe()
     const municipalContractsListener = app.$MunicipalContract(siteId)
     const municipalContracts = municipalContractsListener.subscribe()
     const industrialContractsListener = app.$IndustrialContract(siteId)
@@ -26,8 +26,8 @@ export default {
     return {
       customerId,
       siteId,
-      SiteRootUnitPrices,
-      SiteRootUnitPricesListener,
+      SiteRootContracts,
+      SiteRootContractsListener,
       municipalContracts,
       municipalContractsListener,
       industrialContracts,
@@ -52,7 +52,7 @@ export default {
     },
   },
   destroyed() {
-    this.SiteRootUnitPricesListener.unsubscribe()
+    this.SiteRootContractsListener.unsubscribe()
     this.municipalContractsListener.unsubscribe()
     this.industrialContractsListener.unsubscribe()
   },
@@ -77,10 +77,10 @@ export default {
               <v-card>
                 <v-card-title>ルート回収契約</v-card-title>
                 <v-container fluid>
-                  <g-collection-controller-site-root-unit-prices
+                  <g-collection-controller-site-root-contracts
                     :site-id="siteId"
                     :default-item="{ siteId: siteId }"
-                    :items="SiteRootUnitPrices"
+                    :items="SiteRootContracts"
                     :table-props="{
                       headers: [{ text: '適用開始日', value: 'startAt' }],
                       'sort-by': 'startAt',
@@ -91,7 +91,7 @@ export default {
                     <template #table="{ attrs, on }">
                       <g-data-table v-bind="attrs" v-on="on" />
                     </template>
-                  </g-collection-controller-site-root-unit-prices>
+                  </g-collection-controller-site-root-contracts>
                 </v-container>
               </v-card>
             </v-col>

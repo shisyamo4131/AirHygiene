@@ -13,14 +13,14 @@ const props = {
 export { props }
 
 /**
- * ## SiteRootUnitPrices
+ * ## SiteRootContract
  *
  * @author shisyamo4131
  */
-export default class SiteRootUnitPrices extends FireModel {
+export default class SiteRootContract extends FireModel {
   constructor(context, siteId, item) {
     super(context, item)
-    this.collection = `Sites/${siteId}/SiteRootUnitPrices`
+    this.collection = `Sites/${siteId}/SiteRootContracts`
   }
 
   initialize(item) {
