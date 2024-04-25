@@ -75,7 +75,7 @@ export default {
           <v-row>
             <v-col cols="12">
               <v-card>
-                <v-card-title>契約単価</v-card-title>
+                <v-card-title>ルート回収契約</v-card-title>
                 <v-container fluid>
                   <g-collection-controller-site-root-unit-prices
                     :site-id="siteId"

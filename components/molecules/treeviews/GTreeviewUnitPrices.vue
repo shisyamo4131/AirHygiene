@@ -23,44 +23,6 @@ class ItemNode {
     this.children = 'children' in item ? item.children : []
   }
 }
-class UnitPriceNode {
-  #store
-  constructor(store, item) {
-    this.#store = store
-    this.itemId = ''
-    this.unitId = ''
-    this.price = null
-    this.initialize(item)
-    Object.defineProperties(this, {
-      id: {
-        enumerable: true,
-        get() {
-          if (this.itemId && this.unitId) return `${this.itemId}-${this.unitId}`
-          if (this.itemId && !this.unitId) return this.itemId
-          return ''
-        },
-        set(v) {
-          ;[this.itemId, this.unitId] = v.split('-')
-        },
-      },
-      name: {
-        enumerable: false,
-        get() {
-          if (!this.itemId || !this.unitId) return ''
-          const unit = this.#store.getters['Units/get'](this.unitId)
-          return `${unit.code}: ${unit.name}`
-        },
-      },
-    })
-  }
-
-  initialize(item) {
-    if (!item) return
-    this.itemId = item?.itemId || ''
-    this.unitId = item?.unitId || ''
-    this.price = 'price' in item ? item.price : null
-  }
-}
 export default {
   props: {
     ignorePrice: { type: Boolean, default: false, required: false },
@@ -69,7 +31,7 @@ export default {
     selectedItems: {
       get() {
         const result = (this.$attrs?.value || []).map((item) => {
-          return new UnitPriceNode(this.$store, item)
+          return this.$UnitPrice(item)
         })
         return result
       },
@@ -95,13 +57,18 @@ export default {
         const itemNodes = groupedItems.reduce((sum, item) => {
           /* Create UNIT-NODES of ITEM-NODE's children */
           const unitPriceNodes = allUnits.map((unit) => {
-            const unitPriceNode = new UnitPriceNode(this.$store)
-            unitPriceNode.initialize({ itemId: item.docId, unitId: unit.docId })
-            /* Set price if $attrs.value has same object. */
+            const unitPriceNode = this.$UnitPrice({
+              itemId: item.docId,
+              unitId: unit.docId,
+            })
+            /* Set price and convertWeight if $attrs.value has same object. */
             const selectedItem = (this.$attrs?.value || []).find(
               ({ id }) => id === unitPriceNode.id
             )
-            if (selectedItem) unitPriceNode.price = selectedItem.price
+            if (selectedItem) {
+              unitPriceNode.price = selectedItem.price
+              unitPriceNode.convertWeight = selectedItem.convertWeight
+            }
             /* Set price to 0 if props.ignorePrice is true. */
             if (this.ignorePrice) unitPriceNode.price = 0
             return unitPriceNode
@@ -149,7 +116,9 @@ export default {
   >
     <template #prepend="{ leaf, item, selected }">
       <v-icon
-        v-if="leaf && selected && !item.price && item.price !== 0"
+        v-if="
+          leaf && selected && (item.convertWeight == null || item.price == null)
+        "
         color="error"
         small
       >
@@ -162,20 +131,17 @@ export default {
         <div class="text-truncate" style="min-width: 120px">
           {{ item.name }}
         </div>
-        <v-sheet
-          color="blue lighten-5"
-          class="pa-1"
-          style="min-width: 120px; text-align: right"
-          rounded
-        >
+        <div>
           {{
-            `${
-              item.price || item.price === 0
-                ? item.price.toLocaleString()
+            `単価: ${
+              item.price != null ? item.price.toLocaleString() : '--'
+            } 円 / 換算重量: ${
+              item.convertWeight != null
+                ? item.convertWeight.toLocaleString()
                 : '--'
-            } 円`
+            } kg`
           }}
-        </v-sheet>
+        </div>
       </div>
       <div v-else class="d-flex align-center">
         <div class="text-truncate" style="min-width: 120px">
@@ -184,14 +150,13 @@ export default {
       </div>
     </template>
     <template #append="{ leaf, selected, item }">
-      <!-- Button for pricing -->
       <v-btn
         v-if="leaf && selected"
-        :disabled="ignorePrice"
+        icon
         color="primary"
         text
         @click="$emit('click:priceSet', item)"
-        >単価設定</v-btn
+        ><v-icon>mdi-cog</v-icon></v-btn
       >
     </template>
   </v-treeview>

@@ -7,6 +7,7 @@ export default class UnitPrice {
     this.itemId = ''
     this.unitId = ''
     this.price = null
+    this.convertWeight = null
     this.initialize(item)
     Object.defineProperties(this, {
       id: {

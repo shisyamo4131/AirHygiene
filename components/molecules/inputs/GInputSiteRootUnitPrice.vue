@@ -16,11 +16,14 @@ export default {
   data() {
     return {
       dialog: false,
-      editItem: this.$UnitPrice(this.$store),
+      editItem: this.$UnitPrice(),
       unitPricesRule: (v) => {
-        if (!v.length) return '回収品目、回収単位を選択してください'
-        if (v.some((item) => !item.price && item.price !== 0)) {
+        if (!v.length) return true
+        if (v.some((item) => item.price == null)) {
           return '単価の設定されていない回収品目があります'
+        }
+        if (v.some((item) => item.convertWeight == null)) {
+          return '換算重量の設定されていない回収品目があります'
         }
         return true
       },
@@ -39,11 +42,14 @@ export default {
       )
       if (!answer) event.stopPropagation()
     },
-    updatePriceToZero(event) {
+    /**
+     * Update all prices to 'PAYLOAD' and emits unitPrices.
+     * Also emits claimFixedCharge after that.
+     */
+    updatePriceTo(event, payload) {
       const result = this.unitPrices.map((item) => {
-        return JSON.parse(JSON.stringify(item))
+        return { ...JSON.parse(JSON.stringify(item)), price: payload }
       })
-      result.forEach((item) => (item.price = 0))
       this.$emit('update:unitPrices', result)
       this.$emit('update:claimFixedCharge', event)
     },
@@ -71,11 +77,12 @@ export default {
       required
       @input="$emit('update:startAt', $event)"
     />
+    <v-subheader>月極</v-subheader>
     <g-switch
       :input-value="claimFixedCharge"
       label="月極請求"
       @click.native.capture="confirmToFixedCharge"
-      @change="updatePriceToZero"
+      @change="updatePriceTo($event, $event ? 0 : null)"
     />
     <v-expand-transition>
       <div v-show="claimFixedCharge">
@@ -111,6 +118,7 @@ export default {
         </g-numeric>
       </div>
     </v-expand-transition>
+    <v-subheader>回収単価設定</v-subheader>
     <v-input :value="unitPrices" :rules="[unitPricesRule]">
       <g-treeview-unit-prices
         style="width: 100%"
@@ -138,7 +146,15 @@ export default {
           class="right-input"
           :label="editItem.name"
           decimal-places="2"
+          :disabled="claimFixedCharge"
           suffix="円"
+        />
+        <g-numeric
+          v-model="editItem.convertWeight"
+          class="right-input"
+          label="換算重量"
+          decimal-places="2"
+          suffix="kg"
         />
       </template>
     </g-dialog-editor>
