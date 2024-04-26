@@ -77,6 +77,49 @@ export default {
       required
       @input="$emit('update:startAt', $event)"
     />
+    <v-subheader>最低保証</v-subheader>
+    <g-switch
+      :input-value="claimMinimumCharge"
+      label="最低保証"
+      @change="$emit('update:claimMinimumCharge', $event)"
+    />
+    <v-row>
+      <v-col cols="12" md="6">
+        <g-numeric
+          class="right-input"
+          :value="minimumCharge"
+          label="最低保証金額"
+          :required="claimMinimumCharge"
+          :disabled="!claimMinimumCharge"
+          suffix="円"
+          @input="$emit('update:minimumCharge', $event)"
+        />
+      </v-col>
+      <v-col cols="12" md="6">
+        <g-numeric
+          class="right-input"
+          :value="minimumChargeFirst"
+          label="初回保証金額"
+          :required="claimMinimumCharge"
+          :disabled="!claimMinimumCharge"
+          suffix="円"
+          @input="$emit('update:minimumChargeFirst', $event)"
+        >
+          <template #prepend>
+            <v-tooltip top>
+              <template #activator="{ attrs, on }">
+                <v-icon v-bind="attrs" color="primary" v-on="on"
+                  >mdi-information-outline</v-icon
+                >
+              </template>
+              <span>
+                初回の保証金額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
+              </span>
+            </v-tooltip>
+          </template>
+        </g-numeric>
+      </v-col>
+    </v-row>
     <v-subheader>月極</v-subheader>
     <g-switch
       :input-value="claimFixedCharge"
@@ -84,22 +127,25 @@ export default {
       @click.native.capture="confirmToFixedCharge"
       @change="updatePriceTo($event, $event ? 0 : null)"
     />
-    <v-expand-transition>
-      <div v-show="claimFixedCharge">
+    <v-row>
+      <v-col cols="12" md="6">
         <g-numeric
           class="right-input"
           :value="fixedCharge"
           label="月極金額"
           :required="claimFixedCharge"
+          :disabled="!claimFixedCharge"
           suffix="円"
           @input="$emit('update:fixedCharge', $event)"
-        >
-        </g-numeric>
+        />
+      </v-col>
+      <v-col cols="12" md="6">
         <g-numeric
           class="right-input"
           :value="fixedChargeFirst"
-          label="初回請求額"
+          label="初回月極金額"
           :required="claimFixedCharge"
+          :disabled="!claimFixedCharge"
           suffix="円"
           @input="$emit('update:fixedChargeFirst', $event)"
         >
@@ -111,13 +157,13 @@ export default {
                 >
               </template>
               <span>
-                初回の請求額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
+                初回の月極請求額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
               </span>
             </v-tooltip>
           </template>
         </g-numeric>
-      </div>
-    </v-expand-transition>
+      </v-col>
+    </v-row>
     <v-subheader>回収単価設定</v-subheader>
     <v-input :value="unitPrices" :rules="[unitPricesRule]">
       <g-treeview-unit-prices

@@ -81,15 +81,27 @@ export default {
                     :site-id="siteId"
                     :default-item="{ siteId: siteId }"
                     :items="SiteRootContracts"
+                    :dialog-props="{ 'max-width': 720 }"
                     :table-props="{
-                      headers: [{ text: '適用開始日', value: 'startAt' }],
+                      headers: [
+                        { text: '適用開始日', value: 'startAt' },
+                        { text: '月極請求', value: 'fixedCharge' },
+                      ],
                       'sort-by': 'startAt',
                       'sort-desc': true,
                     }"
                     :actions="['edit', 'delete']"
                   >
                     <template #table="{ attrs, on }">
-                      <g-data-table v-bind="attrs" v-on="on" />
+                      <g-data-table v-bind="attrs" v-on="on">
+                        <template #[`item.fixedCharge`]="{ item }">
+                          {{
+                            item.fixedCharge != null
+                              ? item.fixedCharge.toLocaleString()
+                              : '--'
+                          }}
+                        </template>
+                      </g-data-table>
                     </template>
                   </g-collection-controller-site-root-contracts>
                 </v-container>
