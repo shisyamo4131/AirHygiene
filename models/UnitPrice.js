@@ -44,5 +44,6 @@ export default class UnitPrice {
     this.itemId = item?.itemId || ''
     this.unitId = item?.unitId || ''
     this.price = 'price' in item ? item.price : null
+    this.convertWeight = 'convertWeight' in item ? item.convertWeight : null
   }
 }

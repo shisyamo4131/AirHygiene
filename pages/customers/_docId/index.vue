@@ -31,6 +31,13 @@ export default {
   destroyed() {
     this.sitesListener.unsubscribe()
   },
+  methods: {
+    siteSubmitComplete({ mode, model }) {
+      if (mode === 'REGIST' || mode === 'UPDATE') {
+        this.$router.push(`/customers/${this.docId}/${model.docId}`)
+      }
+    },
+  },
 }
 </script>
 
@@ -69,6 +76,7 @@ export default {
                 @click:detail="
                   $router.push(`/customers/${docId}/${$event.docId}`)
                 "
+                @submit:complete="siteSubmitComplete"
               >
                 <template #table="{ attrs, on }">
                   <g-data-table v-bind="attrs" v-on="on" />

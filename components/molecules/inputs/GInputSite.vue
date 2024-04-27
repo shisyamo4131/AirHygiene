@@ -21,10 +21,29 @@ export default {
    * MIXINS
    ***************************************************************************/
   mixins: [props, GMixinInput],
+  data() {
+    return {
+      loadingCustomer: false,
+    }
+  },
   /***************************************************************************
    * METHODS
    ***************************************************************************/
   methods: {
+    async copyFromCustomer() {
+      if (!this.customerId) return
+      this.loadingCustomer = true
+      const model = this.$Customer()
+      await model.fetch(this.customerId)
+      this.$emit('update:zipcode', model.zipcode)
+      this.$emit('update:pref', model.pref)
+      this.$emit('update:city', model.city)
+      this.$emit('update:address1', model.address1)
+      this.$emit('update:address2', model.address2)
+      this.$emit('update:tel', model.tel)
+      this.$emit('update:fax', model.fax)
+      this.loadingCustomer = false
+    },
     loaded(e) {
       this.$emit('update:pref', e.pref)
       this.$emit('update:city', e.city)
@@ -41,6 +60,7 @@ export default {
       label="排出場所名"
       required
       @input="$emit('update:name', $event)"
+      @change="$emit('update:abbr', $event)"
     />
     <g-text-field
       :value="abbr"
@@ -59,6 +79,19 @@ export default {
       input-type="katakana"
       @input="$emit('update:abbrKana', $event)"
     />
+    <div class="d-flex justify-end">
+      <v-btn
+        color="primary"
+        :loading="loadingCustomer"
+        :disabled="loadingCustomer"
+        small
+        text
+        @click="copyFromCustomer"
+      >
+        <v-icon small>mdi-content-duplicate</v-icon>
+        取引先の情報を複製</v-btn
+      >
+    </div>
     <a-renderless-zipcode
       :value="zipcode"
       @input="$emit('update:zipcode', $event)"

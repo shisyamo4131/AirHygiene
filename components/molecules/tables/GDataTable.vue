@@ -26,6 +26,7 @@ export default {
     headers: { type: Array, default: () => [], required: false },
     height: { type: [Number, String], default: undefined, required: false },
     hidePagination: { type: Boolean, default: false, required: false },
+    itemsPerPage: { type: Number, default: 10, required: false },
   },
   /***************************************************************************
    * DATA
@@ -55,6 +56,10 @@ export default {
       if (!this.height) return undefined
       const result = parseInt(this.height) - this.paginationHeight
       return result <= 0 ? undefined : result
+    },
+    internalItemsPerPage() {
+      if (this.hidePagination) return -1
+      return this.itemsPerPage
     },
     paginationHeight() {
       if (this.hidePagination) return 0
@@ -88,6 +93,7 @@ export default {
     :headers="internalHeaders"
     :height="internalHeight"
     hide-default-footer
+    :items-per-page="internalItemsPerPage"
     :page.sync="page"
     @page-count="pageCount = $event"
     v-on="$listeners"

@@ -133,7 +133,7 @@ export default {
         if (this.customSubmit)
           await this.customSubmit({ model: this.model, editMode: mode })
         if (!this.customSubmit) await this.defaultSubmit(mode)
-        this.$emit(`submit:complete`, mode)
+        this.$emit(`submit:complete`, { mode, model: this.modelAttrs })
         this.dialog = false
       } catch (err) {
         // eslint-disable-next-line

@@ -85,7 +85,18 @@ export default {
                     :table-props="{
                       headers: [
                         { text: '適用開始日', value: 'startAt' },
-                        { text: '月極請求', value: 'fixedCharge' },
+                        {
+                          text: '最低保証',
+                          value: 'minimumCharge',
+                          align: 'right',
+                          sortable: false,
+                        },
+                        {
+                          text: '月極請求',
+                          value: 'fixedCharge',
+                          align: 'right',
+                          sortable: false,
+                        },
                       ],
                       'sort-by': 'startAt',
                       'sort-desc': true,
@@ -94,6 +105,13 @@ export default {
                   >
                     <template #table="{ attrs, on }">
                       <g-data-table v-bind="attrs" v-on="on">
+                        <template #[`item.minimumCharge`]="{ item }">
+                          {{
+                            item.minimumCharge != null
+                              ? item.minimumCharge.toLocaleString()
+                              : '--'
+                          }}
+                        </template>
                         <template #[`item.fixedCharge`]="{ item }">
                           {{
                             item.fixedCharge != null
