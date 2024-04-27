@@ -4,7 +4,7 @@ const props = {
   props: {
     siteId: { type: String, default: '', required: false },
     startAt: { type: String, default: '', required: false },
-    claimMinimumCharge: { type: String, default: false, required: false },
+    claimMinimumCharge: { type: Boolean, default: false, required: false },
     minimumCharge: { type: Number, default: null, required: false },
     minimumChargeFirst: { type: Number, default: null, required: false },
     claimFixedCharge: { type: Boolean, default: false, required: false },

@@ -3,20 +3,26 @@
  * ## GInputSiteRootContract
  * @author shisyamo4131
  */
-import GTreeviewUnitPrices from '../treeviews/GTreeviewUnitPrices.vue'
-import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GDataTable from '../tables/GDataTable.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
+import GInputUnitPrice from './GInputUnitPrice.vue'
 import { props } from '~/models/SiteRootContract'
 import GMixinInput from '~/components/mixins/GMixinInput'
+import AArrayController from '~/components/atoms/AArrayController.vue'
 export default {
-  components: { GDate, GTreeviewUnitPrices, GDialogEditor, GNumeric, GSwitch },
+  components: {
+    GDate,
+    GNumeric,
+    GSwitch,
+    GDataTable,
+    GInputUnitPrice,
+    AArrayController,
+  },
   mixins: [props, GMixinInput],
   data() {
     return {
-      dialog: false,
-      editItem: this.$UnitPrice(),
       unitPricesRule: (v) => {
         if (!v.length) return true
         if (v.some((item) => item.price == null)) {
@@ -28,11 +34,6 @@ export default {
         return true
       },
     }
-  },
-  watch: {
-    dialog(v) {
-      if (!v) this.editItem.initialize()
-    },
   },
   methods: {
     confirmToFixedCharge(event) {
@@ -52,18 +53,6 @@ export default {
       })
       this.$emit('update:unitPrices', result)
       this.$emit('update:claimFixedCharge', event)
-    },
-    editPrice(e) {
-      this.editItem.initialize(e)
-      this.dialog = true
-    },
-    submitPrice() {
-      const result = this.unitPrices.map((unitPrice) => {
-        if (unitPrice.id !== this.editItem.id) return unitPrice
-        return JSON.parse(JSON.stringify(this.editItem))
-      })
-      this.$emit('update:unitPrices', result)
-      this.dialog = false
     },
   },
 }
@@ -165,45 +154,50 @@ export default {
       </v-col>
     </v-row>
     <v-subheader>回収単価設定</v-subheader>
-    <v-input :value="unitPrices" :rules="[unitPricesRule]">
-      <g-treeview-unit-prices
-        style="width: 100%"
-        :value="unitPrices"
-        dense
-        :ignore-price="claimFixedCharge"
-        selection-type="leaf"
-        selectable
-        transition
-        @input="$emit('update:unitPrices', $event)"
-        @click:priceSet="editPrice"
-      />
-    </v-input>
-    <g-dialog-editor
-      v-model="dialog"
-      label="単価"
-      :edit-mode="editItem.price ? 'UPDATE' : 'REGIST'"
-      max-width="360"
-      @click:submit="submitPrice"
-      @click:cancel="dialog = false"
+    <a-array-controller
+      :actions="['edit', 'delete']"
+      model-id="UnitPrice"
+      :value="unitPrices"
+      :table-props="{
+        headers: [
+          { text: '回収品目', value: 'itemId' },
+          { text: '単位', value: 'unitId' },
+          { text: '単価', value: 'price', align: 'right', sortable: false },
+          {
+            text: '換算重量',
+            value: 'convertWeight',
+            align: 'right',
+            sortable: false,
+          },
+        ],
+        'hide-pagination': true,
+      }"
+      @input="$emit('update:unitPrices', $event)"
     >
-      <template #form>
-        <g-numeric
-          v-model="editItem.price"
-          class="right-input"
-          :label="editItem.name"
-          decimal-places="2"
-          :disabled="claimFixedCharge"
-          suffix="円"
-        />
-        <g-numeric
-          v-model="editItem.convertWeight"
-          class="right-input"
-          label="換算重量"
-          decimal-places="2"
-          suffix="kg"
-        />
+      <template #default="{ table, editItem, isEditing, btnRegist }">
+        <g-data-table v-bind="table.attrs" v-on="table.on">
+          <template #[`item.itemId`]="{ item }">
+            {{ $store.getters[`Items/get`](item.itemId).abbr }}
+          </template>
+          <template #[`item.unitId`]="{ item }">
+            {{ $store.getters[`Units/get`](item.unitId).abbr }}
+          </template>
+        </g-data-table>
+        <v-expand-transition>
+          <v-container v-show="isEditing" fluid>
+            <v-form ref="form">
+              <g-input-unit-price v-bind="editItem.attrs" v-on="editItem.on" />
+            </v-form>
+          </v-container>
+        </v-expand-transition>
+        <div class="d-flex justify-end">
+          <v-btn color="primary" text small v-on="btnRegist.on">
+            <v-icon small>{{ `mdi-${!isEditing ? 'plus' : 'check'}` }}</v-icon>
+            {{ `${!isEditing ? '追加' : '確定'}` }}
+          </v-btn>
+        </div>
       </template>
-    </g-dialog-editor>
+    </a-array-controller>
   </div>
 </template>
 

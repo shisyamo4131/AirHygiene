@@ -2,6 +2,17 @@
  * ### UnitPrice
  * @author shisyamo4131
  */
+
+const props = {
+  props: {
+    itemId: { type: String, default: '', required: false },
+    unitId: { type: String, default: '', required: false },
+    price: { type: Number, default: null, required: false },
+    convertWeight: { type: Number, default: null, required: false },
+  },
+}
+export { props }
+
 export default class UnitPrice {
   constructor(context, item) {
     this.itemId = ''
@@ -21,29 +32,35 @@ export default class UnitPrice {
           ;[this.itemId, this.unitId] = v.split('-')
         },
       },
-      name: {
-        enumerable: false,
-        get() {
-          if (this.itemId && this.unitId) {
-            const item = context.store.getters['Items/get'](this.itemId)
-            const unit = context.store.getters['Units/get'](this.unitId)
-            return `${item.name}-${unit.name}`
-          }
-          if (this.itemId && !this.unitId) {
-            const item = context.store.getters['Items/get'](this.itemId)
-            return item.name
-          }
-          return ''
-        },
-      },
+      // name: {
+      //   enumerable: false,
+      //   get() {
+      //     if (this.itemId && this.unitId) {
+      //       const item = context.store.getters['Items/get'](this.itemId)
+      //       const unit = context.store.getters['Units/get'](this.unitId)
+      //       return `${item.name}-${unit.name}`
+      //     }
+      //     if (this.itemId && !this.unitId) {
+      //       const item = context.store.getters['Items/get'](this.itemId)
+      //       return item.name
+      //     }
+      //     return ''
+      //   },
+      // },
     })
   }
 
   initialize(item) {
+    Object.keys(props.props).forEach((key) => {
+      const propDefault = props.props[key].default
+      this[key] =
+        typeof propDefault === 'function' ? propDefault() : propDefault
+    })
     if (!item) return
-    this.itemId = item?.itemId || ''
-    this.unitId = item?.unitId || ''
-    this.price = 'price' in item ? item.price : null
-    this.convertWeight = 'convertWeight' in item ? item.convertWeight : null
+    Object.keys(item).forEach((key) => {
+      if (key in this) {
+        this[key] = JSON.parse(JSON.stringify(item[key]))
+      }
+    })
   }
 }

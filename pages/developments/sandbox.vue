@@ -1,32 +1,17 @@
 <template>
-  <div>
-    <v-data-table
-      :headers="[
-        { text: 'item', value: 'itemId' },
-        { text: 'unit', value: 'unitId' },
-        { text: 'price', value: 'price' },
-      ]"
-      :items="value"
-    />
-    <g-input-unit-prices v-model="value" />
-  </div>
+  <v-container>
+    <g-date v-model="value" />
+    {{ value }}
+  </v-container>
 </template>
 
 <script>
-import GInputUnitPrices from '~/components/molecules/treeviews/GTreeviewUnitPrices.vue'
+import GDate from '~/components/molecules/inputs/GDate.vue'
 export default {
-  components: { GInputUnitPrices },
+  components: { GDate },
   data() {
     return {
-      value: [
-        {
-          id: 'SD7mw8KjXEDvvIe48M7C-Gsz2Xba85Il8VSVQC42O',
-          itemId: 'SD7mw8KjXEDvvIe48M7C',
-          unitId: 'Gsz2Xba85Il8VSVQC42O',
-          name: '可燃物-kg',
-          price: 30,
-        },
-      ],
+      value: '',
     }
   },
 }
