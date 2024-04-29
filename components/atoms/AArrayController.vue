@@ -8,6 +8,8 @@ export default {
     defaultItem: { type: Object, default: () => ({}), required: false },
     /* An object provided to the dialog component. */
     dialogProps: { type: Object, default: () => ({}), required: false },
+    /* To switch delete direct if true. */
+    directDelete: { type: Boolean, default: false, required: false },
     /* A string used to specify the item in props.value */
     itemKey: { type: String, default: 'id', required: false },
     /* A string provided to dialog component. */
@@ -70,8 +72,14 @@ export default {
     onClickDelete(item) {
       this.editItem.initialize(item)
       this.editMode = 'DELETE'
-      this.dialog = true
-      this.isEditing = true
+      if (this.directDelete) {
+        const answer = window.confirm('削除してもよろしいですか？')
+        if (!answer) return
+        this.submit()
+      } else {
+        this.dialog = true
+        this.isEditing = true
+      }
     },
     submit() {
       if (!this.formValid) return

@@ -156,6 +156,7 @@ export default {
     <v-subheader>回収単価設定</v-subheader>
     <a-array-controller
       :actions="['edit', 'delete']"
+      direct-delete
       model-id="UnitPrice"
       :value="unitPrices"
       :table-props="{
