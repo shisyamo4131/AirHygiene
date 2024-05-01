@@ -26,6 +26,7 @@ export default {
     :table-props="{
       'hide-pagination': true,
       cols: { cols: 12, md: 6, lg: 4, xl: 3 },
+      sortBy: 'code',
     }"
     @click:detail="$router.push(`/customers/${$event.docId}`)"
   >
@@ -34,6 +35,7 @@ export default {
         <template #col="colProps">
           <g-action-card-simple-customer
             v-bind="colProps.attrs"
+            outlined
             v-on="colProps.on"
           />
         </template>
