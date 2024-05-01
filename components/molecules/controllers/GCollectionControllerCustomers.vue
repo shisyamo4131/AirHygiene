@@ -30,7 +30,7 @@ export default {
     v-on="$listeners"
   >
     <template #default="{ dialog, table, model, search }">
-      <v-toolbar dense flat style="position: sticky; top: 60px; z-index: 2">
+      <v-toolbar dense flat>
         <g-text-field-search v-bind="search.attrs" v-on="search.on" />
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
