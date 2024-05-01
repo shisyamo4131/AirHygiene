@@ -162,7 +162,7 @@ export default {
       :table-props="{
         headers: [
           { text: '回収品目', value: 'itemId' },
-          { text: '単位', value: 'unitId' },
+          { text: '単位', value: 'unitId', align: 'right', sortable: false },
           { text: '単価', value: 'price', align: 'right', sortable: false },
           {
             text: '換算重量',
