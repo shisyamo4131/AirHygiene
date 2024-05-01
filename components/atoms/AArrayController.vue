@@ -18,7 +18,6 @@ export default {
     modelId: { type: String, required: true },
     /* An object provided to the table component. */
     tableProps: { type: Object, default: () => ({}), required: false },
-    formValid: { type: Boolean, default: true, required: false },
     /* An array provided to the table component. */
     value: { type: Array, default: () => [], required: false },
   },
@@ -26,10 +25,10 @@ export default {
     return {
       dialog: false,
       editMode: 'REGIST',
+      editKey: null,
       editItem: null,
       /* A string used for searching items provided to table-props. */
       internalSearch: null,
-      isEditing: false,
     }
   },
   computed: {
@@ -49,6 +48,14 @@ export default {
     },
   },
   watch: {
+    dialog(v) {
+      if (!v) {
+        this.editMode = 'REGIST'
+        this.editKey = null
+        this.editItem.initialize()
+        this.$refs[`air-form-${this._uid}`].resetValidation()
+      }
+    },
     modelId: {
       handler(v) {
         this.editItem = this[`$${v}`](this.defaultItem)
@@ -61,35 +68,52 @@ export default {
       this.editItem.initialize()
       this.editMode = 'REGIST'
       this.dialog = true
-      this.isEditing = true
     },
     onClickEdit(item) {
       this.editItem.initialize(item)
+      this.editKey = this.editItem[this.itemKey]
       this.editMode = 'UPDATE'
       this.dialog = true
-      this.isEditing = true
     },
     onClickDelete(item) {
       this.editItem.initialize(item)
+      this.editKey = this.editItem[this.itemKey]
       this.editMode = 'DELETE'
       if (this.directDelete) {
+        this.dialog = false
         const answer = window.confirm('削除してもよろしいですか？')
         if (!answer) return
         this.submit()
       } else {
         this.dialog = true
-        this.isEditing = true
       }
     },
-    submit() {
-      if (!this.formValid) return
-      let result
-      if (this.editMode === 'REGIST') result = this.regist()
-      if (this.editMode === 'UPDATE') result = this.update()
-      if (this.editMode === 'DELETE') result = this.delete()
-      this.$emit('input', result)
+    onClickCancel() {
       this.dialog = false
-      this.isEditing = false
+      // this.editItem.initialize()
+      // this.$refs[`air-form-${this._uid}`].resetValidation()
+    },
+    validate() {
+      const result = this.$refs[`air-form-${this._uid}`].validate()
+      if (!result) alert('入力に不備があります。')
+      return result
+    },
+    duplicated(v) {
+      const uniques = [...new Set(v.map((item) => item[this.itemKey]))]
+      return v.length !== uniques.length
+    },
+    submit() {
+      if (this.editMode !== 'DELETE' && !this.validate()) return
+      try {
+        let result
+        if (this.editMode === 'REGIST') result = this.regist()
+        if (this.editMode === 'UPDATE') result = this.update()
+        if (this.editMode === 'DELETE') result = this.delete()
+        this.$emit('input', result)
+        this.dialog = false
+      } catch (err) {
+        alert(err.message)
+      }
     },
     regist() {
       const item = JSON.parse(JSON.stringify(this.editItem))
@@ -97,6 +121,9 @@ export default {
         return JSON.parse(JSON.stringify(item))
       })
       result.push(item)
+      if (this.duplicated(result)) {
+        throw new Error('重複して登録することはできません。')
+      }
       return result
     },
     update() {
@@ -105,9 +132,12 @@ export default {
         return JSON.parse(JSON.stringify(item))
       })
       const index = this.value.findIndex((item) => {
-        return item[this.itemKey] === this.editItem[this.itemKey]
+        return item[this.itemKey] === this.editKey
       })
       if (index !== -1) result.splice(index, 1, item)
+      if (this.duplicated(result)) {
+        throw new Error('重複して登録することはできません。')
+      }
       return result
     },
     delete() {
@@ -115,7 +145,7 @@ export default {
         return JSON.parse(JSON.stringify(item))
       })
       const index = this.value.findIndex((item) => {
-        return item[this.itemKey] === this.editItem[this.itemKey]
+        return item[this.itemKey] === this.editKey
       })
       if (index !== -1) result.splice(index, 1)
       return result
@@ -123,8 +153,13 @@ export default {
   },
   render(createElement) {
     return createElement(
-      'div',
-      {},
+      'v-form',
+      {
+        attrs: {
+          disabled: this.editMode === 'DELETE',
+        },
+        ref: `air-form-${this._uid}`,
+      },
       this.$scopedSlots.default({
         dialog: {
           attrs: {
@@ -143,17 +178,22 @@ export default {
           attrs: { ...this.editItemAttrs, editMode: this.editMode },
           on: this.editItemOn,
         },
+        editKey: this.editKey,
         editMode: this.editMode,
-        isEditing: this.isEditing,
+        /* The editItem is editing if dialog is true. */
+        isEditing: this.dialog,
         search: {
           attrs: { value: this.internalSearch },
           on: { input: (v) => (this.internalSearch = v) },
         },
         table: {
           attrs: {
+            actions: this.actions,
+            disableDelete: this.dialog,
+            disableEdit: this.dialog,
+            itemKey: this.itemKey,
             items: this.value,
             search: this.internalSearch,
-            actions: this.actions,
             ...this.tableProps,
           },
           on: {
@@ -163,14 +203,18 @@ export default {
             // 'click:detail': this.onClickDetail,
           },
         },
-        btnRegist: {
-          on: {
-            click: () => {
-              if (this.isEditing) {
-                this.submit()
-              } else {
-                this.onClickRegist()
-              }
+        btns: {
+          regist: {
+            on: {
+              click: this.dialog ? this.submit : this.onClickRegist,
+            },
+          },
+          cancel: {
+            attrs: {
+              disabled: !this.dialog,
+            },
+            on: {
+              click: this.onClickCancel,
             },
           },
         },

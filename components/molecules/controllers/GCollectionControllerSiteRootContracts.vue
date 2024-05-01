@@ -29,6 +29,7 @@ export default {
     v-bind="{ ...$attrs, ...$props }"
     model-id="SiteRootContract"
     :parent-id="siteId"
+    :dialog-props="{ maxWidth: 840 }"
     v-on="$listeners"
   >
     <template #default="{ dialog, table, model, search }">

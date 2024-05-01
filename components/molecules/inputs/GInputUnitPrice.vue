@@ -39,6 +39,7 @@ export default {
         label="単価"
         required
         decimal-places="2"
+        suffix="円"
         @input="$emit('update:price', $event)"
       />
     </v-col>
@@ -49,6 +50,7 @@ export default {
         label="換算重量"
         required
         decimal-places="2"
+        suffix="kg"
         @input="$emit('update:convertWeight', $event)"
       />
     </v-col>

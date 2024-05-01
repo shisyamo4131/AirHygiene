@@ -175,28 +175,45 @@ export default {
       }"
       @input="$emit('update:unitPrices', $event)"
     >
-      <template #default="{ table, editItem, isEditing, btnRegist }">
+      <template #default="{ table, editItem, editKey, isEditing, btns }">
+        <v-expand-transition>
+          <v-container v-show="isEditing" fluid>
+            <g-input-unit-price v-bind="editItem.attrs" v-on="editItem.on" />
+          </v-container>
+        </v-expand-transition>
+        <div class="d-flex justify-end">
+          <v-btn
+            v-if="isEditing"
+            v-bind="btns.cancel.attrs"
+            text
+            small
+            v-on="btns.cancel.on"
+          >
+            <v-icon small>mdi-cancel</v-icon>
+            取消
+          </v-btn>
+          <v-btn color="primary" text small v-on="btns.regist.on">
+            <v-icon small>{{ `mdi-${!isEditing ? 'plus' : 'check'}` }}</v-icon>
+            {{ `${!isEditing ? '追加' : '確定'}` }}
+          </v-btn>
+        </div>
         <g-data-table v-bind="table.attrs" v-on="table.on">
           <template #[`item.itemId`]="{ item }">
+            <v-icon v-if="item.id === editKey" small color="primary"
+              >mdi-check</v-icon
+            >
             {{ $store.getters[`Items/get`](item.itemId).abbr }}
           </template>
           <template #[`item.unitId`]="{ item }">
             {{ $store.getters[`Units/get`](item.unitId).abbr }}
           </template>
+          <template #[`item.price`]="{ item }">
+            {{ `${(item.price || 0).toFixed(2)} 円` }}
+          </template>
+          <template #[`item.convertWeight`]="{ item }">
+            {{ `${(item.convertWeight || 0).toFixed(2)} kg` }}
+          </template>
         </g-data-table>
-        <v-expand-transition>
-          <v-container v-show="isEditing" fluid>
-            <v-form ref="form">
-              <g-input-unit-price v-bind="editItem.attrs" v-on="editItem.on" />
-            </v-form>
-          </v-container>
-        </v-expand-transition>
-        <div class="d-flex justify-end">
-          <v-btn color="primary" text small v-on="btnRegist.on">
-            <v-icon small>{{ `mdi-${!isEditing ? 'plus' : 'check'}` }}</v-icon>
-            {{ `${!isEditing ? '追加' : '確定'}` }}
-          </v-btn>
-        </div>
       </template>
     </a-array-controller>
   </div>

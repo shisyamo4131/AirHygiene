@@ -23,6 +23,9 @@ export default {
    ***************************************************************************/
   props: {
     actions: { type: Array, default: () => [], required: false },
+    disableEdit: { type: Boolean, default: false, required: false },
+    disableDelete: { type: Boolean, default: false, required: false },
+    disableDetail: { type: Boolean, default: false, required: false },
     headers: { type: Array, default: () => [], required: false },
     height: { type: [Number, String], default: undefined, required: false },
     hidePagination: { type: Boolean, default: false, required: false },
@@ -115,6 +118,7 @@ export default {
         <v-btn
           v-if="actions.includes('edit')"
           icon
+          :disabled="disableEdit"
           @click="$emit('click:edit', props.item)"
         >
           <a-icon-edit />
@@ -122,6 +126,7 @@ export default {
         <v-btn
           v-if="actions.includes('delete')"
           icon
+          :disabled="disableDelete"
           @click="$emit('click:delete', props.item)"
         >
           <a-icon-delete />
@@ -129,6 +134,7 @@ export default {
         <v-btn
           v-if="actions.includes('detail')"
           icon
+          :disabled="disableDetail"
           @click="$emit('click:detail', props.item)"
         >
           <a-icon-detail />
