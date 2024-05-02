@@ -25,14 +25,13 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table }"
+    v-slot="{ dialog, model, table, pagination }"
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="自動採番"
     model-id="Autonumber"
     :table-props="{
-      'hide-pagination': true,
       'disable-sort': true,
       headers: [
         { text: 'コレクション名', value: 'collectionId' },
@@ -43,11 +42,7 @@ export default {
       ],
     }"
   >
-    <g-template-index-page
-      v-bind="$attrs"
-      :search.sync="search"
-      v-on="$listeners"
-    >
+    <g-template-index-page :pagination="pagination">
       <template #append-search>
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">

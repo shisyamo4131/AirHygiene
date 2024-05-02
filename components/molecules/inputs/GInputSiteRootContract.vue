@@ -171,7 +171,6 @@ export default {
             sortable: false,
           },
         ],
-        'hide-pagination': true,
       }"
       @input="$emit('update:unitPrices', $event)"
     >

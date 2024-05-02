@@ -7,18 +7,6 @@ export default {
     actions: { type: Array, default: () => [], required: false },
     cols: { type: Object, default: () => ({}), required: false },
     colProps: { type: Object, default: () => ({}), required: false },
-    hidePagination: { type: Boolean, default: false, required: false },
-    hideSearch: { type: Boolean, default: false, required: false },
-    itemsPerPage: { type: Number, default: 5, required: false },
-  },
-  /***************************************************************************
-   * DATA
-   ***************************************************************************/
-  data() {
-    return {
-      page: 1,
-      pageCount: 0,
-    }
   },
   /***************************************************************************
    * COMPUTED
@@ -36,14 +24,7 @@ export default {
 </script>
 
 <template>
-  <v-data-iterator
-    v-bind="$attrs"
-    hide-default-footer
-    :items-per-page="hidePagination ? -1 : itemsPerPage"
-    :page.sync="page"
-    @page-count="pageCount = $event"
-    v-on="$listeners"
-  >
+  <v-data-iterator v-bind="$attrs" hide-default-footer v-on="$listeners">
     <template #default="props">
       <slot name="default" v-bind="{ ...props, actions }">
         <v-container fluid>
@@ -57,19 +38,6 @@ export default {
                 name="col"
                 v-bind="{ attrs: { item, actions }, on: colOn }"
               />
-            </v-col>
-          </v-row>
-        </v-container>
-      </slot>
-    </template>
-    <!-- ### FOOTER ### -->
-    <!-- Show pagination if 'hidePagination' prop is false. -->
-    <template v-if="!hidePagination" #footer="props">
-      <slot name="footer" v-bind="props">
-        <v-container fluid style="height: 76px">
-          <v-row justify="center" dense>
-            <v-col cols="11">
-              <v-pagination v-model="page" :length="pageCount" />
             </v-col>
           </v-row>
         </v-container>

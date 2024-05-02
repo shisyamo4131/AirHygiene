@@ -36,12 +36,12 @@ export default {
       dialog: false,
       /* A string used to control the edit-mode. */
       editMode: 'REGIST',
-      /* A string used for searching items provided to table-props. */
-      // internalSearch: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
       /* The model controlled by this component. */
       model: null,
+      page: 1,
+      pageCount: 0,
     }
   },
   /***************************************************************************
@@ -171,21 +171,35 @@ export default {
           attrs: { ...this.modelAttrs, editMode: this.editMode },
           on: this.modelOn,
         },
-        // search: {
-        //   attrs: { value: this.internalSearch },
-        //   on: { input: (v) => (this.internalSearch = v) },
-        // },
+        page: this.page,
+        pageCount: this.pageCount,
+        pagination: {
+          attrs: {
+            length: this.pageCount,
+            value: this.page,
+          },
+          on: {
+            input: ($event) => (this.page = $event),
+          },
+        },
         table: {
           attrs: {
             items: this.items,
-            // search: this.internalSearch,
             actions: this.actions,
+            page: this.page,
             ...this.tableProps,
           },
           on: {
+            'update:page': ($event) => (this.page = $event),
+            'page-count': ($event) => (this.pageCount = $event),
             'click:edit': this.onClickEdit,
             'click:delete': this.onClickDelete,
             'click:detail': this.onClickDetail,
+          },
+        },
+        updates: {
+          page: ($event) => {
+            this.page = $event
           },
         },
       })

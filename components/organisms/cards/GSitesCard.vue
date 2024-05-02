@@ -4,6 +4,7 @@ import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
 import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
 import GInputSite from '~/components/molecules/inputs/GInputSite.vue'
 import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
+import GPagination from '~/components/molecules/paginations/GPagination.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 export default {
   components: {
@@ -13,6 +14,7 @@ export default {
     GDialogEditor,
     GInputSite,
     GBtnRegistIcon,
+    GPagination,
   },
   props: {
     actions: {
@@ -63,7 +65,7 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table }"
+    v-slot="{ dialog, model, pagination, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ customerId }"
     :items="items"
@@ -87,6 +89,7 @@ export default {
       <v-container>
         <g-data-table v-bind="table.attrs" :search="search" v-on="table.on" />
       </v-container>
+      <g-pagination v-bind="pagination.attrs" v-on="pagination.on" />
     </v-card>
   </a-collection-controller>
 </template>

@@ -27,14 +27,13 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table }"
+    v-slot="{ dialog, model, table, pagination }"
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="回収品目"
     model-id="Item"
     :table-props="{
-      'hide-pagination': true,
       'group-by': 'group',
       headers: [
         { text: 'CODE', value: 'code', groupable: false },
@@ -44,11 +43,7 @@ export default {
       'sort-by': 'code',
     }"
   >
-    <g-template-index-page
-      v-bind="$attrs"
-      :search.sync="search"
-      v-on="$listeners"
-    >
+    <g-template-index-page :pagination="pagination">
       <template #append-search>
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">

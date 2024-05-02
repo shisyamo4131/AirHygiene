@@ -28,17 +28,6 @@ export default {
     disableDetail: { type: Boolean, default: false, required: false },
     headers: { type: Array, default: () => [], required: false },
     height: { type: [Number, String], default: undefined, required: false },
-    hidePagination: { type: Boolean, default: false, required: false },
-    itemsPerPage: { type: Number, default: 10, required: false },
-  },
-  /***************************************************************************
-   * DATA
-   ***************************************************************************/
-  data() {
-    return {
-      page: 1,
-      pageCount: 0,
-    }
   },
   /***************************************************************************
    * COMPUTED
@@ -57,16 +46,8 @@ export default {
     },
     internalHeight() {
       if (!this.height) return undefined
-      const result = parseInt(this.height) - this.paginationHeight
+      const result = parseInt(this.height)
       return result <= 0 ? undefined : result
-    },
-    internalItemsPerPage() {
-      if (this.hidePagination) return -1
-      return this.itemsPerPage
-    },
-    paginationHeight() {
-      if (this.hidePagination) return 0
-      return 76
     },
   },
   /***************************************************************************
@@ -96,9 +77,6 @@ export default {
     :headers="internalHeaders"
     :height="internalHeight"
     hide-default-footer
-    :items-per-page="internalItemsPerPage"
-    :page.sync="page"
-    @page-count="pageCount = $event"
     v-on="$listeners"
   >
     <!-- ### SLOTS ### -->
@@ -139,19 +117,6 @@ export default {
         >
           <a-icon-detail />
         </v-btn>
-      </slot>
-    </template>
-    <!-- ### FOOTER ### -->
-    <!-- Show pagination if 'hidePagination' prop is false. -->
-    <template v-if="!hidePagination" #footer="props">
-      <slot name="footer" v-bind="props">
-        <v-container fluid style="height: 76px">
-          <v-row justify="center" dense>
-            <v-col cols="11">
-              <v-pagination v-model="page" :length="pageCount" />
-            </v-col>
-          </v-row>
-        </v-container>
       </slot>
     </template>
   </a-data-table>

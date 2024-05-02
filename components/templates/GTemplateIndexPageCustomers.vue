@@ -24,20 +24,19 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table }"
+    v-slot="{ dialog, model, table, pagination }"
     :actions="['edit', 'delete', 'detail']"
     :dialog-props="{ maxWidth: 600 }"
     :items="items"
     label="取引先"
     model-id="Customer"
     :table-props="{
-      'hide-pagination': true,
       cols: { cols: 12, md: 6, lg: 4, xl: 3 },
       sortBy: 'code',
     }"
     @click:detail="$router.push(`/customers/${$event.docId}`)"
   >
-    <g-template-index-page v-bind="$attrs" v-on="$listeners">
+    <g-template-index-page :pagination="pagination">
       <template #append-search>
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
