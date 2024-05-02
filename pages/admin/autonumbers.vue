@@ -1,11 +1,9 @@
 <script>
 import { orderBy } from 'firebase/firestore'
-import GCollectionControllerAutonumbers from '~/components/molecules/controllers/GCollectionControllerAutonumbers.vue'
-import GDataTable from '~/components/molecules/tables/GDataTable.vue'
+import GTemplateIndexPageAutonumbers from '~/components/templates/GTemplateIndexPageAutonumbers.vue'
 export default {
   components: {
-    GCollectionControllerAutonumbers,
-    GDataTable,
+    GTemplateIndexPageAutonumbers,
   },
   asyncData({ app }) {
     const listener = app.$Autonumber()
@@ -19,24 +17,7 @@ export default {
 </script>
 
 <template>
-  <g-collection-controller-autonumbers
-    :items="items"
-    :actions="['edit', 'delete']"
-    :table-props="{
-      'disable-sort': true,
-      headers: [
-        { text: 'コレクション名', value: 'collectionId' },
-        { text: 'フィールド', value: 'field' },
-        { text: '現在値', value: 'current' },
-        { text: '桁数', value: 'length' },
-        { text: '状態', value: 'status' },
-      ],
-    }"
-  >
-    <template #table="{ attrs, on }">
-      <g-data-table v-bind="attrs" v-on="on" />
-    </template>
-  </g-collection-controller-autonumbers>
+  <g-template-index-page-autonumbers :items="items" />
 </template>
 
 <style></style>

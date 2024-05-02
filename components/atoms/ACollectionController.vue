@@ -37,7 +37,7 @@ export default {
       /* A string used to control the edit-mode. */
       editMode: 'REGIST',
       /* A string used for searching items provided to table-props. */
-      internalSearch: null,
+      // internalSearch: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
       /* The model controlled by this component. */
@@ -133,7 +133,7 @@ export default {
         if (this.customSubmit)
           await this.customSubmit({ model: this.model, editMode: mode })
         if (!this.customSubmit) await this.defaultSubmit(mode)
-        this.$emit(`submit:complete`, { mode, model: this.modelAttrs })
+        this.$emit(`submit:${mode}`, this.modelAttrs)
         this.dialog = false
       } catch (err) {
         // eslint-disable-next-line
@@ -171,14 +171,14 @@ export default {
           attrs: { ...this.modelAttrs, editMode: this.editMode },
           on: this.modelOn,
         },
-        search: {
-          attrs: { value: this.internalSearch },
-          on: { input: (v) => (this.internalSearch = v) },
-        },
+        // search: {
+        //   attrs: { value: this.internalSearch },
+        //   on: { input: (v) => (this.internalSearch = v) },
+        // },
         table: {
           attrs: {
             items: this.items,
-            search: this.internalSearch,
+            // search: this.internalSearch,
             actions: this.actions,
             ...this.tableProps,
           },

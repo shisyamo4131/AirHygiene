@@ -1,13 +1,10 @@
 <script>
+import GActionCard from './GActionCard.vue'
 /**
  * ## GActionCardDetailCustomer
  * @author shisyamo4131
  */
-import GActionCard from './GActionCard.vue'
 export default {
-  /***************************************************************************
-   * COMPONENTS
-   ***************************************************************************/
   components: { GActionCard },
   data() {
     return {

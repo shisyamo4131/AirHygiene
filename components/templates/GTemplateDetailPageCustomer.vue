@@ -1,0 +1,34 @@
+<script>
+import GCustomerCard from '../organisms/cards/GCustomerCard.vue'
+import GSitesCard from '../organisms/cards/GSitesCard.vue'
+import GTemplateDetailPage from './GTemplateDetailPage.vue'
+export default {
+  components: { GTemplateDetailPage, GCustomerCard, GSitesCard },
+  props: {
+    customerId: { type: String, required: true },
+  },
+}
+</script>
+
+<template>
+  <g-template-detail-page v-bind="$attrs">
+    <v-row>
+      <v-col cols="12" md="4">
+        <g-customer-card
+          :doc-id="customerId"
+          @submit:delete="$router.replace(`/customers`)"
+        />
+      </v-col>
+      <v-col cols="12" md="8">
+        <g-sites-card
+          :customer-id="customerId"
+          @click:detail="$router.push(`${$route}/${$event.docId}`)"
+          @submit:regist="$router.push(`${$route}/${$event.docId}`)"
+          @submit:update="$router.push(`${$route}/${$event.docId}`)"
+        />
+      </v-col>
+    </v-row>
+  </g-template-detail-page>
+</template>
+
+<style></style>
