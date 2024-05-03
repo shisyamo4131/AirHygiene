@@ -1,3 +1,4 @@
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import FireModel from './FireModel'
 
 const props = {
@@ -33,5 +34,31 @@ export default class SiteRootContract extends FireModel {
         typeof propDefault === 'function' ? propDefault() : propDefault
     })
     super.initialize(item)
+  }
+
+  async beforeCreate() {
+    const colRef = collection(this.firestore, this.collection)
+    const q = query(colRef, where('startAt', '==', this.startAt))
+    const querySnapshot = await getDocs(q)
+    if (!querySnapshot.empty) {
+      throw new Error(
+        '指定された日付を適用開始とするルート回収契約が既に登録されています。'
+      )
+    }
+  }
+
+  async beforeUpdate() {
+    const colRef = collection(this.firestore, this.collection)
+    const q = query(
+      colRef,
+      where('startAt', '==', this.startAt),
+      where('docId', '!=', this.docId)
+    )
+    const querySnapshot = await getDocs(q)
+    if (!querySnapshot.empty) {
+      throw new Error(
+        '指定された日付を適用開始とするルート回収契約が既に登録されています。'
+      )
+    }
   }
 }
