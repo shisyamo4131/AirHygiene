@@ -1,5 +1,6 @@
 <script>
 import ACollectionController from '../atoms/ACollectionController.vue'
+import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
 import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
 import GInputAutonumber from '../molecules/inputs/GInputAutonumber.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
@@ -11,6 +12,7 @@ export default {
     GDialogEditor,
     GDataTable,
     GInputAutonumber,
+    GBtnRegistIcon,
   },
   props: {
     items: { type: Array, default: () => [], required: false },
@@ -30,7 +32,7 @@ export default {
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="自動採番"
-    model-id="Autonumber"
+    :model="$Autonumber()"
     :table-props="{
       'disable-sort': true,
       headers: [

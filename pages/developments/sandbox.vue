@@ -1,18 +1,22 @@
 <template>
   <v-container>
-    <g-date v-model="value" />
-    {{ value }}
+    {{ clone }}
+    <v-btn @click="test">aaa</v-btn>
   </v-container>
 </template>
 
 <script>
-import GDate from '~/components/molecules/inputs/GDate.vue'
 export default {
-  components: { GDate },
   data() {
     return {
-      value: '',
+      clone: null,
+      model: this.$SiteRootContract('pNLmHcEU1rwCjfHRpvUn'),
     }
+  },
+  methods: {
+    test() {
+      console.log('initialize' in this.model)
+    },
   },
 }
 </script>

@@ -70,7 +70,7 @@ export default {
     :default-item="{ customerId }"
     :items="items"
     label="排出場所"
-    model-id="Site"
+    :model="$Site()"
     v-on="$listeners"
   >
     <v-card>

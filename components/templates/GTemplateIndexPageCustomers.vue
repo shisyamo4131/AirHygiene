@@ -52,13 +52,26 @@ export default {
 </script>
 
 <template>
-  <a-collection-controller
+  <!-- <a-collection-controller
     v-slot="{ dialog, model, table, pagination }"
     :actions="['edit', 'delete', 'detail']"
     :dialog-props="{ maxWidth: 600 }"
     :items="items"
     label="取引先"
     model-id="Customer"
+    :table-props="{
+      cols: { cols: 12, md: 6, lg: 4, xl: 3 },
+      sortBy: 'code',
+    }"
+    @click:detail="$router.push(`/customers/${$event.docId}`)"
+  > -->
+  <a-collection-controller
+    v-slot="{ dialog, model, table, pagination }"
+    :actions="['edit', 'delete', 'detail']"
+    :dialog-props="{ maxWidth: 600 }"
+    :items="items"
+    label="取引先"
+    :model="$Customer()"
     :table-props="{
       cols: { cols: 12, md: 6, lg: 4, xl: 3 },
       sortBy: 'code',

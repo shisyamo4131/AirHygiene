@@ -30,7 +30,7 @@ export default {
   <a-document-controller
     v-slot="{ card, dialog, editor }"
     v-bind="{ ...$props, ...$attrs }"
-    model-id="Customer"
+    :model="$Customer()"
     v-on="$listeners"
   >
     <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">

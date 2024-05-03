@@ -16,10 +16,23 @@ export default {
     customSubmit: { type: Function, default: undefined, required: false },
     /* A string provided to dialog component. */
     label: { type: String, default: undefined, required: false },
-    /* Specifies the model-id that controlled by this component. */
-    modelId: { type: String, required: true },
-    /* Specifies the parent-id that the model controlled by this component depends on. */
-    parentId: { type: [String, Object], default: undefined, required: false },
+    /* A object that duplicated and controlled by this component. Should be extended by the FireModel. */
+    model: {
+      type: Object,
+      validator: (v) => {
+        const required = [
+          'collection',
+          'initialize',
+          'create',
+          'update',
+          'delete',
+          'subscribeDoc',
+          'unsubscribe',
+        ]
+        return required.every((el) => el in v)
+      },
+      required: true,
+    },
   },
   /***************************************************************************
    * DATA
@@ -32,23 +45,9 @@ export default {
       editModel: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
-      /* The model controlled by this component. */
-      model: null,
+      /* A listener that subscribe the document. */
+      listener: null,
     }
-  },
-  /***************************************************************************
-   * COMPUTED
-   ***************************************************************************/
-  computed: {
-    /* Returns definitions of update events for all properties of the edit-model. */
-    editorOn() {
-      return Object.keys(this.editModel).reduce((result, key) => {
-        result[`update:${key}`] = ($event) => {
-          this.editModel[key] = $event
-        }
-        return result
-      }, {})
-    },
   },
   /***************************************************************************
    * WATCH
@@ -62,37 +61,30 @@ export default {
     },
   },
   /***************************************************************************
-   * METHODS
+   * CREATED
    ***************************************************************************/
   created() {
-    /* Watch the model-id, parent-id, doc-id to define the model and subscribe the document. */
+    /* Watch the model and doc-id to duplicate the model and subscribe the document. */
     this.$watch(
-      () => ({
-        modelId: this.modelId,
-        parentId: this.parentId,
-        docId: this.docId,
-      }),
+      () => ({ model: this.model, docId: this.docId }),
       (newVal, oldVal) => {
         if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return
-        if (!newVal.modelId) return
+        if (!newVal.model) return
         if (!newVal.docId) return
-        if (!newVal.parentId) {
-          this.model = this[`$${newVal.modelId}`]()
-          this.editModel = this[`$${newVal.modelId}`]()
-        } else {
-          this.model = this[`$${newVal.modelId}`](newVal.parentId)
-          this.editModel = this[`$${newVal.modelId}`](newVal.parentId)
-        }
-        this.model.subscribeDoc(newVal.docId)
+        this.editModel = this[`$${newVal.model.constructor.name}`]()
+        this.editModel.collection = newVal.model.collection
+        this.listener = this[`$${newVal.model.constructor.name}`]()
+        this.listener.collection = newVal.model.collection
+        this.listener.subscribeDoc(newVal.docId)
       },
-      { immediate: true }
+      { immediate: true, deep: true }
     )
   },
   /***************************************************************************
    * DESTROYED
    ***************************************************************************/
   destroyed() {
-    this.model.unsubscribe()
+    this.listener.unsubscribe()
   },
   /***************************************************************************
    * METHODS
@@ -108,11 +100,11 @@ export default {
     onClickDelete() {
       const answer = window.confirm('削除してもよろしいですか？')
       if (!answer) return
-      this.editModel.initialize(this.model)
+      this.editModel.initialize(this.listener)
       this.submit('DELETE')
     },
     onClickEdit() {
-      this.editModel.initialize(this.model)
+      this.editModel.initialize(this.listener)
       this.dialog = true
     },
     onClickSubmit() {
@@ -159,11 +151,17 @@ export default {
         },
         editor: {
           attrs: { ...this.editModel, editMode: 'UPDATE' },
-          on: this.editorOn,
+          on: Object.keys(this.editModel).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) => (this.editModel[i] = $event)
+            return sum
+          }, {}),
         },
-        model: this.model,
         card: {
-          attrs: { item: this.model, actions: this.actions, ...this.cardProps },
+          attrs: {
+            item: { ...this.listener },
+            actions: this.actions,
+            ...this.cardProps,
+          },
           on: {
             'click:edit': this.onClickEdit,
             'click:delete': this.onClickDelete,

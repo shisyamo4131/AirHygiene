@@ -157,7 +157,7 @@ export default {
     <a-array-controller
       :actions="['edit', 'delete']"
       direct-delete
-      model-id="UnitPrice"
+      :model="$UnitPrice()"
       :value="unitPrices"
       :table-props="{
         headers: [

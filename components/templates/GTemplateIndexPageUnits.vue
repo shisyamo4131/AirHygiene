@@ -32,7 +32,7 @@ export default {
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="回収単位"
-    model-id="Unit"
+    :model="$Unit()"
     :table-props="{
       headers: [
         { text: 'CODE', value: 'code', groupable: false },

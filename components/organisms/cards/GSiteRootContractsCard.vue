@@ -77,8 +77,7 @@ export default {
     :default-item="{ siteId }"
     :items="items"
     label="ルート回収契約"
-    model-id="SiteRootContract"
-    :parent-id="siteId"
+    :model="$SiteRootContract(siteId)"
     v-on="$listeners"
   >
     <v-card>

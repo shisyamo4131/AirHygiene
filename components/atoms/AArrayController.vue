@@ -14,8 +14,15 @@ export default {
     itemKey: { type: String, default: 'id', required: false },
     /* A string provided to dialog component. */
     label: { type: String, default: undefined, required: false },
-    /* Specifies the model-id that controlled by this component. */
-    modelId: { type: String, required: true },
+    /* A object that duplicated and controlled by this component. Should be extended by the FireModel. */
+    model: {
+      type: Object,
+      validator: (v) => {
+        const required = ['initialize']
+        return required.every((el) => el in v)
+      },
+      required: true,
+    },
     /* An object provided to the table component. */
     tableProps: { type: Object, default: () => ({}), required: false },
     /* An array provided to the table component. */
@@ -31,22 +38,6 @@ export default {
       internalSearch: null,
     }
   },
-  computed: {
-    editItemAttrs() {
-      return {
-        ...JSON.parse(JSON.stringify(this.editItem)),
-      }
-    },
-    editItemOn() {
-      const result = {}
-      Object.keys(this.editItem).forEach((key) => {
-        result[`update:${key}`] = ($event) => {
-          this.editItem[key] = $event
-        }
-      })
-      return result
-    },
-  },
   watch: {
     dialog(v) {
       if (!v) {
@@ -56,11 +47,12 @@ export default {
         this.$refs[`air-form-${this._uid}`].resetValidation()
       }
     },
-    modelId: {
+    model: {
       handler(v) {
-        this.editItem = this[`$${v}`](this.defaultItem)
+        this.editItem = this[`$${v.constructor.name}`]()
       },
       immediate: true,
+      deep: true,
     },
   },
   methods: {
@@ -90,8 +82,6 @@ export default {
     },
     onClickCancel() {
       this.dialog = false
-      // this.editItem.initialize()
-      // this.$refs[`air-form-${this._uid}`].resetValidation()
     },
     validate() {
       const result = this.$refs[`air-form-${this._uid}`].validate()
@@ -175,8 +165,11 @@ export default {
           },
         },
         editItem: {
-          attrs: { ...this.editItemAttrs, editMode: this.editMode },
-          on: this.editItemOn,
+          attrs: { ...structuredClone(this.editItem), editMode: this.editMode },
+          on: Object.keys(this.editItem).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) => (this.editItem[i] = $event)
+            return sum
+          }, {}),
         },
         editKey: this.editKey,
         editMode: this.editMode,

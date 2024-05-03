@@ -20,10 +20,21 @@ export default {
     items: { type: Array, default: () => [], required: false },
     /* A string provided to dialog component. */
     label: { type: String, default: undefined, required: false },
-    /* Specifies the model-id that controlled by this component. */
-    modelId: { type: String, required: true },
-    /* Specifies the parent-id that the model controlled by this component depends on. */
-    parentId: { type: [String, Object], default: undefined, required: false },
+    /* A object that duplicated and controlled by this component. Should be extended by the FireModel. */
+    model: {
+      type: Object,
+      validator: (v) => {
+        const required = [
+          'collection',
+          'initialize',
+          'create',
+          'update',
+          'delete',
+        ]
+        return required.every((el) => el in v)
+      },
+      required: true,
+    },
     /* An object provided to the table component. */
     tableProps: { type: Object, default: () => ({}), required: false },
   },
@@ -36,32 +47,15 @@ export default {
       dialog: false,
       /* A string used to control the edit-mode. */
       editMode: 'REGIST',
+      /* The model duplicated by the props.model and controlled by this component. */
+      editModel: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
-      /* The model controlled by this component. */
-      model: null,
+      /* A number used to controll a pagination component. */
       page: 1,
+      /* A number used to controll a pagination component. */
       pageCount: 0,
     }
-  },
-  /***************************************************************************
-   * COMPUTED
-   ***************************************************************************/
-  computed: {
-    modelAttrs() {
-      return {
-        ...JSON.parse(JSON.stringify(this.model)),
-      }
-    },
-    modelOn() {
-      const result = {}
-      Object.keys(this.model).forEach((key) => {
-        result[`update:${key}`] = ($event) => {
-          this.model.initialize({ ...this.model, [key]: $event })
-        }
-      })
-      return result
-    },
   },
   /***************************************************************************
    * WATCH
@@ -69,19 +63,14 @@ export default {
   watch: {
     dialog(v) {
       if (!v) {
-        this.model.initialize(this.defaultItem)
+        this.editModel.initialize(this.defaultItem)
         this.editMode = 'REGIST'
       }
     },
-    modelId: {
-      handler() {
-        this.setModel()
-      },
-      immediate: true,
-    },
-    parentId: {
-      handler() {
-        this.setModel()
+    model: {
+      handler(v) {
+        this.editModel = this[`$${v.constructor.name}`]()
+        this.editModel.collection = v.collection
       },
       immediate: true,
       deep: true,
@@ -92,9 +81,9 @@ export default {
    ***************************************************************************/
   methods: {
     async defaultSubmit(mode) {
-      if (mode === 'REGIST') await this.model.create()
-      if (mode === 'UPDATE') await this.model.update()
-      if (mode === 'DELETE') await this.model.delete()
+      if (mode === 'REGIST') await this.editModel.create()
+      if (mode === 'UPDATE') await this.editModel.update()
+      if (mode === 'DELETE') await this.editModel.delete()
     },
     onClickCancel() {
       this.dialog = false
@@ -104,9 +93,9 @@ export default {
       const answer = window.confirm('削除してもよろしいですか？')
       if (!answer) return
       this.editMode = 'DELETE'
-      this.model.initialize(item)
+      this.editModel.initialize(item)
       await this.submit('DELETE')
-      this.model.initialize()
+      this.editModel.initialize()
       this.editMode = 'REGIST'
     },
     onClickDetail(item) {
@@ -114,24 +103,18 @@ export default {
     },
     onClickEdit(item) {
       this.editMode = 'UPDATE'
-      this.model.initialize(item)
+      // this.model.initialize(item)
+      this.editModel.initialize(item)
       this.dialog = true
     },
     onClickSubmit() {
       this.submit(this.editMode)
     },
-    setModel() {
-      if (!this.parentId) {
-        this.model = this[`$${this.modelId}`](this.defaultItem)
-      } else {
-        this.model = this[`$${this.modelId}`](this.parentId, this.defaultItem)
-      }
-    },
     async submit(mode) {
       try {
         this.loading = true
         if (this.customSubmit)
-          await this.customSubmit({ model: this.model, editMode: mode })
+          await this.customSubmit({ model: this.editModel, editMode: mode })
         if (!this.customSubmit) await this.defaultSubmit(mode)
         this.$emit(`submit:${mode}`, this.modelAttrs)
         this.dialog = false
@@ -168,8 +151,14 @@ export default {
           },
         },
         model: {
-          attrs: { ...this.modelAttrs, editMode: this.editMode },
-          on: this.modelOn,
+          attrs: {
+            ...structuredClone(this.editModel),
+            editMode: this.editMode,
+          },
+          on: Object.keys(this.editModel).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) => (this.editModel[i] = $event)
+            return sum
+          }, {}),
         },
         page: this.page,
         pageCount: this.pageCount,

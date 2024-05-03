@@ -22,9 +22,9 @@ export default {
       <v-col cols="12" md="8">
         <g-sites-card
           :customer-id="customerId"
-          @click:detail="$router.push(`${$route}/${$event.docId}`)"
-          @submit:regist="$router.push(`${$route}/${$event.docId}`)"
-          @submit:update="$router.push(`${$route}/${$event.docId}`)"
+          @click:detail="$router.push(`${$route.path}/${$event.docId}`)"
+          @submit:regist="$router.push(`${$route.path}/${$event.docId}`)"
+          @submit:update="$router.push(`${$route.path}/${$event.docId}`)"
         />
       </v-col>
     </v-row>

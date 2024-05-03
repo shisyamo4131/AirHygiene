@@ -32,7 +32,7 @@ export default {
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="回収品目"
-    model-id="Item"
+    :model="$Item()"
     :table-props="{
       'group-by': 'group',
       headers: [
