@@ -73,7 +73,7 @@ export default {
   <v-card v-bind="$attrs">
     <slot name="default" v-bind="{ item }" />
     <v-card-actions class="justify-end">
-      <slot name="prepend-actions" />
+      <slot name="prepend-actions" v-bind="{ item }" />
       <v-btn
         v-for="(action, index) of actions"
         :key="index"
@@ -82,7 +82,7 @@ export default {
       >
         <component :is="`a-icon-${action}`" />
       </v-btn>
-      <slot name="append-actions" />
+      <slot name="append-actions" v-bind="{ item }" />
     </v-card-actions>
   </v-card>
 </template>

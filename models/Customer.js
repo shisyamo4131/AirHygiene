@@ -40,6 +40,7 @@ const props = {
     sendToAddress1: { type: String, default: '', required: false },
     sendToAddress2: { type: String, default: '', required: false },
     status: { type: String, default: 'active', required: false },
+    favorite: { type: Boolean, default: false, required: false },
     remarks: { type: String, default: '', required: false },
   },
 }

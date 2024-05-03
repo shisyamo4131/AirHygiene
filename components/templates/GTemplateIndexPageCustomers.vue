@@ -1,4 +1,5 @@
 <script>
+import { where } from 'firebase/firestore'
 import ACollectionController from '../atoms/ACollectionController.vue'
 import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
 import GActionCardSimpleCustomer from '../molecules/cards/GActionCardSimpleCustomer.vue'
@@ -16,8 +17,36 @@ export default {
     GActionCardSimpleCustomer,
     GBtnRegistIcon,
   },
-  props: {
-    items: { type: Array, default: () => [], required: false },
+  data() {
+    return {
+      items: [],
+      lazySearch: null,
+      listener: this.$Customer(),
+      search: null,
+    }
+  },
+  watch: {
+    lazySearch: {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.subscribe()
+      },
+      immediate: true,
+    },
+  },
+  destroyed() {
+    this.listener.unsubscribe()
+  },
+  methods: {
+    subscribe() {
+      if (!this.lazySearch) {
+        this.items = this.listener.subscribe(undefined, [
+          where('favorite', '==', true),
+        ])
+      } else {
+        this.items = this.listener.subscribe(this.lazySearch)
+      }
+    },
   },
 }
 </script>
@@ -36,7 +65,11 @@ export default {
     }"
     @click:detail="$router.push(`/customers/${$event.docId}`)"
   >
-    <g-template-index-page :pagination="pagination">
+    <g-template-index-page
+      :search.sync="search"
+      :pagination="pagination"
+      :lazy-search.sync="lazySearch"
+    >
       <template #append-search>
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
