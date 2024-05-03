@@ -16,6 +16,8 @@ export default {
     defaultItem: { type: Object, default: () => ({}), required: false },
     /* An object provided to the dialog component. */
     dialogProps: { type: Object, default: () => ({}), required: false },
+    /* A string used to specify the item in props.items */
+    itemKey: { type: String, default: 'docId', required: false },
     /* An array provided to the table component. */
     items: { type: Array, default: () => [], required: false },
     /* A string provided to dialog component. */
@@ -173,8 +175,9 @@ export default {
         },
         table: {
           attrs: {
-            items: this.items,
             actions: this.actions,
+            itemKey: this.itemKey,
+            items: this.items,
             page: this.page,
             ...this.tableProps,
           },
