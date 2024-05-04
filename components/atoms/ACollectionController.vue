@@ -61,12 +61,15 @@ export default {
    * WATCH
    ***************************************************************************/
   watch: {
-    dialog(v) {
-      if (!v) {
-        // this.editModel.initialize(this.defaultItem)
-        this.model.initialize(this.defaultItem)
-        this.editMode = 'REGIST'
-      }
+    dialog: {
+      handler(v) {
+        if (!v) {
+          // this.editModel.initialize(this.defaultItem)
+          this.model.initialize(this.defaultItem)
+          this.editMode = 'REGIST'
+        }
+      },
+      immediate: true,
     },
   },
   /***************************************************************************

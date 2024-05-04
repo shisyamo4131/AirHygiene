@@ -26,6 +26,15 @@ export default {
       search: null,
     }
   },
+  computed: {
+    noDataText() {
+      if (this.lazySearch) {
+        return '該当するデータがありません。'
+      } else {
+        return 'お気に入りに登録されているデータがありません。'
+      }
+    },
+  },
   watch: {
     lazySearch: {
       handler(newVal, oldVal) {
@@ -81,7 +90,11 @@ export default {
           </template>
         </g-dialog-editor>
       </template>
-      <g-data-iterator v-bind="table.attrs" v-on="table.on">
+      <g-data-iterator
+        :no-data-text="noDataText"
+        v-bind="table.attrs"
+        v-on="table.on"
+      >
         <template #col="{ attrs, on }">
           <g-action-card-simple-customer v-bind="attrs" outlined v-on="on" />
         </template>
