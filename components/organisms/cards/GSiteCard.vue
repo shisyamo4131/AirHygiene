@@ -23,6 +23,25 @@ export default {
     docId: { type: String, required: true },
     label: { type: String, default: '排出場所', required: false },
   },
+  data() {
+    return {
+      editModel: this.$Site(),
+      listener: this.$Site(),
+    }
+  },
+  watch: {
+    docId: {
+      handler(v) {
+        this.listener.unsubscribe()
+        if (!v) return
+        this.listener.subscribeDoc(v)
+      },
+      immediate: true,
+    },
+  },
+  destroyed() {
+    this.listener.unsubscribe()
+  },
 }
 </script>
 
@@ -30,7 +49,8 @@ export default {
   <a-document-controller
     v-slot="{ card, dialog, editor }"
     v-bind="{ ...$props, ...$attrs }"
-    :model="$Site()"
+    :current-model="listener"
+    :model="editModel"
     v-on="$listeners"
   >
     <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">

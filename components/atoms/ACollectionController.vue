@@ -22,7 +22,7 @@ export default {
     items: { type: Array, default: () => [], required: false },
     /* A string provided to dialog component. */
     label: { type: String, default: undefined, required: false },
-    /* A object that duplicated and controlled by this component. Should be extended by the FireModel. */
+    /* A object controlled by this component. Must be extended by the FireModel. */
     model: {
       type: Object,
       validator: (v) => {
@@ -49,8 +49,6 @@ export default {
       dialog: false,
       /* A string used to control the edit-mode. */
       editMode: 'REGIST',
-      /* The model duplicated by the props.model and controlled by this component. */
-      editModel: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
       /* A number used to controll a pagination component. */
@@ -65,17 +63,10 @@ export default {
   watch: {
     dialog(v) {
       if (!v) {
-        this.editModel.initialize(this.defaultItem)
+        // this.editModel.initialize(this.defaultItem)
+        this.model.initialize(this.defaultItem)
         this.editMode = 'REGIST'
       }
-    },
-    model: {
-      handler(v) {
-        this.editModel = this[`$${v.constructor.name}`]()
-        this.editModel.collection = v.collection
-      },
-      immediate: true,
-      deep: true,
     },
   },
   /***************************************************************************
@@ -83,9 +74,9 @@ export default {
    ***************************************************************************/
   methods: {
     async defaultSubmit(mode) {
-      if (mode === 'REGIST') await this.editModel.create()
-      if (mode === 'UPDATE') await this.editModel.update()
-      if (mode === 'DELETE') await this.editModel.delete()
+      if (mode === 'REGIST') await this.model.create()
+      if (mode === 'UPDATE') await this.model.update()
+      if (mode === 'DELETE') await this.model.delete()
     },
     onClickCancel() {
       this.dialog = false
@@ -95,9 +86,9 @@ export default {
       const answer = window.confirm('削除してもよろしいですか？')
       if (!answer) return
       this.editMode = 'DELETE'
-      this.editModel.initialize(item)
+      this.model.initialize(item)
       await this.submit('DELETE')
-      this.editModel.initialize()
+      this.model.initialize(this.defaultItem)
       this.editMode = 'REGIST'
     },
     onClickDetail(item) {
@@ -105,8 +96,8 @@ export default {
     },
     onClickEdit(item) {
       this.editMode = 'UPDATE'
-      // this.model.initialize(item)
-      this.editModel.initialize(item)
+      // this.editModel.initialize(item)
+      this.model.initialize(item)
       this.dialog = true
     },
     onClickSubmit() {
@@ -116,9 +107,9 @@ export default {
       try {
         this.loading = true
         if (this.customSubmit)
-          await this.customSubmit({ model: this.editModel, editMode: mode })
+          await this.customSubmit({ model: this.model, editMode: mode })
         if (!this.customSubmit) await this.defaultSubmit(mode)
-        this.$emit(`submit:${mode}`, this.modelAttrs)
+        this.$emit(`submit:${mode.toLowerCase()}`, structuredClone(this.model))
         this.dialog = false
       } catch (err) {
         // eslint-disable-next-line
@@ -152,13 +143,17 @@ export default {
             'click:submit': this.onClickSubmit,
           },
         },
-        model: {
+        editor: {
           attrs: {
-            ...structuredClone(this.editModel),
+            ...structuredClone(this.model),
             editMode: this.editMode,
           },
-          on: Object.keys(this.editModel).reduce((sum, i) => {
-            sum[`update:${i}`] = ($event) => (this.editModel[i] = $event)
+          on: Object.keys(this.model).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) =>
+              this.model.initialize({
+                ...structuredClone(this.model),
+                [i]: $event,
+              })
             return sum
           }, {}),
         },

@@ -33,7 +33,6 @@ export default {
       dialog: false,
       editMode: 'REGIST',
       editKey: null,
-      editItem: null,
       /* A string used for searching items provided to table-props. */
       internalSearch: null,
     }
@@ -43,33 +42,26 @@ export default {
       if (!v) {
         this.editMode = 'REGIST'
         this.editKey = null
-        this.editItem.initialize()
+        this.model.initialize()
         this.$refs[`air-form-${this._uid}`].resetValidation()
       }
-    },
-    model: {
-      handler(v) {
-        this.editItem = this[`$${v.constructor.name}`]()
-      },
-      immediate: true,
-      deep: true,
     },
   },
   methods: {
     onClickRegist() {
-      this.editItem.initialize()
+      this.model.initialize()
       this.editMode = 'REGIST'
       this.dialog = true
     },
     onClickEdit(item) {
-      this.editItem.initialize(item)
-      this.editKey = this.editItem[this.itemKey]
+      this.model.initialize(item)
+      this.editKey = this.model[this.itemKey]
       this.editMode = 'UPDATE'
       this.dialog = true
     },
     onClickDelete(item) {
-      this.editItem.initialize(item)
-      this.editKey = this.editItem[this.itemKey]
+      this.model.initialize(item)
+      this.editKey = this.model[this.itemKey]
       this.editMode = 'DELETE'
       if (this.directDelete) {
         this.dialog = false
@@ -106,7 +98,7 @@ export default {
       }
     },
     regist() {
-      const item = JSON.parse(JSON.stringify(this.editItem))
+      const item = structuredClone(this.model)
       const result = this.value.map((item) => {
         return JSON.parse(JSON.stringify(item))
       })
@@ -117,7 +109,7 @@ export default {
       return result
     },
     update() {
-      const item = JSON.parse(JSON.stringify(this.editItem))
+      const item = structuredClone(this.model)
       const result = this.value.map((item) => {
         return JSON.parse(JSON.stringify(item))
       })
@@ -164,16 +156,20 @@ export default {
             'click:submit': this.onClickSubmit,
           },
         },
-        editItem: {
-          attrs: { ...structuredClone(this.editItem), editMode: this.editMode },
-          on: Object.keys(this.editItem).reduce((sum, i) => {
-            sum[`update:${i}`] = ($event) => (this.editItem[i] = $event)
+        editor: {
+          attrs: { ...structuredClone(this.model), editMode: this.editMode },
+          on: Object.keys(this.model).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) =>
+              this.model.initialize({
+                ...structuredClone(this.model),
+                [i]: $event,
+              })
             return sum
           }, {}),
         },
         editKey: this.editKey,
         editMode: this.editMode,
-        /* The editItem is editing if dialog is true. */
+        /* The model is editing if dialog is true. */
         isEditing: this.dialog,
         search: {
           attrs: { value: this.internalSearch },

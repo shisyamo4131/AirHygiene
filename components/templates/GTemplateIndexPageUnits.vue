@@ -14,11 +14,10 @@ export default {
     GDataTable,
     GBtnRegistIcon,
   },
-  props: {
-    items: { type: Array, default: () => [], required: false },
-  },
   data() {
     return {
+      items: this.$store.state.Units.items,
+      model: this.$Unit(),
       search: null,
     }
   },
@@ -27,12 +26,12 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table, pagination }"
+    v-slot="{ dialog, editor, table, pagination }"
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="回収単位"
-    :model="$Unit()"
+    :model="model"
     :table-props="{
       headers: [
         { text: 'CODE', value: 'code', groupable: false },
@@ -49,7 +48,7 @@ export default {
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
           <template #form>
-            <g-input-unit v-bind="model.attrs" v-on="model.on" />
+            <g-input-unit v-bind="editor.attrs" v-on="editor.on" />
           </template>
         </g-dialog-editor>
       </template>

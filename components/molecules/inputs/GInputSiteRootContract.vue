@@ -174,10 +174,10 @@ export default {
       }"
       @input="$emit('update:unitPrices', $event)"
     >
-      <template #default="{ table, editItem, editKey, isEditing, btns }">
+      <template #default="{ table, editor, editKey, isEditing, btns }">
         <v-expand-transition>
           <v-container v-show="isEditing" fluid>
-            <g-input-unit-price v-bind="editItem.attrs" v-on="editItem.on" />
+            <g-input-unit-price v-bind="editor.attrs" v-on="editor.on" />
           </v-container>
         </v-expand-transition>
         <div class="d-flex justify-end">

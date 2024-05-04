@@ -41,6 +41,7 @@ export default {
   data() {
     return {
       items: [],
+      model: this.$Site(),
       listener: this.$Site(),
       search: null,
     }
@@ -65,12 +66,12 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, pagination, table }"
+    v-slot="{ dialog, editor, pagination, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ customerId }"
     :items="items"
     label="排出場所"
-    :model="$Site()"
+    :model="model"
     v-on="$listeners"
   >
     <v-card>
@@ -82,7 +83,7 @@ export default {
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
           <template #form>
-            <g-input-site v-bind="model.attrs" v-on="model.on" />
+            <g-input-site v-bind="editor.attrs" v-on="editor.on" />
           </template>
         </g-dialog-editor>
       </v-toolbar>

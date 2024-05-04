@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "airhygiene-dev-b9cf4"
+    "default": "airhygiene-dev-b9cf4",
+    "dev": "airhygiene-dev-b9cf4"
   }
 }

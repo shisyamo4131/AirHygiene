@@ -1,4 +1,5 @@
 <script>
+import { orderBy } from 'firebase/firestore'
 import ACollectionController from '../atoms/ACollectionController.vue'
 import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
 import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
@@ -14,25 +15,31 @@ export default {
     GInputAutonumber,
     GBtnRegistIcon,
   },
-  props: {
-    items: { type: Array, default: () => [], required: false },
-  },
   data() {
     return {
+      items: [],
+      model: this.$Autonumber(),
+      listener: this.$Autonumber(),
       search: null,
     }
+  },
+  mounted() {
+    this.items = this.listener.subscribe(undefined, [orderBy('collectionId')])
+  },
+  destroyed() {
+    this.listener.unsubscribe()
   },
 }
 </script>
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table, pagination }"
+    v-slot="{ dialog, editor, table, pagination }"
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
     label="自動採番"
-    :model="$Autonumber()"
+    :model="model"
     :table-props="{
       'disable-sort': true,
       headers: [
@@ -51,7 +58,7 @@ export default {
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
           <template #form>
-            <g-input-autonumber v-bind="model.attrs" v-on="model.on" />
+            <g-input-autonumber v-bind="editor.attrs" v-on="editor.on" />
           </template>
         </g-dialog-editor>
       </template>

@@ -4,16 +4,11 @@ export default {
   components: {
     GTemplateIndexPageUnits,
   },
-  data() {
-    return {
-      items: this.$store.state.Units.items,
-    }
-  },
 }
 </script>
 
 <template>
-  <g-template-index-page-units :items="items" />
+  <g-template-index-page-units />
 </template>
 
 <style></style>

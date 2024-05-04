@@ -49,6 +49,7 @@ export default {
   data() {
     return {
       items: [],
+      model: this.$SiteRootContract(),
       listener: this.$SiteRootContract(),
     }
   },
@@ -56,6 +57,7 @@ export default {
     siteId: {
       handler(v) {
         if (v) {
+          this.model = this.$SiteRootContract(v)
           this.listener = this.$SiteRootContract(v)
           this.items = this.listener.subscribe()
         }
@@ -72,12 +74,12 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, model, table }"
+    v-slot="{ dialog, editor, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ siteId }"
     :items="items"
     label="ルート回収契約"
-    :model="$SiteRootContract(siteId)"
+    :model="model"
     v-on="$listeners"
   >
     <v-card>
@@ -88,7 +90,10 @@ export default {
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
           <template #form>
-            <g-input-site-root-contract v-bind="model.attrs" v-on="model.on" />
+            <g-input-site-root-contract
+              v-bind="editor.attrs"
+              v-on="editor.on"
+            />
           </template>
         </g-dialog-editor>
       </v-card-title>
