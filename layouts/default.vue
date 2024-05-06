@@ -7,8 +7,7 @@
       <v-spacer />
     </v-app-bar>
     <v-main>
-      <!-- <Nuxt keep-alive :keep-alive-props="{ include: keepAlivePages }" /> -->
-      <Nuxt />
+      <Nuxt keep-alive :keep-alive-props="{ include: keepAlivePages }" />
     </v-main>
   </v-app>
 </template>
@@ -32,14 +31,8 @@ export default {
       return result
     },
     keepAlivePages() {
-      // const result = [
-      //   'IndexPage',
-      //   'CustomersIndex',
-      //   'SitesIndex',
-      //   'EmployeesIndex',
-      //   'OperationResultsIndex',
-      // ]
-      const result = []
+      const result = ['CustomersIndex']
+      // const result = []
       return result
     },
   },

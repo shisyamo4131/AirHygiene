@@ -550,8 +550,11 @@ export default class FireModel {
    */
   subscribe(ngram = undefined, constraints = []) {
     this.unsubscribe()
-    // eslint-disable-next-line
+    /* eslint-disable */
     console.info('Subscription of %s has been started.', this.#collection)
+    if (ngram) console.table(ngram)
+    console.table(constraints)
+    /* eslint-enable */
     this.#items.splice(0)
     const grams = this.convertToGrams(ngram)
     const wheres = grams.map((gram) => {

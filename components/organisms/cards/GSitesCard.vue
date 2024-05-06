@@ -1,4 +1,5 @@
 <script>
+import { where } from 'firebase/firestore'
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
 import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
@@ -6,6 +7,8 @@ import GInputSite from '~/components/molecules/inputs/GInputSite.vue'
 import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
 import GPagination from '~/components/molecules/paginations/GPagination.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
+import GChipSiteStatus from '~/components/molecules/chips/GChipSiteStatus.vue'
+import GSwitch from '~/components/molecules/inputs/GSwitch.vue'
 export default {
   components: {
     ACollectionController,
@@ -15,6 +18,8 @@ export default {
     GInputSite,
     GBtnRegistIcon,
     GPagination,
+    GChipSiteStatus,
+    GSwitch,
   },
   props: {
     actions: {
@@ -32,7 +37,14 @@ export default {
       default: () => ({
         headers: [
           { text: 'CODE', value: 'code' },
-          { text: '名称', value: 'name' },
+          { text: '名称', value: 'name', sortable: false },
+          {
+            text: '状態',
+            value: 'status',
+            sortable: false,
+            filterable: false,
+            align: 'center',
+          },
         ],
         sortBy: 'code',
       }),
@@ -43,23 +55,30 @@ export default {
       items: [],
       model: this.$Site(),
       listener: this.$Site(),
+      onlyActive: true,
       search: null,
     }
   },
   watch: {
     customerId: {
       handler(v) {
-        if (v) {
-          this.listener = this.$Site()
-          this.items = this.listener.subscribe()
-        }
-        if (!v) this.listener.unsubscribe()
+        this.subscribe()
       },
       immediate: true,
+    },
+    onlyActive(v) {
+      this.subscribe()
     },
   },
   destroyed() {
     this.listener.unsubscribe()
+  },
+  methods: {
+    subscribe() {
+      const constraints = [where('customerId', '==', this.customerId)]
+      if (this.onlyActive) constraints.push(where('status', '==', 'active'))
+      this.items = this.listener.subscribe(undefined, constraints)
+    },
   },
 }
 </script>
@@ -75,7 +94,7 @@ export default {
     v-on="$listeners"
   >
     <v-card>
-      <v-card-title>排出場所一覧</v-card-title>
+      <v-card-title>排出場所一覧{{ `（全 ${items.length} 件）` }}</v-card-title>
       <v-toolbar dense flat>
         <g-text-field-search v-model="search" />
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
@@ -87,8 +106,15 @@ export default {
           </template>
         </g-dialog-editor>
       </v-toolbar>
+      <v-toolbar dense flat class="d-flex justify-end">
+        <g-switch v-model="onlyActive" label="契約中のみ表示" hide-details />
+      </v-toolbar>
       <v-container>
-        <g-data-table v-bind="table.attrs" :search="search" v-on="table.on" />
+        <g-data-table v-bind="table.attrs" :search="search" v-on="table.on">
+          <template #[`item.status`]="{ item }">
+            <g-chip-site-status :value="item.status" x-small />
+          </template>
+        </g-data-table>
       </v-container>
       <g-pagination v-bind="pagination.attrs" v-on="pagination.on" />
     </v-card>

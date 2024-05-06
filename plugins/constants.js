@@ -52,6 +52,17 @@ const ROUNDING_ARRAY = Object.entries(ROUNDING).map(([value, text]) => ({
   text,
 }))
 
+const SITE_STATUS = {
+  active: '契約中',
+  pause: '休止中',
+  expired: '契約終了',
+}
+
+const SITE_STATUS_ARRAY = Object.entries(SITE_STATUS).map(([value, text]) => ({
+  value,
+  text,
+}))
+
 export default (context, inject) => {
   inject('DEADLINE', DEADLINE)
   inject('DEADLINE_ARRAY', DEADLINE_ARRAY)
@@ -59,4 +70,6 @@ export default (context, inject) => {
   inject('ITEM_GROUP_ARRAY', ITEM_GROUP_ARRAY)
   inject('ROUNDING', ROUNDING)
   inject('ROUNDING_ARRAY', ROUNDING_ARRAY)
+  inject('SITE_STATUS', SITE_STATUS)
+  inject('SITE_STATUS_ARRAY', SITE_STATUS_ARRAY)
 }
