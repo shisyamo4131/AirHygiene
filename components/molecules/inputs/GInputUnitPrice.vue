@@ -12,7 +12,7 @@ export default {
   components: { GAutocompleteItem, GAutocompleteUnit, GNumeric },
   mixins: [props, GMixinInput],
   props: {
-    disabledPrice: { type: Boolean, default: false, required: false },
+    hidePrice: { type: Boolean, default: false, required: false },
   },
 }
 </script>
@@ -32,11 +32,11 @@ export default {
       @input="$emit('update:unitId', $event)"
     />
     <g-numeric
+      v-if="!hidePrice"
       class="right-input"
       :value="price"
       label="単価"
       required
-      :disabled="disabledPrice"
       decimal-places="2"
       suffix="円"
       @input="$emit('update:price', $event)"

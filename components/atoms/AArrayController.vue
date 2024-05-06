@@ -10,6 +10,8 @@ export default {
     dialogProps: { type: Object, default: () => ({}), required: false },
     /* To switch delete direct if true. */
     directDelete: { type: Boolean, default: false, required: false },
+    /* If true, it indicates that the model is being edited. The .sync modifier can be used. */
+    isEditing: { type: Boolean, default: false, required: false },
     /* A string used to specify the item in props.value */
     itemKey: { type: String, default: 'id', required: false },
     /* A string provided to dialog component. */
@@ -37,32 +39,83 @@ export default {
       internalSearch: null,
     }
   },
+  /****************************************************************************
+   * WATCH
+   ****************************************************************************/
   watch: {
-    dialog(v) {
-      if (!v) {
-        this.editMode = 'REGIST'
-        this.editKey = null
-        this.model.initialize(this.defaultItem)
-        this.$refs[`air-form-${this._uid}`].resetValidation()
-      }
+    /**
+     * Defines the behavior the action when the 'defaultItem' is changed.
+     * The 'model' will be initialized with the object.
+     */
+    defaultItem: {
+      handler(v) {
+        this.model.initialize({ ...structuredClone(this.model), v })
+      },
+      deep: true,
     },
-    model(v) {
-      console.log('price changed')
+    /**
+     * Defines the behavior the action when the 'dialog' is changed or this component is mounted.
+     * If the 'dialog' is changed to FALSE,
+     * - The 'editMode' is changed to 'REGIST'.
+     * - The 'editKey' is changed to null.
+     * - The 'initialize' function of the 'model' is called with the 'defaultItem' as an argument.
+     * - The 'resetValidation' function of the 'form' is called if it was already mounted.
+     * then, emit the 'update:isEditing' event with the value of 'dialog' as an argument.
+     */
+    dialog: {
+      handler(v) {
+        if (!v) {
+          this.editMode = 'REGIST'
+          this.editKey = null
+          this.model.initialize(this.defaultItem)
+          const form = this.$refs[`air-form-${this._uid}`]
+          if (form) form.resetValidation()
+        }
+        this.$emit('update:isEditing', v)
+      },
+      immediate: true,
     },
-    deep: true,
   },
+  /****************************************************************************
+   * METHODS
+   ****************************************************************************/
   methods: {
+    /**
+     * Defines the behavior of the action when the regist-button is clicked.
+     * Simply change the 'dialog' to true.
+     * NOTE:
+     * Since 'model' and 'editMode' are initialized when 'dialog' is changed to false,
+     * no initialization process is required here.
+     * WHY THE INITIALIZATION PROCESS IS DEFINED AT THE DIALOG WATCHER?
+     * This is because this component privides the 'ACTIVATOR' slot of the dialog component.
+     */
     onClickRegist() {
-      this.model.initialize(this.defaultItem)
-      this.editMode = 'REGIST'
+      // this.model.initialize(this.defaultItem)
+      // this.editMode = 'REGIST'
       this.dialog = true
     },
+    /**
+     * Defines the behavior of the action when the edit-button is clicked.
+     * - Initialize the 'model' with the selected item.
+     * - Set the key of the item (default is 'id') to the 'editKey'.
+     * - Set the 'editMode' to 'UPDATE'.
+     * - Open the dialog.
+     */
     onClickEdit(item) {
       this.model.initialize(item)
       this.editKey = this.model[this.itemKey]
       this.editMode = 'UPDATE'
       this.dialog = true
     },
+    /**
+     * Defines the behavior of the action when the delete-button is clicked.
+     * - Initialize the 'model' with the selected item.
+     * - Set the key of the item (default is 'id') to the 'editKey'.
+     * - Set the 'editMode' to 'DELETE'.
+     * Then, call the 'submit' function with the 'editMode' as an argument
+     * if the 'directDelete' is true.
+     * If it is false, this component will open the dialog.
+     */
     onClickDelete(item) {
       this.model.initialize(item)
       this.editKey = this.model[this.itemKey]
@@ -71,33 +124,51 @@ export default {
         this.dialog = false
         const answer = window.confirm('削除してもよろしいですか？')
         if (!answer) return
-        this.submit()
+        this.submit(this.editMode)
       } else {
         this.dialog = true
       }
     },
+    /**
+     * Defines the behavior of the action when the cancel-button is clicked.
+     * Simply change the 'dialog' to false.
+     */
     onClickCancel() {
       this.dialog = false
     },
+    /**
+     * Defines the behavior of the action when the submit-button is clicked.
+     * Simply call the 'submit' function with the 'editMode' as an argument.
+     */
     onClickSubmit() {
       this.submit(this.editMode)
     },
+    /**
+     * Defines the behavior of the validate action of the 'form'.
+     * Returns boolean as the validate() result.
+     */
     validate() {
       const result = this.$refs[`air-form-${this._uid}`].validate()
       if (!result) alert('入力に不備があります。')
       return result
     },
+    /**
+     * Returns the items provided by the argument is duplicated or not.
+     */
     duplicated(v) {
       const uniques = [...new Set(v.map((item) => item[this.itemKey]))]
       return v.length !== uniques.length
     },
-    submit() {
-      if (this.editMode !== 'DELETE' && !this.validate()) return
+    /**
+     * Defines the behavior of the submit action.
+     */
+    submit(mode) {
+      if (mode !== 'DELETE' && !this.validate()) return
       try {
         let result
-        if (this.editMode === 'REGIST') result = this.regist()
-        if (this.editMode === 'UPDATE') result = this.update()
-        if (this.editMode === 'DELETE') result = this.delete()
+        if (mode === 'REGIST') result = this.regist()
+        if (mode === 'UPDATE') result = this.update()
+        if (mode === 'DELETE') result = this.delete()
         this.$emit('input', result)
         this.dialog = false
       } catch (err) {
@@ -140,6 +211,9 @@ export default {
       return result
     },
   },
+  /****************************************************************************
+   * METHODS
+   ****************************************************************************/
   render(createElement) {
     return createElement(
       'v-form',
@@ -187,6 +261,7 @@ export default {
             actions: this.actions,
             disableDelete: this.dialog,
             disableEdit: this.dialog,
+            editKey: this.editKey,
             itemKey: this.itemKey,
             items: this.value,
             search: this.internalSearch,

@@ -3,8 +3,8 @@
  * ## GInputSiteRootContract
  * @author shisyamo4131
  */
-import GDataTable from '../tables/GDataTable.vue'
 import GDialogEditor from '../dialogs/GDialogEditor.vue'
+import GDataTableUnitPrices from '../tables/GDataTableUnitPrices.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
@@ -19,17 +19,18 @@ export default {
     GDate,
     GNumeric,
     GSwitch,
-    GDataTable,
     GInputUnitPrice,
     AArrayController,
     GAutocompleteItem,
     GAutocompleteUnit,
     GDialogEditor,
+    GDataTableUnitPrices,
   },
   mixins: [props, GMixinInput],
   data() {
     return {
       model: this.$UnitPrice(),
+      unitPriceIsEditing: false,
     }
   },
   methods: {
@@ -57,6 +58,7 @@ export default {
 
 <template>
   <div>
+    {{ unitPriceIsEditing }}
     <g-date
       :value="startAt"
       label="適用開始日"
@@ -131,7 +133,7 @@ export default {
       :input-value="claimFixedCharge"
       :label="`月極請求: ${claimFixedCharge ? 'あり' : 'なし'}`"
       @click.native.capture="confirmToFixedCharge"
-      @change="updatePriceTo($event, $event ? 0 : null)"
+      @change="$emit('update:claimFixedCharge', $event)"
     />
     <v-expand-transition>
       <v-container v-show="claimFixedCharge">
@@ -198,9 +200,10 @@ export default {
     </div>
     <a-array-controller
       :actions="['edit', 'delete']"
-      :default-item="claimFixedCharge ? { price: 0 } : { price: 100 }"
+      :default-item="{ price: claimFixedCharge ? 0 : null }"
       :dialog-props="{ maxWidth: 480 }"
       direct-delete
+      :is-editing.sync="unitPriceIsEditing"
       label="回収単価"
       :model="model"
       :value="unitPrices"
@@ -219,7 +222,7 @@ export default {
       }"
       @input="$emit('update:unitPrices', $event)"
     >
-      <template #default="{ dialog, table, editor, editKey }">
+      <template #default="{ dialog, table, editor }">
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
             <div class="d-flex justify-end">
@@ -232,28 +235,16 @@ export default {
           <template #form>
             <g-input-unit-price
               v-bind="editor.attrs"
-              :disabled-price="claimFixedCharge"
+              :hide-price="claimFixedCharge"
               v-on="editor.on"
             />
           </template>
         </g-dialog-editor>
-        <g-data-table v-bind="table.attrs" v-on="table.on">
-          <template #[`item.itemId`]="{ item }">
-            <v-icon v-if="item.id === editKey" small color="primary"
-              >mdi-check</v-icon
-            >
-            {{ $store.getters[`Items/get`](item.itemId).abbr }}
-          </template>
-          <template #[`item.unitId`]="{ item }">
-            {{ $store.getters[`Units/get`](item.unitId).abbr }}
-          </template>
-          <template #[`item.price`]="{ item }">
-            {{ `${(item.price || 0).toFixed(2)} 円` }}
-          </template>
-          <template #[`item.convertWeight`]="{ item }">
-            {{ `${(item.convertWeight || 0).toFixed(2)} kg` }}
-          </template>
-        </g-data-table>
+        <g-data-table-unit-prices
+          v-bind="table.attrs"
+          :hide-price="claimFixedCharge"
+          v-on="table.on"
+        />
       </template>
     </a-array-controller>
   </div>

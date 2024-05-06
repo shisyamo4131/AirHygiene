@@ -49,6 +49,9 @@ export default class SiteRootContract extends FireModel {
         '指定された日付を適用開始とするルート回収契約が既に登録されています。'
       )
     }
+    if (this.claimFixedCharge) {
+      this.unitPrices.forEach(({ price }) => (price = 0))
+    }
   }
 
   async beforeUpdate() {
@@ -63,6 +66,9 @@ export default class SiteRootContract extends FireModel {
       throw new Error(
         '指定された日付を適用開始とするルート回収契約が既に登録されています。'
       )
+    }
+    if (this.claimFixedCharge) {
+      this.unitPrices.forEach(({ price }) => (price = 0))
     }
   }
 }
