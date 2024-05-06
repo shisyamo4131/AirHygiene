@@ -21,6 +21,7 @@ export default {
       required
       counter
       maxlength="3"
+      :rules="[(v) => !v || [v].length <= 3 || '3桁まで']"
       @input="$emit('update:code', $event)"
     />
     <g-text-field
@@ -36,6 +37,7 @@ export default {
       required
       counter
       maxlength="3"
+      :rules="[(v) => !v || [...v].length <= 3 || '3文字まで']"
       @input="$emit('update:abbr', $event)"
     />
   </div>
