@@ -4,10 +4,13 @@
  * @author shisyamo4131
  */
 import GDataTable from '../tables/GDataTable.vue'
+import GDialogEditor from '../dialogs/GDialogEditor.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
 import GInputUnitPrice from './GInputUnitPrice.vue'
+import GAutocompleteItem from './GAutocompleteItem.vue'
+import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import { props } from '~/models/SiteRootContract'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import AArrayController from '~/components/atoms/AArrayController.vue'
@@ -19,20 +22,14 @@ export default {
     GDataTable,
     GInputUnitPrice,
     AArrayController,
+    GAutocompleteItem,
+    GAutocompleteUnit,
+    GDialogEditor,
   },
   mixins: [props, GMixinInput],
   data() {
     return {
-      unitPricesRule: (v) => {
-        if (!v.length) return true
-        if (v.some((item) => item.price == null)) {
-          return '単価の設定されていない回収品目があります'
-        }
-        if (v.some((item) => item.convertWeight == null)) {
-          return '換算重量の設定されていない回収品目があります'
-        }
-        return true
-      },
+      model: this.$UnitPrice(),
     }
   },
   methods: {
@@ -66,98 +63,146 @@ export default {
       required
       @input="$emit('update:startAt', $event)"
     />
-    <v-subheader>最低保証</v-subheader>
     <g-switch
       :input-value="claimMinimumCharge"
-      label="最低保証"
+      :label="`最低保証: ${claimMinimumCharge ? 'あり' : 'なし'}`"
       @change="$emit('update:claimMinimumCharge', $event)"
     />
-    <v-row>
-      <v-col cols="12" md="6">
-        <g-numeric
-          class="right-input"
-          :value="minimumCharge"
-          label="最低保証金額"
-          :required="claimMinimumCharge"
-          :disabled="!claimMinimumCharge"
-          suffix="円"
-          @input="$emit('update:minimumCharge', $event)"
-        />
-      </v-col>
-      <v-col cols="12" md="6">
-        <g-numeric
-          class="right-input"
-          :value="minimumChargeFirst"
-          label="初回保証金額"
-          :required="claimMinimumCharge"
-          :disabled="!claimMinimumCharge"
-          suffix="円"
-          @input="$emit('update:minimumChargeFirst', $event)"
-        >
-          <template #prepend>
-            <v-tooltip top>
-              <template #activator="{ attrs, on }">
-                <v-icon v-bind="attrs" color="primary" v-on="on"
-                  >mdi-information-outline</v-icon
-                >
+    <v-expand-transition>
+      <v-container v-show="claimMinimumCharge">
+        <v-row>
+          <v-col cols="12" md="6">
+            <g-autocomplete-item
+              :value="minimumChargeItemId"
+              label="請求品目"
+              :required="claimMinimumCharge"
+              :disabled="!claimMinimumCharge"
+              @input="$emit('update:minimumChargeItemId', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-autocomplete-unit
+              :value="minimumChargeUnitId"
+              label="請求単位"
+              :required="claimMinimumCharge"
+              :disabled="!claimMinimumCharge"
+              @input="$emit('update:minimumChargeUnitId', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-numeric
+              class="right-input"
+              :value="minimumChargePrice"
+              label="最低保証金額"
+              :required="claimMinimumCharge"
+              :disabled="!claimMinimumCharge"
+              suffix="円"
+              @input="$emit('update:minimumChargePrice', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-numeric
+              class="right-input"
+              :value="minimumChargeFirst"
+              label="初回保証金額"
+              :required="claimMinimumCharge"
+              :disabled="!claimMinimumCharge"
+              suffix="円"
+              @input="$emit('update:minimumChargeFirst', $event)"
+            >
+              <template #prepend>
+                <v-tooltip top>
+                  <template #activator="{ attrs, on }">
+                    <v-icon v-bind="attrs" color="primary" v-on="on"
+                      >mdi-information-outline</v-icon
+                    >
+                  </template>
+                  <span>
+                    初回の保証金額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
+                  </span>
+                </v-tooltip>
               </template>
-              <span>
-                初回の保証金額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
-              </span>
-            </v-tooltip>
-          </template>
-        </g-numeric>
-      </v-col>
-    </v-row>
-    <v-subheader>月極</v-subheader>
+            </g-numeric>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-expand-transition>
     <g-switch
       :input-value="claimFixedCharge"
-      label="月極請求"
+      :label="`月極請求: ${claimFixedCharge ? 'あり' : 'なし'}`"
       @click.native.capture="confirmToFixedCharge"
       @change="updatePriceTo($event, $event ? 0 : null)"
     />
-    <v-row>
-      <v-col cols="12" md="6">
-        <g-numeric
-          class="right-input"
-          :value="fixedCharge"
-          label="月極金額"
-          :required="claimFixedCharge"
-          :disabled="!claimFixedCharge"
-          suffix="円"
-          @input="$emit('update:fixedCharge', $event)"
-        />
-      </v-col>
-      <v-col cols="12" md="6">
-        <g-numeric
-          class="right-input"
-          :value="fixedChargeFirst"
-          label="初回月極金額"
-          :required="claimFixedCharge"
-          :disabled="!claimFixedCharge"
-          suffix="円"
-          @input="$emit('update:fixedChargeFirst', $event)"
-        >
-          <template #prepend>
-            <v-tooltip top>
-              <template #activator="{ attrs, on }">
-                <v-icon v-bind="attrs" color="primary" v-on="on"
-                  >mdi-information-outline</v-icon
-                >
+    <v-expand-transition>
+      <v-container v-show="claimFixedCharge">
+        <v-row>
+          <v-col cols="12" md="6">
+            <g-autocomplete-item
+              :value="fixedChargeItemId"
+              label="請求品目"
+              :required="claimFixedCharge"
+              :disabled="!claimFixedCharge"
+              @input="$emit('update:fixedChargeItemId', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-autocomplete-unit
+              :value="fixedChargeUnitId"
+              label="請求単位"
+              :required="claimFixedCharge"
+              :disabled="!claimFixedCharge"
+              @input="$emit('update:fixedChargeUnitId', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-numeric
+              class="right-input"
+              :value="fixedChargePrice"
+              label="月極金額"
+              :required="claimFixedCharge"
+              :disabled="!claimFixedCharge"
+              suffix="円"
+              @input="$emit('update:fixedChargePrice', $event)"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <g-numeric
+              class="right-input"
+              :value="fixedChargeFirst"
+              label="初回月極金額"
+              :required="claimFixedCharge"
+              :disabled="!claimFixedCharge"
+              suffix="円"
+              @input="$emit('update:fixedChargeFirst', $event)"
+            >
+              <template #prepend>
+                <v-tooltip top>
+                  <template #activator="{ attrs, on }">
+                    <v-icon v-bind="attrs" color="primary" v-on="on"
+                      >mdi-information-outline</v-icon
+                    >
+                  </template>
+                  <span>
+                    初回の月極請求額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
+                  </span>
+                </v-tooltip>
               </template>
-              <span>
-                初回の月極請求額です。<br />月半ばから適用される契約の場合、<br />直近締日までの日割り金額を入力します。
-              </span>
-            </v-tooltip>
-          </template>
-        </g-numeric>
-      </v-col>
-    </v-row>
+            </g-numeric>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-expand-transition>
     <v-subheader>回収単価設定</v-subheader>
+    <div v-show="claimFixedCharge" class="red--text text-caption text-end">
+      月極請求を行う場合、ルート回収の単価はすべて0円になります。
+    </div>
     <a-array-controller
       :actions="['edit', 'delete']"
+      :default-item="claimFixedCharge ? { price: 0 } : { price: 100 }"
+      :dialog-props="{ maxWidth: 480 }"
       direct-delete
-      :model="$UnitPrice()"
+      label="回収単価"
+      :model="model"
       :value="unitPrices"
       :table-props="{
         headers: [
@@ -174,28 +219,24 @@ export default {
       }"
       @input="$emit('update:unitPrices', $event)"
     >
-      <template #default="{ table, editor, editKey, isEditing, btns }">
-        <v-expand-transition>
-          <v-container v-show="isEditing" fluid>
-            <g-input-unit-price v-bind="editor.attrs" v-on="editor.on" />
-          </v-container>
-        </v-expand-transition>
-        <div class="d-flex justify-end">
-          <v-btn
-            v-if="isEditing"
-            v-bind="btns.cancel.attrs"
-            text
-            small
-            v-on="btns.cancel.on"
-          >
-            <v-icon small>mdi-cancel</v-icon>
-            取消
-          </v-btn>
-          <v-btn color="primary" text small v-on="btns.regist.on">
-            <v-icon small>{{ `mdi-${!isEditing ? 'plus' : 'check'}` }}</v-icon>
-            {{ `${!isEditing ? '追加' : '確定'}` }}
-          </v-btn>
-        </div>
+      <template #default="{ dialog, table, editor, editKey }">
+        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
+          <template #activator="{ attrs, on }">
+            <div class="d-flex justify-end">
+              <v-btn v-bind="attrs" color="primary" text small v-on="on">
+                <v-icon small>mdi-plus</v-icon>
+                追加
+              </v-btn>
+            </div>
+          </template>
+          <template #form>
+            <g-input-unit-price
+              v-bind="editor.attrs"
+              :disabled-price="claimFixedCharge"
+              v-on="editor.on"
+            />
+          </template>
+        </g-dialog-editor>
         <g-data-table v-bind="table.attrs" v-on="table.on">
           <template #[`item.itemId`]="{ item }">
             <v-icon v-if="item.id === editKey" small color="primary"

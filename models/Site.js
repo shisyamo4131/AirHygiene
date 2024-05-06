@@ -30,6 +30,14 @@ export default class Site extends FireModel {
     super(context, item)
     this.collection = `Sites`
     this.tokenFields = ['abbr', 'abbrKana']
+    this.hasMany = [
+      {
+        collection: 'CollectionResults',
+        field: 'siteId',
+        condition: '==',
+        type: 'collection',
+      },
+    ]
     Object.defineProperties(this, {
       fullAddress: {
         enumerable: true,

@@ -42,14 +42,18 @@ export default {
       if (!v) {
         this.editMode = 'REGIST'
         this.editKey = null
-        this.model.initialize()
+        this.model.initialize(this.defaultItem)
         this.$refs[`air-form-${this._uid}`].resetValidation()
       }
     },
+    model(v) {
+      console.log('price changed')
+    },
+    deep: true,
   },
   methods: {
     onClickRegist() {
-      this.model.initialize()
+      this.model.initialize(this.defaultItem)
       this.editMode = 'REGIST'
       this.dialog = true
     },
@@ -74,6 +78,9 @@ export default {
     },
     onClickCancel() {
       this.dialog = false
+    },
+    onClickSubmit() {
+      this.submit(this.editMode)
     },
     validate() {
       const result = this.$refs[`air-form-${this._uid}`].validate()

@@ -28,25 +28,8 @@ export default class UnitPrice {
           if (this.itemId && !this.unitId) return this.itemId
           return ''
         },
-        set(v) {
-          ;[this.itemId, this.unitId] = v.split('-')
-        },
+        set(v) {},
       },
-      // name: {
-      //   enumerable: false,
-      //   get() {
-      //     if (this.itemId && this.unitId) {
-      //       const item = context.store.getters['Items/get'](this.itemId)
-      //       const unit = context.store.getters['Units/get'](this.unitId)
-      //       return `${item.name}-${unit.name}`
-      //     }
-      //     if (this.itemId && !this.unitId) {
-      //       const item = context.store.getters['Items/get'](this.itemId)
-      //       return item.name
-      //     }
-      //     return ''
-      //   },
-      // },
     })
   }
 
