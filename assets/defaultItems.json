@@ -1,0 +1,191 @@
+[
+  {
+    "docId": "SYSTEM-ITEM-1011",
+    "code": "1011",
+    "name": "可燃ごみ",
+    "abbr": "可燃ごみ",
+    "group": "1011",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2011",
+    "code": "2011",
+    "name": "燃え殻",
+    "abbr": "燃え殻",
+    "group": "2011",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2021",
+    "code": "2021",
+    "name": "汚泥",
+    "abbr": "汚泥",
+    "group": "2021",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2031",
+    "code": "2031",
+    "name": "廃油",
+    "abbr": "廃油",
+    "group": "2031",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2041",
+    "code": "2041",
+    "name": "廃酸",
+    "abbr": "廃酸",
+    "group": "2041",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2051",
+    "code": "2051",
+    "name": "廃アルカリ",
+    "abbr": "アルカリ",
+    "group": "2051",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2061",
+    "code": "2061",
+    "name": "廃プラスチック類",
+    "abbr": "廃プラ",
+    "group": "2061",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2071",
+    "code": "2071",
+    "name": "ゴムくず",
+    "abbr": "ゴムくず",
+    "group": "2071",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2081",
+    "code": "2081",
+    "name": "金属くず",
+    "abbr": "金属くず",
+    "group": "2081",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2091",
+    "code": "2091",
+    "name": "ガラス・コンクリート・陶磁器くず",
+    "abbr": "ガラコン",
+    "group": "2091",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2101",
+    "code": "2101",
+    "name": "鉱さい",
+    "abbr": "鉱さい",
+    "group": "2101",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2111",
+    "code": "2111",
+    "name": "がれき類",
+    "abbr": "がれき類",
+    "group": "2111",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2121",
+    "code": "2121",
+    "name": "ばいじん",
+    "abbr": "ばいじん",
+    "group": "2121",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2131",
+    "code": "2131",
+    "name": "紙くず",
+    "abbr": "紙くず",
+    "group": "2131",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2141",
+    "code": "2141",
+    "name": "木くず",
+    "abbr": "木くず",
+    "group": "2141",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2151",
+    "code": "2151",
+    "name": "繊維くず",
+    "abbr": "繊維くず",
+    "group": "2151",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2161",
+    "code": "2161",
+    "name": "動物系固形不要物",
+    "abbr": "動物固形",
+    "group": "2161",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2171",
+    "code": "2171",
+    "name": "動植物性残さ",
+    "abbr": "動植残さ",
+    "group": "2171",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2181",
+    "code": "2181",
+    "name": "動物のふん尿",
+    "abbr": "ふん尿",
+    "group": "2181",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2191",
+    "code": "2191",
+    "name": "動物の死体",
+    "abbr": "動物死体",
+    "group": "2191",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-ITEM-2201",
+    "code": "2201",
+    "name": "その他の産廃",
+    "abbr": "その他",
+    "group": "2201",
+    "editable": false,
+    "deletable": false
+  }
+]

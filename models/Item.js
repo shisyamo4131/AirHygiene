@@ -6,6 +6,8 @@ const props = {
     name: { type: String, default: '', required: false },
     abbr: { type: String, default: '', required: false },
     group: { type: String, default: '', required: false },
+    editable: { type: Boolean, default: true, required: false },
+    deletable: { type: Boolean, default: true, required: false },
   },
 }
 export { props }

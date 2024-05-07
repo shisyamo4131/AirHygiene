@@ -1,0 +1,82 @@
+[
+  {
+    "docId": "SYSTEM-UNIT-001",
+    "code": "001",
+    "name": "kg",
+    "abbr": "kg",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-002",
+    "code": "002",
+    "name": "袋[45ℓ]",
+    "abbr": "45ℓ",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-003",
+    "code": "003",
+    "name": "袋[70ℓ]",
+    "abbr": "70ℓ",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-004",
+    "code": "004",
+    "name": "袋[90ℓ]",
+    "abbr": "90ℓ",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-005",
+    "code": "005",
+    "name": "式",
+    "abbr": "式",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-006",
+    "code": "006",
+    "name": "㎥",
+    "abbr": "㎥",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-007",
+    "code": "007",
+    "name": "台",
+    "abbr": "台",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-008",
+    "code": "008",
+    "name": "ヶ",
+    "abbr": "ヶ",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-009",
+    "code": "009",
+    "name": "本",
+    "abbr": "本",
+    "editable": false,
+    "deletable": false
+  },
+  {
+    "docId": "SYSTEM-UNIT-010",
+    "code": "010",
+    "name": "回",
+    "abbr": "回",
+    "editable": false,
+    "deletable": false
+  }
+]
