@@ -28,6 +28,7 @@ export default {
     disableDetail: { type: Boolean, default: false, required: false },
     headers: { type: Array, default: () => [], required: false },
     height: { type: [Number, String], default: undefined, required: false },
+    itemKey: { type: String, default: 'docId', required: false },
   },
   /***************************************************************************
    * COMPUTED
@@ -77,6 +78,7 @@ export default {
     :headers="internalHeaders"
     :height="internalHeight"
     hide-default-footer
+    :item-key="itemKey"
     v-on="$listeners"
   >
     <!-- ### SLOTS ### -->

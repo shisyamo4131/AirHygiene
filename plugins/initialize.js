@@ -15,14 +15,24 @@ export default async (context) => {
 }
 
 const createAutonumbers = async (app) => {
-  for (const item of autonumbers) {
-    const model = app.$Autonumber()
-    await model.fetch(item.collectionId)
-    if (!model.docId) {
-      model.initialize(item)
-      await model.create()
-    }
+  const existDocs = []
+  const docIds = autonumbers.map(({ collectionId }) => collectionId)
+  const chunked = docIds.flatMap((_, i, a) =>
+    i % 30 ? [] : [docIds.slice(i, i + 30)]
+  )
+  const colRef = collection(app.$firestore, 'Autonumbers')
+  for (const arr of chunked) {
+    const q = query(colRef, where('docId', 'in', arr))
+    const querySnapshot = await getDocs(q)
+    existDocs.push(...querySnapshot.docs.map((doc) => doc.data()))
   }
+  const unregists = autonumbers.filter(
+    ({ collectionId }) => !existDocs.some((item) => item.docId === collectionId)
+  )
+  const promises = unregists.map((item) =>
+    app.$Autonumber(item).create(item.docId)
+  )
+  await Promise.all(promises)
 }
 
 const createDefaultItems = async (app) => {

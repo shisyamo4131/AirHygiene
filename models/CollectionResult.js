@@ -2,15 +2,20 @@ import FireModel from './FireModel'
 
 const props = {
   props: {
-    code: { type: String, default: '', required: false },
     date: { type: String, default: '', required: false },
-    resultType: { type: String, default: '', required: false }, // 'root', 'spot', 'fixedCharge', 'minimunCharge'
+    resultType: {
+      type: String,
+      default: '',
+      validator: (v) => ['root', 'spot'].includes(v),
+      required: false,
+    },
     siteId: { type: String, default: '', required: false },
     itemId: { type: String, default: '', required: false },
     unitId: { type: String, default: '', required: false },
     amount: { type: Number, default: null, required: false },
     unitPrice: { type: Number, default: null, required: false },
     convertWeight: { type: Number, default: null, required: false },
+    remarks: { type: String, default: '', required: false },
   },
 }
 export { props }

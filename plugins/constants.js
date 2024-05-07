@@ -1,3 +1,13 @@
+const COLLECTION_RESULT_TYPE = {
+  root: 'ルート',
+  spot: 'スポット',
+}
+const COLLECTION_RESULT_TYPE_ARRAY = Object.entries(COLLECTION_RESULT_TYPE).map(
+  ([value, text]) => ({
+    value,
+    text,
+  })
+)
 const DEADLINE = {
   '05': '5日',
   10: '10日',
@@ -64,6 +74,8 @@ const SITE_STATUS_ARRAY = Object.entries(SITE_STATUS).map(([value, text]) => ({
 }))
 
 export default (context, inject) => {
+  inject('COLLECTION_RESULT_TYPE', COLLECTION_RESULT_TYPE)
+  inject('COLLECTION_RESULT_TYPE_ARRAY', COLLECTION_RESULT_TYPE_ARRAY)
   inject('DEADLINE', DEADLINE)
   inject('DEADLINE_ARRAY', DEADLINE_ARRAY)
   inject('ITEM_GROUP', ITEM_GROUP)

@@ -20,30 +20,51 @@ export default {
   props: {
     delay: { type: [String, Number], default: 500, required: false },
     lazyValue: { type: undefined, default: undefined, required: false },
-    value: { type: undefined, default: undefined, required: false },
   },
   /***************************************************************************
    * DATA
    ***************************************************************************/
   data() {
     return {
+      internalValue: null,
       timerId: null,
     }
   },
   /***************************************************************************
    * COMPUTED
    ***************************************************************************/
-  computed: {},
+  computed: {
+    /* for v-model */
+    computedValue: {
+      get() {
+        return this.internalValue
+      },
+      set(v) {
+        this.internalValue = v
+        this.$emit('input', v)
+      },
+    },
+  },
   /***************************************************************************
    * WATCH
    ***************************************************************************/
   watch: {
-    value: {
-      handler(v) {
+    /* Save the 'value' to 'internalValue' if it specified. */
+    '$attrs.value': {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.internalValue = newVal
+      },
+      immediate: true,
+    },
+    /* Synchronize to the 'lazyValue' with specified delay when the 'internalValue' is changed. */
+    internalValue: {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
         clearTimeout(this.timerId)
-        const delay = v ? Number(this.delay) : 0
+        const delay = newVal ? Number(this.delay) : 0
         this.timerId = setTimeout(() => {
-          this.$emit('update:lazyValue', v)
+          this.$emit('update:lazyValue', newVal)
         }, delay)
       },
       immediate: true,
@@ -57,7 +78,11 @@ export default {
 </script>
 
 <template>
-  <a-text-field-search v-bind="$attrs" :value="value" v-on="$listeners">
+  <a-text-field-search
+    v-bind="$attrs"
+    v-model="computedValue"
+    v-on="$listeners"
+  >
     <template
       v-for="(_, scopedSlotName) in $scopedSlots"
       #[scopedSlotName]="slotData"
