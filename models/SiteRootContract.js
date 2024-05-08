@@ -1,4 +1,11 @@
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore'
 import FireModel from './FireModel'
 
 const props = {
@@ -70,5 +77,22 @@ export default class SiteRootContract extends FireModel {
     if (this.claimFixedCharge) {
       this.unitPrices.forEach(({ price }) => (price = 0))
     }
+  }
+
+  async fetchUnitPrice({ date, itemId, unitId }) {
+    const colRef = collection(this.firestore, this.collection)
+    const q = query(
+      colRef,
+      where('startAt', '<=', date),
+      orderBy('startAt', 'desc'),
+      limit(1)
+    )
+    const querySnapshot = await getDocs(q)
+    if (querySnapshot.empty) return undefined
+    const unitPrices = querySnapshot.docs[0].data().unitPrices
+    const unitPrice = unitPrices.find(
+      (item) => item.itemId === itemId && item.unitId === unitId
+    )
+    return unitPrice
   }
 }

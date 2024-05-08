@@ -1,3 +1,4 @@
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import FireModel from './FireModel'
 
 const props = {
@@ -107,5 +108,40 @@ export default class CollectionResult extends FireModel {
         typeof propDefault === 'function' ? propDefault() : propDefault
     })
     super.initialize(item)
+  }
+
+  async beforeCreate() {
+    if (this.resultType === 'root') {
+      const sameRootResult = await this.getSameRootResults()
+      if (sameRootResult.length) {
+        throw new Error('ルート回収の実績が既に登録されています。')
+      }
+    }
+  }
+
+  async beforeUpdate() {
+    if (this.resultType === 'root') {
+      const sameRootResult = await this.getSameRootResults()
+      const ignoreSelf = sameRootResult.filter(
+        ({ docId }) => docId !== this.docId
+      )
+      if (ignoreSelf.length) {
+        throw new Error('ルート回収の実績が既に登録されています。')
+      }
+    }
+  }
+
+  async getSameRootResults() {
+    const colRef = collection(this.firestore, this.collection)
+    const q = query(
+      colRef,
+      where('date', '==', this.date),
+      where('resultType', '==', 'root'),
+      where('itemId', '==', this.itemId),
+      where('unitId', '==', this.unitId)
+    )
+    const querySnapshot = await getDocs(q)
+    if (querySnapshot.empty) return []
+    return querySnapshot.docs.map((doc) => doc.data())
   }
 }
