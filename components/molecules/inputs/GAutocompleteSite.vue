@@ -10,9 +10,9 @@ export default {
   data() {
     return {
       filter: (item, queryText) => {
-        return (
-          item.abbr.includes(queryText) || item.abbrKana.includes(queryText)
-        )
+        if (item.code.includes(queryText)) return true
+        if (item.abbr.includes(queryText)) return true
+        if (item.abbrKana.includes(queryText)) return true
       },
     }
   },

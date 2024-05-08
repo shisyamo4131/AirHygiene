@@ -29,7 +29,7 @@ export default class Site extends FireModel {
   constructor(context, item) {
     super(context, item)
     this.collection = `Sites`
-    this.tokenFields = ['abbr', 'abbrKana']
+    this.tokenFields = ['code', 'abbr', 'abbrKana']
     this.hasMany = [
       {
         collection: 'CollectionResults',
