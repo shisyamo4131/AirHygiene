@@ -7,8 +7,12 @@ export default {
 </script>
 
 <template>
-  <a-lazy-fetch-docs v-slot="{ attrs, on }" v-bind="$attrs" v-on="$listeners">
-    <g-autocomplete v-bind="attrs" v-on="on">
+  <a-lazy-fetch-docs
+    v-slot="{ autocomplete }"
+    v-bind="$attrs"
+    v-on="$listeners"
+  >
+    <g-autocomplete v-bind="autocomplete.attrs" v-on="autocomplete.on">
       <template
         v-for="(_, scopedSlotName) in $scopedSlots"
         #[scopedSlotName]="slotData"

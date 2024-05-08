@@ -1,15 +1,19 @@
 <template>
   <v-container>
-    <g-autocomplete-site />
+    <g-text-field-search />
+    <g-autocomplete-site v-model="objectValue" :search.sync="search" multiple />
+    {{ value }}
   </v-container>
 </template>
 
 <script>
 import GAutocompleteSite from '~/components/molecules/inputs/GAutocompleteSite.vue'
+import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
 export default {
-  components: { GAutocompleteSite },
+  components: { GAutocompleteSite, GTextFieldSearch },
   data() {
     return {
+      search: null,
       value: 'TRVyrinLCAoyEr2slUMp',
       objectValue: [
         'TRVyrinLCAoyEr2slUMp',

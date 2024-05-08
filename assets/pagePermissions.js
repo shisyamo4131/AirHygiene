@@ -8,4 +8,5 @@
  */
 module.exports = {
   'developments-sandbox': ['developer'],
+  'collection-results': [],
 }

@@ -15,6 +15,13 @@
     ]
   },
   {
+    "name": "日次業務",
+    "icon": "mdi-cube",
+    "lists": [
+      { "name": "回収実績", "to": "/collection-results", "icon": "mdi-domain" }
+    ]
+  },
+  {
     "name": "管理",
     "icon": "mdi-wrench-cog",
     "lists": [

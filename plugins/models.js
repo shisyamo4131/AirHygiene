@@ -4,6 +4,7 @@ import Site from '../models/Site'
 import Item from '../models/Item'
 import Unit from '../models/Unit'
 import UnitPrice from '../models/UnitPrice'
+import CollectionResult from '../models/CollectionResult'
 import IndustrialContract from '../models/IndustrialContract'
 import MunicipalContract from '../models/MunicipalContract'
 import SiteRootContract from '../models/SiteRootContract'
@@ -15,6 +16,10 @@ export default (context, inject) => {
   inject('Item', (item) => new Item(context, item))
   inject('Unit', (item) => new Unit(context, item))
   inject('UnitPrice', (item) => new UnitPrice(context, item))
+  inject(
+    'CollectionResult',
+    (siteId, item) => new CollectionResult(context, siteId, item)
+  )
   inject(
     'IndustrialContract',
     (siteId, item) => new IndustrialContract(context, siteId, item)

@@ -1,15 +1,7 @@
 <script>
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 /**
  * ### AirLazyFetchDocs
- * Wrapper component that provides v-autocomplete with API integration with Firestore.
  * @author shisyamo4131
  */
 export default {
@@ -17,14 +9,16 @@ export default {
    * PROPS
    ****************************************************************************/
   props: {
+    belongs: { type: Array, default: () => [], required: false },
     collectionId: { type: String, required: true },
     constraints: { type: Array, default: () => [], required: false },
     delay: { type: [String, Number], default: 500, required: false },
-    itemValue: {
+    itemKey: {
       type: [String, Array, Function],
       default: 'docId',
       required: false,
     },
+    sortBy: { type: String, default: 'code', required: false },
     tokenField: { type: String, default: 'tokenMap', required: false },
   },
   /****************************************************************************
@@ -42,41 +36,74 @@ export default {
    * WATCH
    ****************************************************************************/
   watch: {
+    '$attrs.search': {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.searchInput = newVal
+      },
+      immediate: true,
+    },
     searchInput: {
-      handler(v) {
+      handler(newVal, oldVal) {
         this.loading = true
         clearTimeout(this.timerId)
-        if (!v) {
+        if (newVal === oldVal || !newVal) {
           this.loading = false
-          return
+        } else {
+          const delay = newVal ? Number(this.delay) : 0
+          this.timerId = setTimeout(async () => {
+            await this.fetchDocs(newVal)
+            this.loading = false
+          }, delay)
         }
-        const delay = v ? Number(this.delay) : 0
-        this.timerId = setTimeout(async () => {
-          await this.fetchDocs(v)
-          this.loading = false
-        }, delay)
+        this.$emit('update:search', newVal)
       },
+      immediate: true,
     },
     '$attrs.value': {
-      handler(newVal, oldVal) {
-        if (newVal === oldVal || !newVal) return
-        const ids = []
-        if (typeof newVal === 'object' && Array.isArray(newVal)) {
-          ids.push(...newVal.map((item) => item?.[this.itemValue] || item))
-        } else if (typeof newVal === 'object') {
-          const id = this.$attrs.value?.[this.itemValue] || undefined
-          if (id) ids.push(id)
-        } else {
-          const id = this.$attrs.value || undefined
-          if (id) ids.push(id)
-        }
-        for (const id of ids) {
-          if (!this.items.some((item) => item[this.itemValue] === id)) {
-            const docRef = doc(this.$firestore, `${this.collectionId}/${id}`)
-            getDoc(docRef).then((docSnapshot) => {
-              if (docSnapshot.exists()) this.items.push(docSnapshot.data())
+      async handler(newVal, oldVal) {
+        try {
+          if (newVal === oldVal || !newVal) return
+          this.loading = true
+          const ids = []
+          if (typeof newVal === 'object' && Array.isArray(newVal)) {
+            ids.push(...newVal.map((item) => item?.[this.itemKey] || item))
+          } else if (typeof newVal === 'object') {
+            const id = this.$attrs.value?.[this.itemKey] || undefined
+            if (id) ids.push(id)
+          } else {
+            const id = this.$attrs.value || undefined
+            if (id) ids.push(id)
+          }
+          const newIds = ids.filter(
+            (id) => !this.items.some((item) => item[this.itemKey] === id)
+          )
+          const chunkedIds = newIds.flatMap((_, i, a) =>
+            i % 30 ? [] : [a.slice(i, i + 30)]
+          )
+          const colRef = collection(this.$firestore, this.collectionId)
+          for (const ids of chunkedIds) {
+            const q = query(colRef, where(this.itemKey, 'in', ids))
+            const querySnapshot = await getDocs(q)
+            const newDocs = querySnapshot.docs.map((doc) => doc)
+            const fetchedBelongs = await this.fetchBelongs(newDocs)
+            newDocs.forEach((doc) => {
+              const belongsResult = this.belongs.reduce((sum, belong) => {
+                sum[belong.name] = fetchedBelongs[belong.collectionId].find(
+                  (item) =>
+                    item[belong.primaryKey] === doc.data()[belong.foreignKey]
+                )
+                return sum
+              }, {})
+              this.items.push({ ...doc.data(), ...belongsResult })
             })
           }
+        } catch (err) {
+          // eslint-disable-next-line
+          console.err(err)
+          alert(err.message)
+        } finally {
+          this.loading = false
         }
       },
       immediate: true,
@@ -119,24 +146,49 @@ export default {
       const q = query(colRef, ...this.constraints, ...wheres)
       const querySnapshot = await getDocs(q)
       if (querySnapshot.empty) return
-      querySnapshot.docs.forEach((doc) => {
-        const isExist = this.items.some((item) => {
-          return item[this.itemValue] === doc.data()[this.itemValue]
-        })
-        if (!isExist) this.items.push(doc.data())
+      const newDocs = querySnapshot.docs.filter((docSnapshot) => {
+        const id = docSnapshot.data()[this.itemKey]
+        return !this.items.some((item) => item[this.itemKey] === id)
       })
+      const fetchedBelongs = await this.fetchBelongs(newDocs)
+      newDocs.forEach((doc) => {
+        const belongsResult = this.belongs.reduce((sum, belong) => {
+          sum[belong.name] = fetchedBelongs[belong.collectionId].find(
+            (item) => item[belong.primaryKey] === doc.data()[belong.foreignKey]
+          )
+          return sum
+        }, {})
+        this.items.push({ ...doc.data(), ...belongsResult })
+      })
+    },
+    async fetchBelongs(newDocs) {
+      const result = {}
+      for (const belong of this.belongs) {
+        const fetchedDocs = []
+        const chunkedIds = [
+          ...new Set(newDocs.map((doc) => doc.data()[belong.foreignKey])),
+        ].flatMap((_, i, a) => (i % 30 ? [] : [a.slice(i, i + 30)]))
+        const colRef = collection(this.$firestore, belong.collectionId)
+        for (const ids of chunkedIds) {
+          const q = query(colRef, where(belong.primaryKey, 'in', ids))
+          const querySnapshot = await getDocs(q)
+          fetchedDocs.push(...querySnapshot.docs.map((doc) => doc.data()))
+        }
+        result[belong.collectionId] = fetchedDocs
+      }
+      return result
     },
   },
   /****************************************************************************
    * RENDER
    ****************************************************************************/
-  render(createElement) {
-    return createElement('div', {}, [
-      this.$scopedSlots.default({
+  render() {
+    return this.$scopedSlots.default({
+      autocomplete: {
         attrs: {
           cacheItems: true,
           items: this.items,
-          itemValue: this.itemValue,
+          itemValue: this.itemKey,
           loading: this.loading,
           searchInput: this.searchInput,
           ...this.$attrs,
@@ -145,8 +197,8 @@ export default {
           'update:search-input': ($event) => (this.searchInput = $event),
           ...this.$listeners,
         },
-      }),
-    ])
+      },
+    })
   },
 }
 </script>

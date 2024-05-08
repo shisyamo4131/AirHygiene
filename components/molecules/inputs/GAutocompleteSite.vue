@@ -1,11 +1,11 @@
 <script>
-import { doc, getDoc } from 'firebase/firestore'
+import GChipSiteStatus from '../chips/GChipSiteStatus.vue'
 import GAutocompleteFirestore from './GAutocompleteFirestore.vue'
 export default {
-  components: { GAutocompleteFirestore },
+  components: { GAutocompleteFirestore, GChipSiteStatus },
   props: {
     autoSelectFirst: { type: Boolean, default: true, required: false },
-    itemValue: { type: String, default: 'docId', required: false },
+    multiple: { type: Boolean, default: false, required: false },
   },
   data() {
     return {
@@ -16,13 +16,6 @@ export default {
       },
     }
   },
-  methods: {
-    async customer(docId) {
-      const docRef = doc(this.$firestore, `Customers/${docId}`)
-      const docSnapshot = await getDoc(docRef)
-      return docSnapshot.data()
-    },
-  },
 }
 </script>
 
@@ -31,6 +24,16 @@ export default {
     v-bind="{ ...$props, ...$attrs }"
     collection-id="Sites"
     :filter="filter"
+    :item-text="(item) => `${item.code}: ${item.abbr}`"
+    item-value="docId"
+    :belongs="[
+      {
+        collectionId: 'Customers',
+        primaryKey: 'docId',
+        foreignKey: 'customerId',
+        name: 'customer',
+      },
+    ]"
     v-on="$listeners"
   >
     <template
@@ -43,12 +46,16 @@ export default {
       <slot :name="slotName" />
     </template>
     <template #item="{ item, attrs, on }">
-      <v-list-item v-bind="attrs" v-on="on">
+      <v-list-item v-slot="{ active }" v-bind="attrs" v-on="on">
+        <v-list-item-action v-if="multiple">
+          <v-checkbox :input-value="active" />
+        </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>{{ item.abbr }}</v-list-item-title>
-          <v-list-item-subtitle>{{
-            customer(item.customerId)
-          }}</v-list-item-subtitle>
+          <v-list-item-title>
+            {{ `${item.code}: ${item.abbr}` }}
+            <g-chip-site-status class="ml-2" :value="item.status" x-small />
+          </v-list-item-title>
+          <v-list-item-subtitle>{{ item.customer.abbr }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </template>
