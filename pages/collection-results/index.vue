@@ -1,13 +1,13 @@
-<template>
-  <g-template-transaction-page-collection-results />
-</template>
-
 <script>
-import GTemplateTransactionPageCollectionResults from '~/components/templates/GTemplateTransactionPageCollectionResults.vue'
+import GTemplateIndexPageCollectionResults from '~/components/templates/GTemplateIndexPageCollectionResults.vue'
 export default {
   name: 'CollectionResultsIndex',
-  components: { GTemplateTransactionPageCollectionResults },
+  components: { GTemplateIndexPageCollectionResults },
 }
 </script>
+
+<template>
+  <g-template-index-page-collection-results />
+</template>
 
 <style></style>

@@ -22,7 +22,7 @@ export default {
       listener: this.$CollectionResult(),
       model: this.$CollectionResult(),
       search: null,
-      selectedSite: 'TRVyrinLCAoyEr2slUMp',
+      selectedSite: null,
     }
   },
   watch: {
