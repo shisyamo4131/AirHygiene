@@ -55,7 +55,7 @@ export default class Customer extends FireModel {
   constructor(context, item) {
     super(context, item)
     this.collection = 'Customers'
-    this.tokenFields = ['code', 'abbr', 'abbrKana']
+    this.tokenFields = ['abbr', 'abbrKana']
     this.hasMany = [
       {
         collection: 'Sites',

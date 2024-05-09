@@ -10,7 +10,6 @@ export default {
   data() {
     return {
       filter: (item, queryText) => {
-        if (item.code.includes(queryText)) return true
         if (item.abbr.includes(queryText)) return true
         if (item.abbrKana.includes(queryText)) return true
       },

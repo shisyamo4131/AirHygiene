@@ -30,7 +30,7 @@ export default class CollectionResult extends FireModel {
   constructor(context, siteId, item) {
     super(context, item)
     this.collection = `Sites/${siteId}/CollectionResults`
-    this.tokenFields = ['abbr', 'abbrKana']
+    // this.tokenFields = ['abbr', 'abbrKana']
     Object.defineProperties(this, {
       amountString: {
         enumerable: true,
