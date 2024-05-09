@@ -10,6 +10,11 @@ export default {
   props: {
     dense: { type: Boolean, default: true, required: false },
     label: { type: String, default: undefined, required: false },
+    numberError: {
+      type: String,
+      default: '数値を入力してください',
+      required: false,
+    },
     outlined: { type: Boolean, default: true, required: false },
     required: { type: Boolean, default: false, required: false },
     requiredError: { type: String, default: '必須入力', required: false },
