@@ -4,7 +4,6 @@ import GAutocompleteFirestore from './GAutocompleteFirestore.vue'
 export default {
   components: { GAutocompleteFirestore, GChipSiteStatus },
   props: {
-    // autoSelectFirst: { type: Boolean, default: true, required: false },
     multiple: { type: Boolean, default: false, required: false },
   },
   data() {
