@@ -32,22 +32,6 @@ export default class CollectionResult extends FireModel {
     this.collection = `Sites/${siteId}/CollectionResults`
     this.tokenFields = ['abbr', 'abbrKana']
     Object.defineProperties(this, {
-      price: {
-        enumerable: true,
-        get() {
-          if (!this.amount || !this.unitPrice) return 0
-          return (this.amount * 100 * (this.unitPrice * 100)) / 10000
-        },
-        set(v) {},
-      },
-      convertedWeight: {
-        enumerable: true,
-        get() {
-          if (!this.amount || !this.convertWeight) return 0
-          return (this.amount * 100 * (this.convertWeight * 100)) / 10000
-        },
-        set(v) {},
-      },
       amountString: {
         enumerable: true,
         get() {
@@ -68,6 +52,14 @@ export default class CollectionResult extends FireModel {
         },
         set(v) {},
       },
+      convertedWeight: {
+        enumerable: true,
+        get() {
+          if (!this.amount || !this.convertWeight) return 0
+          return (this.amount * 100 * (this.convertWeight * 100)) / 10000
+        },
+        set(v) {},
+      },
       convertedWeightString: {
         enumerable: true,
         get() {
@@ -78,13 +70,24 @@ export default class CollectionResult extends FireModel {
         },
         set(v) {},
       },
-      unitPriceString: {
+      dateObj: {
         enumerable: true,
         get() {
-          return (this.unitPrice || 0).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })
+          if (!this.date) return null
+          const date = new Date(this.date)
+          const year = date.getFullYear()
+          const month = date.getMonth() + 1
+          const day = date.getDate()
+          const dayOfWeek = date.getDay()
+          return { year, month, day, dayOfWeek }
+        },
+        set(v) {},
+      },
+      price: {
+        enumerable: true,
+        get() {
+          if (!this.amount || !this.unitPrice) return 0
+          return (this.amount * 100 * (this.unitPrice * 100)) / 10000
         },
         set(v) {},
       },
@@ -92,6 +95,16 @@ export default class CollectionResult extends FireModel {
         enumerable: true,
         get() {
           return (this.price || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        },
+        set(v) {},
+      },
+      unitPriceString: {
+        enumerable: true,
+        get() {
+          return (this.unitPrice || 0).toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })

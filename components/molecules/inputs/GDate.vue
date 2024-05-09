@@ -35,6 +35,7 @@ export default {
       required: false,
     },
     pickerOnly: { type: Boolean, default: false, required: false },
+    pickerProps: { type: Object, default: () => ({}), required: false },
     required: { type: Boolean, default: false, required: false },
     value: { type: String, default: '', required: false },
   },
@@ -44,6 +45,16 @@ export default {
       date: null,
       menu: false,
     }
+  },
+  computed: {
+    inputAttrs() {
+      return {
+        ...this.$attrs,
+        value: this.date,
+        readonly: this.pickerOnly || this.$vuetify.breakpoint.mobile,
+        required: this.menu ? false : this.required,
+      }
+    },
   },
   watch: {
     /**
@@ -93,29 +104,38 @@ export default {
     :return-value.sync="date"
   >
     <template #activator="{ attrs, on }">
-      <a-date
+      <slot
+        name="activator"
         v-bind="{
-          ...$attrs,
-          value: date,
-          readonly: pickerOnly || $vuetify.breakpoint.mobile,
-          required: menu ? false : required,
-          ...attrs,
+          attrs: { ...inputAttrs, ...attrs },
+          on: { ...$listeners, ...on },
         }"
-        v-on="{ ...$listeners, ...on }"
       >
-        <template
-          v-for="(_, scopedSlotName) in $scopedSlots"
-          #[scopedSlotName]="slotData"
+        <a-date
+          v-bind="{
+            ...$attrs,
+            value: date,
+            readonly: pickerOnly || $vuetify.breakpoint.mobile,
+            required: menu ? false : required,
+            ...attrs,
+          }"
+          v-on="{ ...$listeners, ...on }"
         >
-          <slot :name="scopedSlotName" v-bind="slotData" />
-        </template>
-        <template v-for="(_, slotName) in $slots" #[slotName]>
-          <slot :name="slotName" />
-        </template>
-      </a-date>
+          <template
+            v-for="(_, scopedSlotName) in $scopedSlots"
+            #[scopedSlotName]="slotData"
+          >
+            <slot :name="scopedSlotName" v-bind="slotData" />
+          </template>
+          <template v-for="(_, slotName) in $slots" #[slotName]>
+            <slot :name="slotName" />
+          </template>
+        </a-date>
+      </slot>
     </template>
     <!-- Picker's value is current date if the 'date' is null. -->
     <a-date-picker
+      v-bind="{ ...pickerProps }"
       :value="date || $dayjs().format('YYYY-MM-DD')"
       :active-picker.sync="internalActivePicker"
       @change="$refs.menu.save($event)"
