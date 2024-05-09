@@ -1,22 +1,31 @@
 <script>
 /**
+ * ### ATextarea
  * @author shisyamo4131
  */
-export default {}
+export default {
+  /***************************************************************************
+   * PROPS
+   ***************************************************************************/
+  props: {
+    label: { type: String, default: undefined, required: false },
+    outlined: { type: Boolean, default: true, required: false },
+    required: { type: Boolean, default: false, required: false },
+    requiredError: { type: String, default: '必須入力', required: false },
+  },
+}
 </script>
 
 <template>
-  <air-textarea
-    v-bind="$attrs"
-    outlined
-    required-error="必須入力"
-    v-on="$listeners"
-  >
-    <template
-      v-for="(_, scopedSlotName) in $scopedSlots"
-      #[scopedSlotName]="slotData"
-    >
-      <slot :name="scopedSlotName" v-bind="slotData" />
+  <air-textarea v-bind="{ ...$props, ...$attrs }" v-on="$listeners">
+    <template #label>
+      <slot name="label">
+        {{ label }}
+        <span v-if="required" style="color: red">*</span>
+      </slot>
+    </template>
+    <template v-for="(_, scopedSlot) in $scopedSlots" #[scopedSlot]="slotData">
+      <slot :name="scopedSlot" v-bind="slotData" />
     </template>
     <template v-for="(_, slotName) in $slots" #[slotName]>
       <slot :name="slotName" />

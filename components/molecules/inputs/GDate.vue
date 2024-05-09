@@ -5,88 +5,121 @@
  * @author shisyamo4131
  */
 import ADate from '~/components/atoms/inputs/ADate.vue'
+import ADatePicker from '~/components/atoms/pickers/ADatePicker.vue'
 export default {
-  components: { ADate },
+  components: { ADate, ADatePicker },
   props: {
-    pickerProps: { type: Object, default: () => ({}), required: false },
+    /**
+     * A string indicating which picker is being displayed. Use with the .sync modifier.
+     * Use 'defaultPicker' to specify which picker to display.
+     */
+    activePicker: { type: String, default: undefined, required: false },
+    /**
+     * An string or undefined used to define which picker is displayed when picker is opend.
+     * Ignored if the 'value' is set.
+     */
+    defaultPicker: {
+      type: String,
+      default: undefined,
+      validator: (v) => !v || ['YEAR', 'MONTH', 'DATE'].includes(v),
+      required: false,
+    },
+    menuProps: {
+      type: Object,
+      default: () => ({
+        closeOnContentClick: false,
+        minWidth: 'auto',
+        offsetY: true,
+        transition: 'scale-transition',
+      }),
+      required: false,
+    },
+    pickerOnly: { type: Boolean, default: false, required: false },
+    required: { type: Boolean, default: false, required: false },
+    value: { type: String, default: '', required: false },
   },
   data() {
     return {
-      activePicker: null,
+      internalActivePicker: null,
+      date: null,
       menu: false,
     }
   },
-  computed: {
+  watch: {
+    /**
+     * Changed the 'date' means the date was changed (selected) by the date-picker.
+     * Emits input event with new date value as an argument for v-model.
+     */
     date: {
-      get() {
-        return this.$attrs.value || null
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.$emit('input', newVal)
       },
-      set(v) {
-        this.$emit('input', v)
+      immediate: true,
+    },
+    internalActivePicker: {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.$emit('update:activePicker', newVal)
       },
     },
-  },
-  watch: {
     menu(val) {
       // ディレイをある程度指定しないと年のスクロールが行われない。
       // たぶん原因は日付データのバケツリレー。
       val &&
         setTimeout(() => {
-          this.activePicker = 'YEAR'
+          if (this.defaultPicker && !this.value) {
+            this.internalActivePicker = this.defaultPicker
+          }
         }, 100)
     },
-  },
-  methods: {
-    // save(date) {
-    //   this.$refs.menu.save(date)
-    // },
+    value: {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return
+        this.date = newVal
+      },
+      immediate: true,
+    },
   },
 }
 </script>
 
 <template>
-  <div>
-    <a-date
-      v-if="!$vuetify.breakpoint.mobile"
-      v-bind="$attrs"
-      v-on="$listeners"
-    >
-      <template
-        v-for="(_, scopedSlotName) in $scopedSlots"
-        #[scopedSlotName]="slotData"
+  <v-menu
+    ref="menu"
+    v-model="menu"
+    v-bind="{ ...menuProps }"
+    :disabled="pickerOnly ? false : $vuetify.breakpoint.mobile"
+    :return-value.sync="date"
+  >
+    <template #activator="{ attrs, on }">
+      <a-date
+        v-bind="{
+          ...$attrs,
+          value: date,
+          readonly: pickerOnly || $vuetify.breakpoint.mobile,
+          required: menu ? false : required,
+          ...attrs,
+        }"
+        v-on="{ ...$listeners, ...on }"
       >
-        <slot :name="scopedSlotName" v-bind="slotData" />
-      </template>
-      <template v-for="(_, slotName) in $slots" #[slotName]>
-        <slot :name="slotName" />
-      </template>
-    </a-date>
-    <v-menu
-      v-else
-      ref="menu"
-      v-model="menu"
-      :close-on-content-click="false"
-      transition="scale-transition"
-      offset-y
-      min-width="auto"
-    >
-      <template #activator="{ attrs, on }">
-        <a-date
-          v-model="date"
-          readonly
-          v-bind="{ ...$attrs, ...attrs }"
-          v-on="{ ...$listeners, ...on }"
-        ></a-date>
-      </template>
-      <v-date-picker
-        v-model="date"
-        v-bind="pickerProps"
-        locale="ja-jp"
-        :active-picker.sync="activePicker"
-        :picker-date="date"
-        @change="$refs.menu.save($event)"
-      ></v-date-picker>
-    </v-menu>
-  </div>
+        <template
+          v-for="(_, scopedSlotName) in $scopedSlots"
+          #[scopedSlotName]="slotData"
+        >
+          <slot :name="scopedSlotName" v-bind="slotData" />
+        </template>
+        <template v-for="(_, slotName) in $slots" #[slotName]>
+          <slot :name="slotName" />
+        </template>
+      </a-date>
+    </template>
+    <!-- Picker's value is current date if the 'date' is null. -->
+    <a-date-picker
+      :value="date || $dayjs().format('YYYY-MM-DD')"
+      :active-picker.sync="internalActivePicker"
+      @change="$refs.menu.save($event)"
+    ></a-date-picker>
+  </v-menu>
 </template>
 <style></style>

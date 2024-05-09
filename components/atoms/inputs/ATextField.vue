@@ -16,12 +16,12 @@ export default {
    ***************************************************************************/
   props: {
     dense: { type: Boolean, default: true, required: false },
-    ignoreSurrogatePair: { type: Boolean, default: false, required: false },
     emailError: {
       type: String,
       default: '正しくありません。',
       required: false,
     },
+    ignoreSurrogatePair: { type: Boolean, default: false, required: false },
     katakanaError: {
       type: String,
       default: '全角カタカナ・スペースのみ使用可能です',
@@ -32,7 +32,9 @@ export default {
       default: (v) => /^[\u30A1-\u30F6ー\x20\u3000]+$/.test(v),
       required: false,
     },
+    label: { type: String, default: undefined, required: false },
     outlined: { type: Boolean, default: true, required: false },
+    required: { type: Boolean, default: false, required: false },
     requiredError: { type: String, default: '必須入力', required: false },
     rules: { type: Array, default: () => [], required: false },
     value: { type: undefined, default: undefined, required: false },
@@ -71,11 +73,14 @@ export default {
     :rules="[...rules, surrogateRule]"
     v-on="$listeners"
   >
-    <template
-      v-for="(_, scopedSlotName) in $scopedSlots"
-      #[scopedSlotName]="slotData"
-    >
-      <slot :name="scopedSlotName" v-bind="slotData" />
+    <template #label>
+      <slot name="label">
+        {{ label }}
+        <span v-if="required" style="color: red">*</span>
+      </slot>
+    </template>
+    <template v-for="(_, scopedSlot) in $scopedSlots" #[scopedSlot]="slotData">
+      <slot :name="scopedSlot" v-bind="slotData" />
     </template>
     <template v-for="(_, slotName) in $slots" #[slotName]>
       <slot :name="slotName" />

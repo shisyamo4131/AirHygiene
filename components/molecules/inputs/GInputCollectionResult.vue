@@ -9,7 +9,6 @@ import GNumeric from './GNumeric.vue'
 import GDate from './GDate.vue'
 import GAutocompleteItem from './GAutocompleteItem.vue'
 import GAutocompleteUnit from './GAutocompleteUnit.vue'
-// import GAutocompleteSite from './GAutocompleteSite.vue'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import { props } from '~/models/CollectionResult'
 export default {
@@ -23,7 +22,6 @@ export default {
     GDate,
     GAutocompleteItem,
     GAutocompleteUnit,
-    // GAutocompleteSite,
   },
   /***************************************************************************
    * MIXINS
@@ -55,16 +53,11 @@ export default {
 
 <template>
   <div>
-    <!-- <g-autocomplete-site
-      :value="siteId"
-      label="排出場所"
-      required
-      @input="$emit('update:siteId', $event)"
-    /> -->
     <g-date
       :value="date"
       label="回収日"
       required
+      picker-only
       :disabled="loading"
       :loading="loading"
       @input="$emit('update:date', $event)"

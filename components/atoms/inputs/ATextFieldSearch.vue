@@ -5,6 +5,9 @@
  * @author shisyamo4131
  */
 export default {
+  /***************************************************************************
+   * PROPS
+   ***************************************************************************/
   props: {
     clearable: { type: Boolean, default: true, required: false },
     dense: { type: Boolean, default: true, required: false },
@@ -19,11 +22,8 @@ export default {
 
 <template>
   <v-text-field v-bind="{ ...$props, ...$attrs }" v-on="$listeners">
-    <template
-      v-for="(_, scopedSlotName) in $scopedSlots"
-      #[scopedSlotName]="slotData"
-    >
-      <slot :name="scopedSlotName" v-bind="slotData" />
+    <template v-for="(_, scopedSlot) in $scopedSlots" #[scopedSlot]="slotData">
+      <slot :name="scopedSlot" v-bind="slotData" />
     </template>
     <template v-for="(_, slotName) in $slots" #[slotName]>
       <slot :name="slotName" />

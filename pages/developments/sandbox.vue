@@ -1,27 +1,16 @@
 <template>
   <v-container>
-    <g-text-field-search />
-    <g-autocomplete-site v-model="objectValue" :search.sync="search" multiple />
-    {{ value }}
+    <g-date v-model="value" required clearable default-picker="YEAR" />
   </v-container>
 </template>
 
 <script>
-import GAutocompleteSite from '~/components/molecules/inputs/GAutocompleteSite.vue'
-import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
+import GDate from '~/components/molecules/inputs/GDate.vue'
 export default {
-  components: { GAutocompleteSite, GTextFieldSearch },
+  components: { GDate },
   data() {
     return {
-      search: null,
-      value: 'TRVyrinLCAoyEr2slUMp',
-      objectValue: [
-        'TRVyrinLCAoyEr2slUMp',
-        '2lF7careP5MRntKeCfwH',
-        'ODrMTuhF5lo3mUHV6PsY',
-        'itjgwiCjX6AAjFYT3dHg',
-        'qyoLDzRjZyxXHet6AQmR',
-      ],
+      value: '',
     }
   },
   methods: {},
