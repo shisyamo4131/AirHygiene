@@ -53,19 +53,26 @@ export default {
           </template>
         </g-dialog-editor>
       </template>
-      <g-data-table v-bind="table.attrs" :search="search" v-on="table.on">
-        <template #[`group.header`]="{ headers, group, toggle, isOpen }">
-          <td :colspan="headers.length" class="text-start">
-            <v-btn icon small @click="toggle">
-              <v-icon>{{ `mdi-chevron-${isOpen ? 'up' : 'down'}` }}</v-icon>
-            </v-btn>
-            {{ $ITEM_GROUP[group] }}
-          </td>
-        </template>
-        <template #[`item.group`]="{ item }">
-          {{ $ITEM_GROUP[item.group] }}
-        </template>
-      </g-data-table>
+      <template #default="{ height }">
+        <g-data-table
+          v-bind="table.attrs"
+          :height="height"
+          :search="search"
+          v-on="table.on"
+        >
+          <template #[`group.header`]="{ headers, group, toggle, isOpen }">
+            <td :colspan="headers.length" class="text-start">
+              <v-btn icon small @click="toggle">
+                <v-icon>{{ `mdi-chevron-${isOpen ? 'up' : 'down'}` }}</v-icon>
+              </v-btn>
+              {{ $ITEM_GROUP[group] }}
+            </td>
+          </template>
+          <template #[`item.group`]="{ item }">
+            {{ $ITEM_GROUP[item.group] }}
+          </template>
+        </g-data-table>
+      </template>
     </g-template-index-page>
   </a-collection-controller>
 </template>
