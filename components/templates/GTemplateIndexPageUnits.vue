@@ -1,18 +1,12 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
 import GInputUnit from '../molecules/inputs/GInputUnit.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
   components: {
-    ACollectionController,
     GTemplateIndexPage,
-    GDialogEditor,
     GInputUnit,
     GDataTable,
-    GBtnRegistIcon,
   },
   data() {
     return {
@@ -25,8 +19,7 @@ export default {
 </script>
 
 <template>
-  <a-collection-controller
-    v-slot="{ dialog, editor, table, pagination }"
+  <g-template-index-page
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
@@ -41,21 +34,13 @@ export default {
       'sort-by': 'code',
     }"
   >
-    <g-template-index-page :pagination="pagination">
-      <template #append-search>
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
-          <template #activator="{ attrs, on }">
-            <g-btn-regist-icon v-bind="attrs" v-on="on" />
-          </template>
-          <template #form>
-            <g-input-unit v-bind="editor.attrs" v-on="editor.on" />
-          </template>
-        </g-dialog-editor>
-      </template>
-      <g-data-table v-bind="table.attrs" :search="search" v-on="table.on">
-      </g-data-table>
-    </g-template-index-page>
-  </a-collection-controller>
+    <template #form="{ attrs, on }">
+      <g-input-unit v-bind="attrs" v-on="on" />
+    </template>
+    <template #table="{ attrs, on }">
+      <g-data-table v-bind="attrs" :search="search" v-on="on" />
+    </template>
+  </g-template-index-page>
 </template>
 
 <style></style>

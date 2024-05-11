@@ -1,8 +1,5 @@
 <script>
 import { where } from 'firebase/firestore'
-import ACollectionController from '../atoms/ACollectionController.vue'
-import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
 import GInputCollectionResult from '../molecules/inputs/GInputCollectionResult.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GAutocompleteSite from '../molecules/inputs/GAutocompleteSite.vue'
@@ -13,11 +10,8 @@ import GSelect from '../molecules/inputs/GSelect.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
   components: {
-    ACollectionController,
     GTemplateIndexPage,
-    GDialogEditor,
     GInputCollectionResult,
-    GBtnRegistIcon,
     GDataTable,
     GAutocompleteSite,
     GDate,
@@ -91,10 +85,11 @@ export default {
 </script>
 
 <template>
-  <a-collection-controller
-    v-slot="{ dialog, editor, table, pagination }"
+  <g-template-index-page
     :actions="['edit', 'delete']"
+    :deduct-height="!searchBox ? 0 : $vuetify.breakpoint.sm ? 56 : 64"
     :dialog-props="{ maxWidth: 600 }"
+    :disable-regist="!selectedSite"
     :items="computedItems"
     label="回収実績"
     :model="model"
@@ -121,57 +116,52 @@ export default {
       sortBy: 'date',
       sortDesc: true,
     }"
+    :search.sync="search"
   >
-    <g-template-index-page :search.sync="search" :pagination="pagination">
-      <template #search>
-        <g-date
-          v-model="selectedMonth"
-          hide-details
-          label="回収年月"
-          picker-only
-          :picker-props="{ type: 'month' }"
-        >
-          <template #activator="{ attrs, on }">
-            <g-text-field
-              v-bind="attrs"
-              style="max-width: 132px; min-width: 132px"
-              v-on="on"
-            >
-              <template #prepend-inner>
-                <v-icon>mdi-calendar</v-icon>
-              </template>
-            </g-text-field>
-          </template>
-        </g-date>
-        <v-divider vertical class="mx-3" />
-        <g-autocomplete-site
-          v-model="selectedSite"
-          label="排出場所"
-          hide-details
-        />
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
-          <template #activator="{ attrs, on }">
-            <g-btn-regist-icon
-              v-bind="attrs"
-              :disabled="!selectedSite"
-              v-on="on"
-            />
-          </template>
-          <template #form>
-            <g-input-collection-result v-bind="editor.attrs" v-on="editor.on" />
-          </template>
-        </g-dialog-editor>
-        <v-divider vertical class="mx-1" />
-        <v-btn icon @click="searchBox = !searchBox">
-          <v-icon color="primary">
-            {{ `mdi-magnify-${searchBox ? 'minus' : 'plus'}-outline` }}
-          </v-icon>
-        </v-btn>
-      </template>
+    <template #search>
+      <g-date
+        v-model="selectedMonth"
+        hide-details
+        label="回収年月"
+        picker-only
+        :picker-props="{ type: 'month' }"
+      >
+        <template #activator="{ attrs, on }">
+          <g-text-field
+            v-bind="attrs"
+            style="max-width: 132px; min-width: 132px"
+            v-on="on"
+          >
+            <template #prepend-inner>
+              <v-icon>mdi-calendar</v-icon>
+            </template>
+          </g-text-field>
+        </template>
+      </g-date>
+      <v-divider vertical class="mx-3" />
+      <g-autocomplete-site
+        v-model="selectedSite"
+        style="max-width: 360px; width: 360px"
+        label="排出場所"
+        hide-details
+      />
+    </template>
+    <template #append-search>
+      <v-divider vertical class="mx-1" />
+      <v-btn icon @click="searchBox = !searchBox">
+        <v-icon color="primary">
+          {{ `mdi-magnify-${searchBox ? 'minus' : 'plus'}-outline` }}
+        </v-icon>
+      </v-btn>
+    </template>
+    <template #form="{ attrs, on }">
+      <g-input-collection-result v-bind="attrs" v-on="on" />
+    </template>
+    <template #append-search-bar>
       <v-expand-transition>
-        <v-sheet v-show="searchBox" outlined class="pa-3" rounded>
+        <v-toolbar v-show="searchBox" flat>
           <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="6">
               <g-select
                 v-model="searchResultType"
                 label="回収区分"
@@ -180,7 +170,7 @@ export default {
                 clearable
               />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="6">
               <g-autocomplete-item
                 v-model="searchItemId"
                 label="回収品目"
@@ -189,9 +179,11 @@ export default {
               />
             </v-col>
           </v-row>
-        </v-sheet>
+        </v-toolbar>
       </v-expand-transition>
-      <g-data-table v-bind="table.attrs" v-on="table.on">
+    </template>
+    <template #table="{ attrs, on }">
+      <g-data-table v-bind="attrs" v-on="on">
         <template #[`item.resultType`]="{ item }">
           {{ $COLLECTION_RESULT_TYPE[item.resultType] }}
         </template>
@@ -212,8 +204,8 @@ export default {
           {{ `${item.convertedWeightString} kg` }}
         </template>
       </g-data-table>
-    </g-template-index-page>
-  </a-collection-controller>
+    </template>
+  </g-template-index-page>
 </template>
 
 <style></style>

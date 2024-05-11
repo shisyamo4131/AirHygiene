@@ -9,7 +9,14 @@ export default {
    ***************************************************************************/
   props: {
     /* An object priveded to the table component. */
-    actions: { type: Array, default: () => [], required: false },
+    actions: {
+      type: Array,
+      default: () => ['edit', 'delete', 'detail'],
+      validator: (v) =>
+        !v.length ||
+        v.every((action) => ['edit', 'delete', 'detail'].includes(action)),
+      required: false,
+    },
     /* A function used to different process from default submit. */
     customSubmit: { type: Function, default: undefined, required: false },
     /* An object used to initialize the model when edit-mode is 'REGIST'. */
@@ -64,7 +71,6 @@ export default {
     dialog: {
       handler(v) {
         if (!v) {
-          // this.editModel.initialize(this.defaultItem)
           this.model.initialize(this.defaultItem)
           this.editMode = 'REGIST'
         }
@@ -99,7 +105,6 @@ export default {
     },
     onClickEdit(item) {
       this.editMode = 'UPDATE'
-      // this.editModel.initialize(item)
       this.model.initialize(item)
       this.dialog = true
     },

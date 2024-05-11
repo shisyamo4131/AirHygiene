@@ -1,21 +1,15 @@
 <script>
 import { where } from 'firebase/firestore'
-import ACollectionController from '../atoms/ACollectionController.vue'
-import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
 import GActionCardSimpleCustomer from '../molecules/cards/GActionCardSimpleCustomer.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
-import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
 import GDataIterator from '../molecules/tables/GDataIterator.vue'
+import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
   components: {
-    ACollectionController,
     GTemplateIndexPage,
-    GDialogEditor,
-    GInputCustomer,
     GDataIterator,
     GActionCardSimpleCustomer,
-    GBtnRegistIcon,
+    GInputCustomer,
   },
   data() {
     return {
@@ -23,7 +17,6 @@ export default {
       lazySearch: null,
       listener: this.$Customer(),
       model: this.$Customer(),
-      search: null,
     }
   },
   computed: {
@@ -38,8 +31,7 @@ export default {
   watch: {
     lazySearch: {
       handler(newVal, oldVal) {
-        if (newVal === oldVal) return
-        this.subscribe()
+        if (newVal !== oldVal) this.subscribe()
       },
       immediate: true,
     },
@@ -62,9 +54,7 @@ export default {
 </script>
 
 <template>
-  <a-collection-controller
-    v-slot="{ dialog, editor, table, pagination }"
-    :actions="['edit', 'delete', 'detail']"
+  <g-template-index-page
     :dialog-props="{ maxWidth: 600 }"
     :items="items"
     label="取引先"
@@ -73,34 +63,24 @@ export default {
       cols: { cols: 12, md: 6, lg: 4, xl: 3 },
       sortBy: 'code',
     }"
+    :lazy-search.sync="lazySearch"
     @click:detail="$router.push(`/customers/${$event.docId}`)"
   >
-    <g-template-index-page
-      :search.sync="search"
-      :pagination="pagination"
-      :lazy-search.sync="lazySearch"
-    >
-      <template #append-search>
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
-          <template #activator="{ attrs, on }">
-            <g-btn-regist-icon v-bind="attrs" v-on="on" />
-          </template>
-          <template #form>
-            <g-input-customer v-bind="editor.attrs" v-on="editor.on" />
-          </template>
-        </g-dialog-editor>
-      </template>
-      <g-data-iterator
-        :no-data-text="noDataText"
-        v-bind="table.attrs"
-        v-on="table.on"
-      >
-        <template #col="{ attrs, on }">
-          <g-action-card-simple-customer v-bind="attrs" outlined v-on="on" />
+    <template #form="{ attrs, on }">
+      <g-input-customer v-bind="attrs" v-on="on" />
+    </template>
+    <template #table="{ attrs, on }">
+      <g-data-iterator :no-data-text="noDataText" v-bind="attrs" v-on="on">
+        <template #col="colProps">
+          <g-action-card-simple-customer
+            v-bind="colProps.attrs"
+            outlined
+            v-on="colProps.on"
+          />
         </template>
       </g-data-iterator>
-    </g-template-index-page>
-  </a-collection-controller>
+    </template>
+  </g-template-index-page>
 </template>
 
 <style></style>

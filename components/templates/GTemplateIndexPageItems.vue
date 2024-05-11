@@ -1,18 +1,12 @@
 <script>
-import ACollectionController from '../atoms/ACollectionController.vue'
-import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
 import GInputItem from '../molecules/inputs/GInputItem.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
   components: {
-    ACollectionController,
     GTemplateIndexPage,
-    GDialogEditor,
     GInputItem,
     GDataTable,
-    GBtnRegistIcon,
   },
   data() {
     return {
@@ -25,8 +19,7 @@ export default {
 </script>
 
 <template>
-  <a-collection-controller
-    v-slot="{ dialog, editor, table, pagination }"
+  <g-template-index-page
     :actions="['edit', 'delete']"
     :dialog-props="{ maxWidth: 480 }"
     :items="items"
@@ -42,39 +35,25 @@ export default {
       'sort-by': 'code',
     }"
   >
-    <g-template-index-page :pagination="pagination">
-      <template #append-search>
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
-          <template #activator="{ attrs, on }">
-            <g-btn-regist-icon v-bind="attrs" v-on="on" />
-          </template>
-          <template #form>
-            <g-input-item v-bind="editor.attrs" v-on="editor.on" />
-          </template>
-        </g-dialog-editor>
-      </template>
-      <template #default="{ height }">
-        <g-data-table
-          v-bind="table.attrs"
-          :height="height"
-          :search="search"
-          v-on="table.on"
-        >
-          <template #[`group.header`]="{ headers, group, toggle, isOpen }">
-            <td :colspan="headers.length" class="text-start">
-              <v-btn icon small @click="toggle">
-                <v-icon>{{ `mdi-chevron-${isOpen ? 'up' : 'down'}` }}</v-icon>
-              </v-btn>
-              {{ $ITEM_GROUP[group] }}
-            </td>
-          </template>
-          <template #[`item.group`]="{ item }">
-            {{ $ITEM_GROUP[item.group] }}
-          </template>
-        </g-data-table>
-      </template>
-    </g-template-index-page>
-  </a-collection-controller>
+    <template #form="{ attrs, on }">
+      <g-input-item v-bind="attrs" v-on="on" />
+    </template>
+    <template #table="{ attrs, on }">
+      <g-data-table v-bind="attrs" :search="search" v-on="on">
+        <template #[`group.header`]="{ headers, group, toggle, isOpen }">
+          <td :colspan="headers.length" class="text-start">
+            <v-btn icon small @click="toggle">
+              <v-icon>{{ `mdi-chevron-${isOpen ? 'up' : 'down'}` }}</v-icon>
+            </v-btn>
+            {{ $ITEM_GROUP[group] }}
+          </td>
+        </template>
+        <template #[`item.group`]="{ item }">
+          {{ $ITEM_GROUP[item.group] }}
+        </template>
+      </g-data-table>
+    </template>
+  </g-template-index-page>
 </template>
 
 <style></style>

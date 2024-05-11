@@ -52,32 +52,66 @@ export default {
   },
   data() {
     return {
-      items: [],
+      // items: [],
+      items: {
+        active: [],
+        noActive: [],
+      },
       model: this.$Site(),
-      listener: this.$Site(),
+      // listener: this.$Site(),
+      listener: {
+        active: this.$Site(),
+        noActive: this.$Site(),
+      },
       onlyActive: true,
       search: null,
     }
   },
+  computed: {
+    internalItems() {
+      const result = this.items.active.concat(this.items.noActive)
+      return result
+    },
+  },
   watch: {
     customerId: {
       handler(v) {
-        this.subscribe()
+        this.subscribeActive()
+        this.subscribeNoActive()
       },
       immediate: true,
     },
     onlyActive(v) {
-      this.subscribe()
+      // this.subscribeActive()
+      this.subscribeNoActive()
     },
   },
   destroyed() {
-    this.listener.unsubscribe()
+    // this.listener.unsubscribe()
+    this.listener.active.unsubscribe()
+    this.listener.noActive.unsubscribe()
   },
   methods: {
-    subscribe() {
-      const constraints = [where('customerId', '==', this.customerId)]
-      if (this.onlyActive) constraints.push(where('status', '==', 'active'))
-      this.items = this.listener.subscribe(undefined, constraints)
+    subscribeActive() {
+      this.listener.active.unsubscribe()
+      if (!this.customerId) return
+      const constraints = [
+        where('customerId', '==', this.customerId),
+        where('status', '==', 'active'),
+      ]
+      this.items.active = this.listener.active.subscribe(undefined, constraints)
+    },
+    subscribeNoActive() {
+      this.listener.noActive.unsubscribe()
+      if (!this.customerId || this.onlyActive) return
+      const constraints = [
+        where('customerId', '==', this.customerId),
+        where('status', '!=', 'active'),
+      ]
+      this.items.noActive = this.listener.noActive.subscribe(
+        undefined,
+        constraints
+      )
     },
   },
 }
@@ -88,13 +122,15 @@ export default {
     v-slot="{ dialog, editor, pagination, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ customerId }"
-    :items="items"
+    :items="internalItems"
     label="排出場所"
     :model="model"
     v-on="$listeners"
   >
     <v-card>
-      <v-card-title>排出場所一覧{{ `（全 ${items.length} 件）` }}</v-card-title>
+      <v-card-title
+        >排出場所一覧{{ `（全 ${internalItems.length} 件）` }}</v-card-title
+      >
       <v-toolbar dense flat>
         <g-text-field-search v-model="search" />
         <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
