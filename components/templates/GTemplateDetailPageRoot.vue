@@ -1,12 +1,5 @@
 <script>
-import {
-  collection,
-  // doc,
-  // getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import draggable from 'vuedraggable'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
@@ -30,16 +23,7 @@ export default {
       dayOfWeeks: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
       fetchedSites: [],
       loadedSites: [],
-      // order: [],
-      order: {
-        sun: [],
-        mon: [],
-        tue: [],
-        wed: [],
-        thu: [],
-        fri: [],
-        sat: [],
-      },
+      order: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
       lazySearch: null,
       listener: this.$Site(),
       model: this.$Root(),
@@ -50,7 +34,6 @@ export default {
   computed: {
     computedFetchedItems() {
       return this.fetchedSites.filter(({ docId }) => {
-        // return !this.order.some((item) => item.docId === docId)
         return !this.order[this.selectedDayOfWeek].some(
           (item) => item.docId === docId
         )
@@ -100,7 +83,6 @@ export default {
   },
   methods: {
     async submit() {
-      // this.model.order = this.order.map(({ docId }) => docId)
       this.model[this.selectedDayOfWeek] = this.order[
         this.selectedDayOfWeek
       ].map(({ docId }) => docId)
@@ -119,7 +101,7 @@ export default {
 </script>
 
 <template>
-  <g-template-detail-page v-bind="$attrs">
+  <g-template-detail-page v-slot="{ height }" v-bind="$attrs">
     <h2>{{ model.name }}</h2>
     <g-radio-group v-model="selectedDayOfWeek" row :disabled="modified">
       <v-radio
@@ -139,7 +121,7 @@ export default {
               { text: '状態', value: 'status', align: 'center' },
               { text: '', value: 'action' },
             ]"
-            height="360"
+            :height="height - 66 - 36 - 52 - 2"
             :items="order[selectedDayOfWeek]"
             :items-per-page="-1"
           >
@@ -189,7 +171,7 @@ export default {
               { text: '排出場所', value: 'name' },
               { text: '状態', value: 'status' },
             ]"
-            height="360"
+            :height="height - 66 - 36 - 2 - 38"
             :items="computedFetchedItems"
             :items-per-page="-1"
           >
