@@ -33,6 +33,7 @@ export default {
     :items="items"
     label="自動採番"
     :model="model"
+    :search.sync="search"
     :table-props="{
       'disable-sort': true,
       headers: [

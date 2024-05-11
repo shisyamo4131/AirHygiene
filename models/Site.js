@@ -32,7 +32,7 @@ export default class Site extends FireModel {
     this.tokenFields = ['abbr', 'abbrKana']
     this.hasMany = [
       {
-        collection: 'CollectionResults',
+        collection: `Sites/${this.docId}/CollectionResults`,
         field: 'siteId',
         condition: '==',
         type: 'collection',

@@ -4,12 +4,11 @@
  * @author shisyamo4131
  */
 import GTextField from './GTextField.vue'
-import GTextFieldAbbr from './GTextFieldAbbr.vue'
 import GSelect from './GSelect.vue'
 import { props } from '~/models/Item'
 import GMixinInput from '~/components/mixins/GMixinInput'
 export default {
-  components: { GTextField, GTextFieldAbbr, GSelect },
+  components: { GTextField, GSelect },
   mixins: [props, GMixinInput],
 }
 </script>
@@ -32,13 +31,15 @@ export default {
       @input="$emit('update:name', $event)"
       @change="$emit('update:abbr', $event)"
     />
-    <g-text-field-abbr
+    <g-text-field
       :value="abbr"
       label="略称"
       required
       counter
       maxlength="4"
       :rules="[(v) => !v || [...v].length <= 4 || '4文字まで']"
+      hint="検索に使用されます"
+      ignore-surrogate-pair
       @input="$emit('update:abbr', $event)"
     />
     <g-select
