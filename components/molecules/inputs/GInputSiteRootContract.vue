@@ -9,8 +9,6 @@ import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
 import GInputUnitPrice from './GInputUnitPrice.vue'
-import GAutocompleteItem from './GAutocompleteItem.vue'
-import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import { props } from '~/models/SiteRootContract'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import AArrayController from '~/components/atoms/AArrayController.vue'
@@ -21,8 +19,6 @@ export default {
     GSwitch,
     GInputUnitPrice,
     AArrayController,
-    GAutocompleteItem,
-    GAutocompleteUnit,
     GDialogEditor,
     GDataTableUnitPrices,
   },
@@ -58,7 +54,6 @@ export default {
 
 <template>
   <div>
-    {{ unitPriceIsEditing }}
     <g-date
       :value="startAt"
       label="適用開始日"
@@ -73,24 +68,6 @@ export default {
     <v-expand-transition>
       <v-container v-show="claimMinimumCharge">
         <v-row>
-          <v-col cols="12" md="6">
-            <g-autocomplete-item
-              :value="minimumChargeItemId"
-              label="請求品目"
-              :required="claimMinimumCharge"
-              :disabled="!claimMinimumCharge"
-              @input="$emit('update:minimumChargeItemId', $event)"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <g-autocomplete-unit
-              :value="minimumChargeUnitId"
-              label="請求単位"
-              :required="claimMinimumCharge"
-              :disabled="!claimMinimumCharge"
-              @input="$emit('update:minimumChargeUnitId', $event)"
-            />
-          </v-col>
           <v-col cols="12" md="6">
             <g-numeric
               class="right-input"
@@ -138,24 +115,6 @@ export default {
     <v-expand-transition>
       <v-container v-show="claimFixedCharge">
         <v-row>
-          <v-col cols="12" md="6">
-            <g-autocomplete-item
-              :value="fixedChargeItemId"
-              label="請求品目"
-              :required="claimFixedCharge"
-              :disabled="!claimFixedCharge"
-              @input="$emit('update:fixedChargeItemId', $event)"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <g-autocomplete-unit
-              :value="fixedChargeUnitId"
-              label="請求単位"
-              :required="claimFixedCharge"
-              :disabled="!claimFixedCharge"
-              @input="$emit('update:fixedChargeUnitId', $event)"
-            />
-          </v-col>
           <v-col cols="12" md="6">
             <g-numeric
               class="right-input"
