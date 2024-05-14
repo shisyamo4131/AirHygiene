@@ -27,6 +27,7 @@ export default {
     disableRegist: { type: Boolean, default: false, required: false },
     hidePagination: { type: Boolean, default: false, required: false },
     hideRegist: { type: Boolean, default: false, required: false },
+    hideSearch: { type: Boolean, default: false, required: false },
     lazySearch: { type: undefined, default: undefined, required: false },
     page: { type: Number, default: 1, required: false },
     pageCount: { type: Number, default: 0, required: false },
@@ -54,7 +55,11 @@ export default {
         this.$vuetify.application.bottom,
       ]
       // get height of template parts.
-      const toolbar = this.$vuetify.breakpoint.sm ? 56 : 64
+      const toolbar = this.hideSearch
+        ? 0
+        : this.$vuetify.breakpoint.sm
+        ? 56
+        : 64
       const pagination = 56
       const padding = 24
       const deduct = this.deductHeight ? parseInt(this.deductHeight) : 0
@@ -108,7 +113,11 @@ export default {
   >
     <slot name="prepend-search-bar" />
     <slot name="search-bar">
-      <v-toolbar style="position: sticky; top: 48px; z-index: 3" flat>
+      <v-toolbar
+        v-if="!hideSearch"
+        style="position: sticky; top: 48px; z-index: 3"
+        flat
+      >
         <slot name="prepend-search" />
         <slot name="search" v-bind="{ attrs: searchAttrs, on: searchOn }">
           <g-text-field-search
@@ -134,7 +143,6 @@ export default {
     </slot>
     <slot name="append-search-bar" />
     <v-container fluid>
-      <slot name="prepend-table" />
       <slot
         name="table"
         v-bind="{ attrs: { ...table.attrs, height }, on: table.on }"

@@ -6,6 +6,7 @@ import Unit from '../models/Unit'
 import UnitPrice from '../models/UnitPrice'
 import Root from '../models/Root'
 import CollectionResult from '../models/CollectionResult'
+import RootCollectionResult from '../models/RootCollectionResult'
 import IndustrialContract from '../models/IndustrialContract'
 import MunicipalContract from '../models/MunicipalContract'
 import SiteRootContract from '../models/SiteRootContract'
@@ -21,6 +22,10 @@ export default (context, inject) => {
   inject(
     'CollectionResult',
     (siteId, item) => new CollectionResult(context, siteId, item)
+  )
+  inject(
+    'RootCollectionResult',
+    (item) => new RootCollectionResult(context, item)
   )
   inject(
     'IndustrialContract',

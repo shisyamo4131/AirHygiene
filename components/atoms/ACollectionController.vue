@@ -23,6 +23,8 @@ export default {
     defaultItem: { type: Object, default: () => ({}), required: false },
     /* An object provided to the dialog component. */
     dialogProps: { type: Object, default: () => ({}), required: false },
+    /* An object provided to the form component in form-slot. */
+    formProps: { type: Object, default: () => ({}), required: false },
     /* A string used to specify the item in props.items */
     itemKey: { type: String, default: 'docId', required: false },
     /* An array provided to the table component. */
@@ -56,6 +58,8 @@ export default {
       dialog: false,
       /* A string used to control the edit-mode. */
       editMode: 'REGIST',
+      /* A form object. */
+      form: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
       /* A number used to controll a pagination component. */
@@ -68,27 +72,30 @@ export default {
    * WATCH
    ***************************************************************************/
   watch: {
-    dialog: {
-      handler(v) {
-        if (!v) {
-          this.model.initialize(this.defaultItem)
-          this.editMode = 'REGIST'
-        }
+    defaultItem: {
+      handler(newVal) {
+        this.model.initialize({ ...structuredClone(this.model), ...newVal })
       },
       immediate: true,
+      deep: true,
     },
   },
   /***************************************************************************
    * METHODS
    ***************************************************************************/
   methods: {
+    initialize() {
+      this.dialog = false
+      this.model.initialize(this.defaultModel)
+      if (this.form) this.form.resetValidation()
+    },
     async defaultSubmit(mode) {
       if (mode === 'REGIST') await this.model.create()
       if (mode === 'UPDATE') await this.model.update()
       if (mode === 'DELETE') await this.model.delete()
     },
     onClickCancel() {
-      this.dialog = false
+      this.initialize()
     },
     async onClickDelete(item) {
       if (!item) return
@@ -97,8 +104,6 @@ export default {
       this.editMode = 'DELETE'
       this.model.initialize(item)
       await this.submit('DELETE')
-      this.model.initialize(this.defaultItem)
-      this.editMode = 'REGIST'
     },
     onClickDetail(item) {
       this.$emit('click:detail', item)
@@ -108,8 +113,12 @@ export default {
       this.model.initialize(item)
       this.dialog = true
     },
-    onClickSubmit() {
-      this.submit(this.editMode)
+    async onClickSubmit() {
+      if (this.editMode !== 'DELETE' && this.form && !this.form.validate()) {
+        alert('入力に不備があります。')
+        return
+      }
+      await this.submit(this.editMode)
     },
     async submit(mode) {
       try {
@@ -119,6 +128,9 @@ export default {
         if (!this.customSubmit) await this.defaultSubmit(mode)
         this.$emit(`submit:${mode.toLowerCase()}`, structuredClone(this.model))
         this.dialog = false
+        this.model.initialize(this.defaultModel)
+        this.editMode = 'REGIST'
+        if (this.form) this.form.resetValidation()
       } catch (err) {
         // eslint-disable-next-line
         console.error(err)
@@ -165,6 +177,12 @@ export default {
             return sum
           }, {}),
         },
+        form: {
+          attrs: {
+            ref: (el) => (this.form = el),
+            ...this.formProps,
+          },
+        },
         page: this.page,
         pageCount: this.pageCount,
         pagination: {
@@ -176,6 +194,8 @@ export default {
             input: ($event) => (this.page = $event),
           },
         },
+        submit: this.onClickSubmit,
+        cancel: this.onClickCancel,
         table: {
           attrs: {
             actions: this.actions,
