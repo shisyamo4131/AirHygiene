@@ -25,14 +25,31 @@ export default class Root extends FireModel {
     super(context, item)
     this.collection = 'Roots'
     this.tokenFields = ['name']
-    // this.hasMany = [
-    //   {
-    //     collection: 'Sites',
-    //     field: 'customerId',
-    //     condition: '==',
-    //     type: 'collection',
-    //   },
-    // ]
+    Object.defineProperties(this, {
+      /**
+       * Returns an array of siteId stored on all days of the week,
+       * excluding duplicates.
+       * This is useful to see if a particular site is registered for a route.
+       */
+      siteIds: {
+        enumerable: true,
+        get() {
+          return [
+            ...new Set(
+              this.sun.concat(
+                this.mon,
+                this.tue,
+                this.wed,
+                this.thu,
+                this.fri,
+                this.sat
+              )
+            ),
+          ]
+        },
+        set(v) {},
+      },
+    })
   }
 
   initialize(item) {
