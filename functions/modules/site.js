@@ -7,7 +7,7 @@ exports.deleted = onDocumentDeleted('Sites/{docId}', async (event) => {
   const promises = [
     deleteMunicipalContracts(docId),
     deleteIndustrialContracts(docId),
-    deleteSiteRootContracts(docId),
+    deleteSiteRouteContracts(docId),
   ]
   await Promise.all(promises)
 })
@@ -35,11 +35,11 @@ async function deleteIndustrialContracts(siteId) {
 }
 
 /**
- * Delete all documents from SiteRootContracts specified by site-id.
+ * Delete all documents from SiteRouteContracts specified by site-id.
  * @param {string} siteId
  */
-async function deleteSiteRootContracts(siteId) {
-  const colRef = firestore.collection(`Sites/${siteId}/SiteRootContracts`)
+async function deleteSiteRouteContracts(siteId) {
+  const colRef = firestore.collection(`Sites/${siteId}/SiteRouteContracts`)
   const snapshot = await colRef.get()
   const promises = snapshot.docs.map((doc) => doc.ref.delete())
   await Promise.all(promises)

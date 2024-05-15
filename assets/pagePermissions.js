@@ -9,5 +9,6 @@
 module.exports = {
   'developments-sandbox': ['developer'],
   'collection-results': [],
-  roots: [],
+  customers: [],
+  routes: [],
 }

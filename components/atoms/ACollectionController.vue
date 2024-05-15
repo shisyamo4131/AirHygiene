@@ -23,6 +23,8 @@ export default {
     defaultItem: { type: Object, default: () => ({}), required: false },
     /* An object provided to the dialog component. */
     dialogProps: { type: Object, default: () => ({}), required: false },
+    /* A form will be disabled if true. */
+    disabledForm: { type: Boolean, default: false, required: false },
     /* An object provided to the form component in form-slot. */
     formProps: { type: Object, default: () => ({}), required: false },
     /* A string used to specify the item in props.items */
@@ -179,6 +181,7 @@ export default {
         },
         form: {
           attrs: {
+            disabled: this.loading || this.disabledForm,
             ref: (el) => (this.form = el),
             ...this.formProps,
           },
@@ -194,8 +197,23 @@ export default {
             input: ($event) => (this.page = $event),
           },
         },
-        submit: this.onClickSubmit,
-        cancel: this.onClickCancel,
+        submit: {
+          attrs: {
+            disabled: this.loading || this.disabledForm,
+            loading: this.loading,
+          },
+          on: {
+            click: this.onClickSubmit,
+          },
+        },
+        cancel: {
+          attrs: {
+            disabled: this.loading,
+          },
+          on: {
+            click: this.onClickCancel,
+          },
+        },
         table: {
           attrs: {
             actions: this.actions,

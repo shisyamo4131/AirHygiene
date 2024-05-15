@@ -1,12 +1,13 @@
 <template>
   <a-collection-controller
+    v-slot="{ editor, form, table, submit, cancel }"
     :actions="['edit', 'delete']"
     :default-item="{
       siteId: selectedSite?.docId || '',
       date,
     }"
+    :disabled-form="!selectedIndex && selectedIndex !== 0"
     :form-props="{
-      disabled: !selectedSite,
       hideDate: true,
     }"
     :items="items"
@@ -18,88 +19,110 @@
       ],
     }"
   >
-    <template #default="{ editor, form, table, submit, cancel }">
-      <v-container fluid>
-        <v-row>
-          <v-col cols="6">
-            <v-card
-              outlined
-              class="overflow-y-auto"
-              :height="$vuetify.breakpoint.height - 48 - 24"
-            >
-              <v-list-item-group v-model="selectedSite">
+    <v-container fluid>
+      <v-row>
+        <v-col cols="4">
+          <v-card
+            outlined
+            class="overflow-y-auto"
+            :height="$vuetify.breakpoint.height - 48 - 24"
+          >
+            <div v-if="loading">
+              <v-skeleton-loader
+                v-for="index in order.length"
+                :key="index"
+                type="list-item-avatar-two-line"
+              />
+            </div>
+            <v-list v-else>
+              <v-list-item-group
+                v-model="selectedIndex"
+                mandatory
+                color="primary"
+              >
                 <v-list-item
                   v-for="(site, index) of order"
                   :key="index"
-                  :value="site"
-                  dense
+                  two-line
                 >
-                  <v-list-item-icon>
+                  <v-list-item-avatar>
                     {{ index + 1 }}
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-content>
-                    {{ site.name }}
+                    <v-list-item-title>
+                      {{ site.name }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{ site.fullAddress }}
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
-            </v-card>
-          </v-col>
-          <v-col cols="6">
-            <v-card outlined>
-              <v-card-title>
-                {{ selectedSite?.name || '排出現場を選択してください' }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ selectedSite?.fullAddress || '--' }}
-              </v-card-subtitle>
-              <v-container>
-                <v-form v-bind="form.attrs">
-                  <g-input-root-collection-result
-                    v-bind="editor.attrs"
-                    hide-date
-                    v-on="editor.on"
-                  />
-                </v-form>
-              </v-container>
-              <v-card-actions>
-                <v-btn color="primary" @click="submit">submit</v-btn>
-                <v-btn color="primary" @click="cancel">cancel</v-btn>
-              </v-card-actions>
-            </v-card>
-            <g-data-table v-bind="table.attrs" v-on="table.on">
-              <template #[`item.itemId`]="{ item }">
-                {{ $store.getters['Items/get'](item.itemId).abbr }}
-              </template>
-              <template #[`item.amountString`]="{ item }">
-                {{ item.amountString }}
-                {{ $store.getters['Units/get'](item.unitId).abbr }}
-              </template>
-            </g-data-table>
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="8">
+          <v-card outlined>
+            <v-card-title>
+              {{ selectedSite?.name || '排出現場を選択してください' }}
+            </v-card-title>
+            <v-card-subtitle>
+              {{ selectedSite?.fullAddress || '--' }}
+            </v-card-subtitle>
+            <v-container>
+              <v-form v-bind="form.attrs">
+                <g-input-route-collection-result
+                  v-bind="editor.attrs"
+                  hide-date
+                  v-on="editor.on"
+                />
+              </v-form>
+            </v-container>
+            <v-card-actions class="justify-space-between">
+              <v-btn v-bind="cancel.attrs" v-on="cancel.on">cancel</v-btn>
+              <v-btn color="primary" v-bind="submit.attrs" v-on="submit.on"
+                >submit</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+          <g-data-table v-bind="table.attrs" v-on="table.on">
+            <template #[`item.itemId`]="{ item }">
+              {{ $store.getters['Items/get'](item.itemId).abbr }}
+            </template>
+            <template #[`item.amountString`]="{ item }">
+              {{ item.amountString }}
+              {{ $store.getters['Units/get'](item.unitId).abbr }}
+            </template>
+          </g-data-table>
+        </v-col>
+      </v-row>
+    </v-container>
   </a-collection-controller>
 </template>
 
 <script>
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
-import GInputRootCollectionResult from '~/components/molecules/inputs/GInputRootCollectionResult.vue'
+import GInputRouteCollectionResult from '~/components/molecules/inputs/GInputRouteCollectionResult.vue'
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 export default {
-  components: { GDataTable, GInputRootCollectionResult, ACollectionController },
+  components: {
+    GDataTable,
+    GInputRouteCollectionResult,
+    ACollectionController,
+  },
   props: {
     date: { type: String, default: '2024-04-01', required: true },
-    rootId: { type: String, default: 'i3VIA52YMgxsgmRhJTIv', required: true },
+    routeId: { type: String, default: 'BMXoI77RLbMOQ9YEjTEp', required: true },
   },
   data() {
     return {
       items: [],
-      loadedSites: [],
-      model: this.$RootCollectionResult(),
-      root: this.$Root(),
-      selectedSite: null,
+      loading: false,
+      model: this.$RouteCollectionResult(),
+      route: this.$Route(),
+      selectedIndex: null,
+      sites: [],
     }
   },
   computed: {
@@ -116,51 +139,47 @@ export default {
       return dayOfWeeks[this.$dayjs(this.date).format('d')]
     },
     order() {
-      return this.root[this.dayOfWeek].map((siteId) => {
-        const site = this.loadedSites.find(({ docId }) => docId === siteId)
+      return this.route[this.dayOfWeek].map((siteId) => {
+        const site = this.sites.find(({ docId }) => docId === siteId)
         return site || this.$Site()
       })
     },
+    selectedSite() {
+      if (!this.selectedIndex && this.selectedIndex !== 0) return this.$Site()
+      return this.order[this.selectedIndex]
+    },
   },
   watch: {
-    rootId: {
-      handler(newVal, oldVal) {
-        if (newVal === oldVal) return
-        this.fetchOrder()
-      },
-      immediate: true,
-    },
-    date: {
-      handler(newVal, oldVal) {
-        if (newVal === oldVal) return
-        this.fetchOrder()
-      },
-      immediate: true,
-    },
     selectedSite(newVal, oldVal) {
       if (newVal === oldVal) return
       this.subscribe()
     },
+  },
+  created() {
+    this.$watch(
+      () => [this.$props.routeId, this.$props.date],
+      (newVal, oldVal) => {
+        if (newVal === oldVal) return
+        this.fetchOrder()
+      },
+      { immediate: true }
+    )
   },
   destroyed() {
     this.model.unsubscribe()
   },
   methods: {
     async fetchOrder() {
-      await this.root.fetch(this.rootId)
-      const siteIds = [
-        ...new Set(this.root[this.dayOfWeek].map((siteId) => siteId)),
-      ]
-      const chunkedSiteIds = siteIds.flatMap((_, i, a) =>
-        i % 30 ? [] : [a.slice(i, i + 30)]
-      )
-      const colRef = collection(this.$firestore, 'Sites')
-      for (const ids of chunkedSiteIds) {
-        const q = query(colRef, where('docId', 'in', ids))
-        const querySnapshot = await getDocs(q)
-        querySnapshot.docs.forEach((doc) => {
-          this.loadedSites.push(doc.data())
-        })
+      try {
+        this.loading = true
+        await this.route.fetch(this.routeId)
+        this.sites = await this.route.getSites(this.dayOfWeek)
+      } catch (err) {
+        // eslint-disable-next-line
+        console.error(err)
+        alert(err.message)
+      } finally {
+        this.loading = false
       }
     },
     subscribe() {

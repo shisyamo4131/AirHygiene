@@ -1,6 +1,6 @@
 <script>
 /**
- * ## GInputSiteRootContract
+ * ## GInputSiteRouteContract
  * @author shisyamo4131
  */
 import GDialogEditor from '../dialogs/GDialogEditor.vue'
@@ -9,7 +9,7 @@ import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
 import GInputUnitPrice from './GInputUnitPrice.vue'
-import { props } from '~/models/SiteRootContract'
+import { props } from '~/models/SiteRouteContract'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import AArrayController from '~/components/atoms/AArrayController.vue'
 export default {

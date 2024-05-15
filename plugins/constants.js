@@ -1,5 +1,5 @@
 const COLLECTION_RESULT_TYPE = {
-  root: '1: ルート',
+  route: '1: ルート',
   spot: '2: スポット',
 }
 const COLLECTION_RESULT_TYPE_ARRAY = Object.entries(COLLECTION_RESULT_TYPE).map(

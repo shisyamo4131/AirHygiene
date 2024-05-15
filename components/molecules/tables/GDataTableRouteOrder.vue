@@ -3,7 +3,7 @@ import draggable from 'vuedraggable'
 import GChipSiteStatus from '../chips/GChipSiteStatus.vue'
 import GDataTable from './GDataTable.vue'
 /**
- * ### GDataTableRootOrder
+ * ### GDataTableRouteOrder
  * props.items must be an array of site-object.
  * @author shisyamo4131
  */
@@ -53,7 +53,7 @@ export default {
     v-bind="{ ...$props, ...$attrs }"
     v-on="$listeners"
   >
-    <template v-if="items.length" #body="props">
+    <template #body="props">
       <draggable
         :value="props.items"
         tag="tbody"
@@ -63,22 +63,31 @@ export default {
         @input="$emit('input', $event)"
         @change="$emit('change', $event)"
       >
-        <tr v-for="(item, index) of props.items" :key="index">
-          <td>
-            <v-icon class="handle" style="cursor: grab" small>mdi-menu</v-icon>
-          </td>
-          <td>
-            <slot name="item.name" v-bind="{ item, index }">
-              <div>{{ item.name }}</div>
-              <div class="text-caption text--secondary">
-                {{ item.fullAddress }}
-              </div>
-            </slot>
-          </td>
-          <td class="text-center">
-            <g-chip-site-status :value="item.status" x-small />
-          </td>
-        </tr>
+        <template v-if="props.items.length">
+          <tr v-for="(item, index) of props.items" :key="index">
+            <td>
+              <v-icon class="handle" style="cursor: grab" small
+                >mdi-menu</v-icon
+              >
+            </td>
+            <td>
+              <slot name="item.name" v-bind="{ item, index }">
+                <div>{{ item.name }}</div>
+                <div class="text-caption text--secondary">
+                  {{ item.fullAddress }}
+                </div>
+              </slot>
+            </td>
+            <td class="text-center">
+              <g-chip-site-status :value="item.status" x-small />
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="v-data-table__empty-wrapper">
+            <td colspan="3">No data available</td>
+          </tr>
+        </template>
       </draggable>
     </template>
   </g-data-table>

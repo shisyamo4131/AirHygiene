@@ -35,10 +35,10 @@ export default {
   },
   methods: {
     async updateUnitPrice() {
-      if (this.resultType !== 'root') return
+      if (this.resultType !== 'route') return
       const [date, itemId, unitId] = [this.date, this.itemId, this.unitId]
       if (!date || !itemId || !unitId) return
-      const model = this.$SiteRootContract(this.siteId)
+      const model = this.$SiteRouteContract(this.siteId)
       this.loading = true
       const result = await model.fetchUnitPrice({ date, itemId, unitId })
       this.loading = false

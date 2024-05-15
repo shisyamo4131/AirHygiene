@@ -1,9 +1,9 @@
 <script>
 import GSiteCard from '../organisms/cards/GSiteCard.vue'
-import GSiteRootContractsCard from '../organisms/cards/GSiteRootContractsCard.vue'
+import GSiteRouteContractsCard from '../organisms/cards/GSiteRouteContractsCard.vue'
 import GTemplateDetailPage from './GTemplateDetailPage.vue'
 export default {
-  components: { GTemplateDetailPage, GSiteCard, GSiteRootContractsCard },
+  components: { GTemplateDetailPage, GSiteCard, GSiteRouteContractsCard },
   props: {
     siteId: { type: String, required: true },
   },
@@ -19,7 +19,7 @@ export default {
       <v-col cols="12" md="8">
         <v-row>
           <v-col cols="12">
-            <g-site-root-contracts-card :site-id="siteId" />
+            <g-site-route-contracts-card :site-id="siteId" />
           </v-col>
         </v-row>
       </v-col>

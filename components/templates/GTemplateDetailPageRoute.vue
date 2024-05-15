@@ -1,7 +1,7 @@
 <script>
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
-import GDataTableRootOrder from '../molecules/tables/GDataTableRootOrder.vue'
+import GDataTableRouteOrder from '../molecules/tables/GDataTableRouteOrder.vue'
 import GRadioGroupDayOfWeek from '../molecules/groups/GRadioGroupDayOfWeek.vue'
 import GTemplateDetailPage from './GTemplateDetailPage.vue'
 export default {
@@ -11,14 +11,14 @@ export default {
   components: {
     GTemplateDetailPage,
     GTextFieldSearch,
-    GDataTableRootOrder,
+    GDataTableRouteOrder,
     GRadioGroupDayOfWeek,
   },
   /***************************************************************************
    * PROPS
    ***************************************************************************/
   props: {
-    rootId: { type: String, required: true },
+    routeId: { type: String, required: true },
   },
   /***************************************************************************
    * DATA
@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       fetchedSites: [],
-      model: this.$Root(),
+      model: this.$Route(),
       modified: false,
       loadedSites: [],
       lazySearch: null,
@@ -54,7 +54,7 @@ export default {
    * WATCH
    ***************************************************************************/
   watch: {
-    rootId: {
+    routeId: {
       async handler(newVal, oldVal) {
         const dayOfWeeks = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
         dayOfWeeks.forEach((day) => this.order[day].splice(0))
@@ -145,10 +145,11 @@ export default {
           />
         </v-toolbar>
         <v-card outlined>
-          <g-data-table-root-order
+          <g-data-table-route-order
             :ref="`ordered-table-${_uid}`"
             v-model="order[selectedDayOfWeek]"
             draggable-sort
+            :group="{ name: 'sites' }"
             :height="height - 36 - 48 - 44 - 2"
             :loading="loading.ordered"
             @change="onChanged"
@@ -169,7 +170,7 @@ export default {
                 </div>
               </div>
             </template>
-          </g-data-table-root-order>
+          </g-data-table-route-order>
           <v-card-actions>
             <v-btn
               :disabled="!modified"
@@ -187,7 +188,7 @@ export default {
           <g-text-field-search :lazy-value.sync="lazySearch" clearable />
         </v-toolbar>
         <v-card outlined>
-          <g-data-table-root-order
+          <g-data-table-route-order
             :ref="`unordered-table-${_uid}`"
             :height="height - 36 - 48 - 2"
             :items="computedFetchedItems"

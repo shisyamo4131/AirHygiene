@@ -7,7 +7,7 @@ const props = {
     resultType: {
       type: String,
       default: '',
-      validator: (v) => !v || ['root', 'spot'].includes(v),
+      validator: (v) => !v || ['route', 'spot'].includes(v),
       required: false,
     },
     siteId: { type: String, default: '', required: false },
@@ -124,18 +124,18 @@ export default class CollectionResult extends FireModel {
   }
 
   async beforeCreate() {
-    if (this.resultType === 'root') {
-      const sameRootResult = await this.getSameRootResults()
-      if (sameRootResult.length) {
+    if (this.resultType === 'route') {
+      const sameRouteResult = await this.getSameRouteResults()
+      if (sameRouteResult.length) {
         throw new Error('ルート回収の実績が既に登録されています。')
       }
     }
   }
 
   async beforeUpdate() {
-    if (this.resultType === 'root') {
-      const sameRootResult = await this.getSameRootResults()
-      const ignoreSelf = sameRootResult.filter(
+    if (this.resultType === 'route') {
+      const sameRouteResult = await this.getSameRouteResults()
+      const ignoreSelf = sameRouteResult.filter(
         ({ docId }) => docId !== this.docId
       )
       if (ignoreSelf.length) {
@@ -144,12 +144,12 @@ export default class CollectionResult extends FireModel {
     }
   }
 
-  async getSameRootResults() {
+  async getSameRouteResults() {
     const colRef = collection(this.firestore, this.collection)
     const q = query(
       colRef,
       where('date', '==', this.date),
-      where('resultType', '==', 'root'),
+      where('resultType', '==', 'route'),
       where('itemId', '==', this.itemId),
       where('unitId', '==', this.unitId)
     )

@@ -24,14 +24,14 @@ const props = {
 export { props }
 
 /**
- * ## SiteRootContract
+ * ## SiteRouteContract
  *
  * @author shisyamo4131
  */
-export default class SiteRootContract extends FireModel {
+export default class SiteRouteContract extends FireModel {
   constructor(context, siteId, item) {
     super(context, item)
-    this.collection = `Sites/${siteId}/SiteRootContracts`
+    this.collection = `Sites/${siteId}/SiteRouteContracts`
   }
 
   initialize(item) {

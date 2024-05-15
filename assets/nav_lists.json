@@ -24,7 +24,7 @@
   {
     "name": "ルート管理",
     "icon": "mdi-cube",
-    "lists": [{ "name": "ルート管理", "to": "/roots", "icon": "mdi-domain" }]
+    "lists": [{ "name": "ルート管理", "to": "/routes", "icon": "mdi-domain" }]
   },
   {
     "name": "管理",

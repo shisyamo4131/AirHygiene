@@ -4,12 +4,12 @@ import Site from '../models/Site'
 import Item from '../models/Item'
 import Unit from '../models/Unit'
 import UnitPrice from '../models/UnitPrice'
-import Root from '../models/Root'
+import Route from '../models/Route'
 import CollectionResult from '../models/CollectionResult'
-import RootCollectionResult from '../models/RootCollectionResult'
+import RouteCollectionResult from '../models/RouteCollectionResult'
 import IndustrialContract from '../models/IndustrialContract'
 import MunicipalContract from '../models/MunicipalContract'
-import SiteRootContract from '../models/SiteRootContract'
+import SiteRouteContract from '../models/SiteRouteContract'
 
 export default (context, inject) => {
   inject('Autonumber', (item) => new Autonumber(context, item))
@@ -18,14 +18,14 @@ export default (context, inject) => {
   inject('Item', (item) => new Item(context, item))
   inject('Unit', (item) => new Unit(context, item))
   inject('UnitPrice', (item) => new UnitPrice(context, item))
-  inject('Root', (item) => new Root(context, item))
+  inject('Route', (item) => new Route(context, item))
   inject(
     'CollectionResult',
     (siteId, item) => new CollectionResult(context, siteId, item)
   )
   inject(
-    'RootCollectionResult',
-    (item) => new RootCollectionResult(context, item)
+    'RouteCollectionResult',
+    (item) => new RouteCollectionResult(context, item)
   )
   inject(
     'IndustrialContract',
@@ -36,7 +36,7 @@ export default (context, inject) => {
     (siteId, item) => new MunicipalContract(context, siteId, item)
   )
   inject(
-    'SiteRootContract',
-    (siteId, item) => new SiteRootContract(context, siteId, item)
+    'SiteRouteContract',
+    (siteId, item) => new SiteRouteContract(context, siteId, item)
   )
 }

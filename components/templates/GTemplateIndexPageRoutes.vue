@@ -1,18 +1,18 @@
 <script>
-import GInputRoot from '../molecules/inputs/GInputRoot.vue'
+import GInputRoute from '../molecules/inputs/GInputRoute.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
   components: {
     GTemplateIndexPage,
     GDataTable,
-    GInputRoot,
+    GInputRoute,
   },
   data() {
     return {
       items: [],
-      model: this.$Root(),
-      listener: this.$Root(),
+      model: this.$Route(),
+      listener: this.$Route(),
       search: null,
     }
   },
@@ -82,10 +82,10 @@ export default {
       ],
       sortBy: 'code',
     }"
-    @click:detail="$router.push(`/roots/${$event.docId}`)"
+    @click:detail="$router.push(`/routes/${$event.docId}`)"
   >
     <template #form="{ attrs, on }">
-      <g-input-root v-bind="attrs" v-on="on" />
+      <g-input-route v-bind="attrs" v-on="on" />
     </template>
     <template #table="{ attrs, on }">
       <g-data-table v-bind="attrs" :search="search" v-on="on" />

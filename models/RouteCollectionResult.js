@@ -14,14 +14,14 @@ const props = {
 export { props }
 
 /**
- * ## RootCollectionResult
+ * ## RouteCollectionResult
  *
  * @author shisyamo4131
  */
-export default class RootCollectionResult extends FireModel {
+export default class RouteCollectionResult extends FireModel {
   constructor(context, item) {
     super(context, item)
-    this.collection = `RootCollectionResults`
+    this.collection = `RouteCollectionResults`
     Object.defineProperties(this, {
       amountString: {
         enumerable: true,
@@ -59,15 +59,15 @@ export default class RootCollectionResult extends FireModel {
   }
 
   async beforeCreate() {
-    const sameRootResult = await this.getSameRootResults()
-    if (sameRootResult.length) {
+    const sameRouteResult = await this.getSameRouteResults()
+    if (sameRouteResult.length) {
       throw new Error('同一品目・単位の実績が既に登録されています。')
     }
   }
 
   async beforeUpdate() {
-    const sameRootResult = await this.getSameRootResults()
-    const ignoreSelf = sameRootResult.filter(
+    const sameRouteResult = await this.getSameRouteResults()
+    const ignoreSelf = sameRouteResult.filter(
       ({ docId }) => docId !== this.docId
     )
     if (ignoreSelf.length) {
@@ -75,7 +75,7 @@ export default class RootCollectionResult extends FireModel {
     }
   }
 
-  async getSameRootResults() {
+  async getSameRouteResults() {
     const colRef = collection(this.firestore, this.collection)
     const q = query(
       colRef,

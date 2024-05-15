@@ -2,14 +2,14 @@
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
 import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
-import GInputSiteRootContract from '~/components/molecules/inputs/GInputSiteRootContract.vue'
+import GInputSiteRouteContract from '~/components/molecules/inputs/GInputSiteRouteContract.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 export default {
   components: {
     ACollectionController,
     GDataTable,
     GDialogEditor,
-    GInputSiteRootContract,
+    GInputSiteRouteContract,
     GBtnRegistIcon,
   },
   props: {
@@ -49,16 +49,16 @@ export default {
   data() {
     return {
       items: [],
-      model: this.$SiteRootContract(),
-      listener: this.$SiteRootContract(),
+      model: this.$SiteRouteContract(),
+      listener: this.$SiteRouteContract(),
     }
   },
   watch: {
     siteId: {
       handler(v) {
         if (v) {
-          this.model = this.$SiteRootContract(v)
-          this.listener = this.$SiteRootContract(v)
+          this.model = this.$SiteRouteContract(v)
+          this.listener = this.$SiteRouteContract(v)
           this.items = this.listener.subscribe()
         }
         if (!v) this.listener.unsubscribe()
@@ -90,7 +90,7 @@ export default {
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
           <template #form>
-            <g-input-site-root-contract
+            <g-input-site-route-contract
               v-bind="editor.attrs"
               v-on="editor.on"
             />

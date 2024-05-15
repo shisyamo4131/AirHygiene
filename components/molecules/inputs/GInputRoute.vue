@@ -1,10 +1,10 @@
 <script>
 /**
- * ## GInputRoot
+ * ## GInputRoute
  * @author shisyamo4131
  */
 import GTextField from './GTextField.vue'
-import { props } from '~/models/Root'
+import { props } from '~/models/Route'
 import GMixinInput from '~/components/mixins/GMixinInput'
 export default {
   /***************************************************************************

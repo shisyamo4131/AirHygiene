@@ -1,3 +1,4 @@
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import FireModel from './FireModel'
 
 const props = {
@@ -16,14 +17,14 @@ const props = {
 export { props }
 
 /**
- * ## Root
+ * ## Route
  *
  * @author shisyamo4131
  */
-export default class Root extends FireModel {
+export default class Route extends FireModel {
   constructor(context, item) {
     super(context, item)
-    this.collection = 'Roots'
+    this.collection = 'Routes'
     this.tokenFields = ['name']
     Object.defineProperties(this, {
       /**
@@ -59,5 +60,34 @@ export default class Root extends FireModel {
         typeof propDefault === 'function' ? propDefault() : propDefault
     })
     super.initialize(item)
+  }
+
+  /**
+   * Returns an array of site object specified by id included in siteIds.
+   * @returns An array of site object.
+   */
+  getSites(dayOfWeek = undefined) {
+    return new Promise((resolve) => {
+      const siteIds = dayOfWeek ? this[dayOfWeek] : this.siteIds
+      const chunkedIds = siteIds.flatMap((_, i, a) =>
+        i % 30 ? [] : [a.slice(i, i + 30)]
+      )
+      const colRef = collection(this.firestore, 'Sites')
+      const promises = chunkedIds.map((ids) => {
+        return new Promise((resolve) => {
+          const q = query(colRef, where('docId', 'in', ids))
+          getDocs(q).then((querySnapshot) => {
+            resolve(querySnapshot.docs.map((doc) => doc.data()))
+          })
+        })
+      })
+      Promise.all(promises).then((values) => {
+        const result = values.reduce((sum, i) => {
+          sum.push(...i)
+          return sum
+        }, [])
+        resolve(result)
+      })
+    })
   }
 }

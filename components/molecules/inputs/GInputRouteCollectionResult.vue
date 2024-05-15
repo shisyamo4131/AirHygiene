@@ -1,6 +1,6 @@
 <script>
 /**
- * ## GInputRootCollectionResult
+ * ## GInputRouteCollectionResult
  * @author shisyamo4131
  */
 import GTextarea from './GTextarea.vue'
@@ -9,7 +9,7 @@ import GDate from './GDate.vue'
 import GAutocompleteItem from './GAutocompleteItem.vue'
 import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import GMixinInput from '~/components/mixins/GMixinInput'
-import { props } from '~/models/RootCollectionResult'
+import { props } from '~/models/RouteCollectionResult'
 export default {
   /***************************************************************************
    * COMPONENTS
