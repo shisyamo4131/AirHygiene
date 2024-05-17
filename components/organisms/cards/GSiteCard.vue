@@ -1,14 +1,14 @@
 <script>
 import ADocumentController from '~/components/atoms/ADocumentController.vue'
 import GActionCardDetailSite from '~/components/molecules/cards/GActionCardDetailSite.vue'
-import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
+import GEditCard from '~/components/molecules/cards/GEditCard.vue'
 import GInputSite from '~/components/molecules/inputs/GInputSite.vue'
 export default {
   components: {
     ADocumentController,
-    GDialogEditor,
     GInputSite,
     GActionCardDetailSite,
+    GEditCard,
   },
   props: {
     actions: {
@@ -47,17 +47,19 @@ export default {
 
 <template>
   <a-document-controller
-    v-slot="{ card, dialog, editor }"
+    v-slot="{ card, dialog, editCard, editor, form }"
     v-bind="{ ...$props, ...$attrs }"
     :current-model="listener"
     :model="editModel"
     v-on="$listeners"
   >
-    <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
-      <template #form>
-        <g-input-site v-bind="editor.attrs" v-on="editor.on" />
-      </template>
-    </g-dialog-editor>
+    <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
+      <g-edit-card v-bind="editCard.attrs" v-on="editCard.on">
+        <v-form v-bind="form.attrs" v-on="form.on">
+          <g-input-site v-bind="editor.attrs" v-on="editor.on" />
+        </v-form>
+      </g-edit-card>
+    </v-dialog>
     <g-action-card-detail-site v-bind="card.attrs" v-on="card.on" />
   </a-document-controller>
 </template>

@@ -11,8 +11,6 @@ export default {
     currentModel: { type: Object, required: true },
     /* An object provided to the dialog component. */
     dialogProps: { type: Object, default: () => ({}), required: false },
-    // /* A string used to specified the document. */
-    // docId: { type: String, required: true },
     /* A function used to different process from default submit. */
     customSubmit: { type: Function, default: undefined, required: false },
     /* A string provided to dialog component. */
@@ -40,14 +38,13 @@ export default {
    ***************************************************************************/
   data() {
     return {
+      card: null,
       /* An boolean to control the dialog. */
       dialog: false,
-      // /* An object extended by the FireModel for editor. */
-      // editModel: null,
+      editCard: null,
+      form: null,
       /* An boolean used to indicate that processing is in progress. */
       loading: false,
-      // /* A listener that subscribe the document. */
-      // listener: null,
     }
   },
   /***************************************************************************
@@ -58,35 +55,11 @@ export default {
     dialog(v) {
       if (!v) {
         this.model.initialize(this.currentModel)
+        if (this.editCard && 'scrollToTop' in this.editCard)
+          this.editCard.scrollToTop()
       }
     },
   },
-  // /***************************************************************************
-  //  * CREATED
-  //  ***************************************************************************/
-  // created() {
-  //   /* Watch the model and doc-id to duplicate the model and subscribe the document. */
-  //   this.$watch(
-  //     () => ({ model: this.model, docId: this.docId }),
-  //     (newVal, oldVal) => {
-  //       if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return
-  //       if (!newVal.model) return
-  //       if (!newVal.docId) return
-  //       this.editModel = this[`$${newVal.model.constructor.name}`]()
-  //       this.editModel.collection = newVal.model.collection
-  //       this.listener = this[`$${newVal.model.constructor.name}`]()
-  //       this.listener.collection = newVal.model.collection
-  //       this.listener.subscribeDoc(newVal.docId)
-  //     },
-  //     { immediate: true, deep: true }
-  //   )
-  // },
-  // /***************************************************************************
-  //  * DESTROYED
-  //  ***************************************************************************/
-  // destroyed() {
-  //   this.listener.unsubscribe()
-  // },
   /***************************************************************************
    * METHODS
    ***************************************************************************/
@@ -136,18 +109,43 @@ export default {
       'div',
       {},
       this.$scopedSlots.default({
-        dialog: {
+        editCard: {
           attrs: {
             editMode: 'UPDATE',
             label: this.label,
-            loading: this.loading,
+            ref: (el) => (this.editCard = el),
+          },
+          on: {
+            'click:cancel': this.onClickCancel,
+            'click:submit': this.onClickSubmit,
+          },
+        },
+        card: {
+          attrs: {
+            actions: this.actions,
+            item: { ...structuredClone(this.currentModel) },
+            ref: (el) => (this.card = el),
+            ...this.cardProps,
+          },
+          on: {
+            'click:edit': this.onClickEdit,
+            'click:delete': this.onClickDelete,
+          },
+        },
+        dialog: {
+          attrs: {
+            editMode: 'UPDATE',
+            // label: this.label,
+            // loading: this.loading,
+            persistent: true,
+            scrollable: true,
             value: this.dialog,
             ...this.dialogProps,
           },
           on: {
             input: (v) => (this.dialog = v),
-            'click:cancel': this.onClickCancel,
-            'click:submit': this.onClickSubmit,
+            // 'click:cancel': this.onClickCancel,
+            // 'click:submit': this.onClickSubmit,
           },
         },
         editor: {
@@ -161,16 +159,13 @@ export default {
             return sum
           }, {}),
         },
-        card: {
+        form: {
           attrs: {
-            item: { ...structuredClone(this.currentModel) },
-            actions: this.actions,
-            ...this.cardProps,
+            disabled: this.editMode === 'DELETE',
+            ref: (el) => (this.form = el),
+            ...this.formProps,
           },
-          on: {
-            'click:edit': this.onClickEdit,
-            'click:delete': this.onClickDelete,
-          },
+          on: {},
         },
       })
     )

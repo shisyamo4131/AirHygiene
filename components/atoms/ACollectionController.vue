@@ -178,8 +178,8 @@ export default {
           },
           on: {
             input: (v) => (this.dialog = v),
-            'click:cancel': this.onClickCancel,
-            'click:submit': this.onClickSubmit,
+            // 'click:cancel': this.onClickCancel,
+            // 'click:submit': this.onClickSubmit,
           },
         },
         editor: {
