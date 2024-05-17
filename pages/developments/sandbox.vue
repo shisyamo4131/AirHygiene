@@ -7,9 +7,6 @@
       date,
     }"
     :disabled-form="!selectedIndex && selectedIndex !== 0"
-    :form-props="{
-      hideDate: true,
-    }"
     :items="items"
     :model="model"
     :table-props="{
@@ -74,6 +71,11 @@
                 <g-input-route-collection-result
                   v-bind="editor.attrs"
                   hide-date
+                  :regulated-item-id="route.regulatedItemId"
+                  :regulated-itemization-unit-ids="
+                    route.regulatedItemizationUnitIds
+                  "
+                  :additional-item-units="route.additionalItemUnits"
                   v-on="editor.on"
                 />
               </v-form>
@@ -112,8 +114,8 @@ export default {
     ACollectionController,
   },
   props: {
-    date: { type: String, default: '2024-04-01', required: true },
-    routeId: { type: String, default: 'BMXoI77RLbMOQ9YEjTEp', required: true },
+    date: { type: String, default: '2024-05-05', required: true },
+    routeId: { type: String, default: '6u6JGYtzbgU9boamw9cM', required: true },
   },
   data() {
     return {

@@ -5,6 +5,7 @@ import Item from '../models/Item'
 import Unit from '../models/Unit'
 import UnitPrice from '../models/UnitPrice'
 import Route from '../models/Route'
+import ItemUnit from '../models/ItemUnit'
 import CollectionResult from '../models/CollectionResult'
 import RouteCollectionResult from '../models/RouteCollectionResult'
 import IndustrialContract from '../models/IndustrialContract'
@@ -19,6 +20,7 @@ export default (context, inject) => {
   inject('Unit', (item) => new Unit(context, item))
   inject('UnitPrice', (item) => new UnitPrice(context, item))
   inject('Route', (item) => new Route(context, item))
+  inject('ItemUnit', (item) => new ItemUnit(context, item))
   inject(
     'CollectionResult',
     (siteId, item) => new CollectionResult(context, siteId, item)

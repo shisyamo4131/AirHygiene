@@ -1,7 +1,7 @@
 <script>
 import ACollectionController from '../atoms/ACollectionController.vue'
 import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '../molecules/dialogs/GDialogEditor.vue'
+import GEditCard from '../molecules/cards/GEditCard.vue'
 import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
 import GPagination from '../molecules/paginations/GPagination.vue'
 export default {
@@ -12,8 +12,8 @@ export default {
     GTextFieldSearch,
     GPagination,
     ACollectionController,
-    GDialogEditor,
     GBtnRegistIcon,
+    GEditCard,
   },
   /***************************************************************************
    * PROPS
@@ -107,7 +107,7 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, editor, table, pagination }"
+    v-slot="{ card, dialog, editor, form, table, pagination }"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -125,7 +125,7 @@ export default {
             @update:lazyValue="$emit('update:lazySearch', $event)"
           />
         </slot>
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
+        <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
             <g-btn-regist-icon
               v-show="!hideRegist"
@@ -134,10 +134,15 @@ export default {
               v-on="on"
             />
           </template>
-          <template #form>
-            <slot name="form" v-bind="{ attrs: editor.attrs, on: editor.on }" />
-          </template>
-        </g-dialog-editor>
+          <g-edit-card v-bind="card.attrs" v-on="card.on">
+            <v-form v-bind="form.attrs" v-on="form.on">
+              <slot
+                name="form"
+                v-bind="{ attrs: editor.attrs, on: editor.on }"
+              />
+            </v-form>
+          </g-edit-card>
+        </v-dialog>
         <slot name="append-search" />
       </v-toolbar>
     </slot>

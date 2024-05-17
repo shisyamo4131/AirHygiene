@@ -21,6 +21,20 @@ export default class Unit extends FireModel {
     super(context, item)
     this.collection = `Units`
     this.tokenFields = ['abbr']
+    this.hasMany = [
+      {
+        collection: `RouteCollectionResults`,
+        field: 'unitId',
+        condition: '==',
+        type: 'collection',
+      },
+      {
+        collection: `CollectionResults`,
+        field: 'unitId',
+        condition: '==',
+        type: 'collectionGroup',
+      },
+    ]
   }
 
   initialize(item) {

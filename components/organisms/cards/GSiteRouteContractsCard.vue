@@ -1,16 +1,16 @@
 <script>
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
+import GEditCard from '~/components/molecules/cards/GEditCard.vue'
 import GInputSiteRouteContract from '~/components/molecules/inputs/GInputSiteRouteContract.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 export default {
   components: {
     ACollectionController,
     GDataTable,
-    GDialogEditor,
     GInputSiteRouteContract,
     GBtnRegistIcon,
+    GEditCard,
   },
   props: {
     actions: {
@@ -74,7 +74,7 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, editor, table }"
+    v-slot="{ card, dialog, editor, form, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ siteId }"
     :items="items"
@@ -85,17 +85,19 @@ export default {
     <v-card>
       <v-card-title class="justify-space-between">
         ルート回収契約
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
+        <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
-          <template #form>
-            <g-input-site-route-contract
-              v-bind="editor.attrs"
-              v-on="editor.on"
-            />
-          </template>
-        </g-dialog-editor>
+          <g-edit-card v-bind="card.attrs" v-on="card.on">
+            <v-form v-bind="form.attrs" v-on="form.on">
+              <g-input-site-route-contract
+                v-bind="editor.attrs"
+                v-on="editor.on"
+              />
+            </v-form>
+          </g-edit-card>
+        </v-dialog>
       </v-card-title>
       <v-container>
         <g-data-table v-bind="table.attrs" v-on="table.on">

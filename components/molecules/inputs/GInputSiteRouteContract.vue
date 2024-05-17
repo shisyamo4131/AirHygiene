@@ -1,10 +1,6 @@
 <script>
-/**
- * ## GInputSiteRouteContract
- * @author shisyamo4131
- */
-import GDialogEditor from '../dialogs/GDialogEditor.vue'
 import GDataTableUnitPrices from '../tables/GDataTableUnitPrices.vue'
+import GEditCard from '../cards/GEditCard.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
@@ -12,6 +8,10 @@ import GInputUnitPrice from './GInputUnitPrice.vue'
 import { props } from '~/models/SiteRouteContract'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import AArrayController from '~/components/atoms/AArrayController.vue'
+/**
+ * ## GInputSiteRouteContract
+ * @author shisyamo4131
+ */
 export default {
   components: {
     GDate,
@@ -19,8 +19,8 @@ export default {
     GSwitch,
     GInputUnitPrice,
     AArrayController,
-    GDialogEditor,
     GDataTableUnitPrices,
+    GEditCard,
   },
   mixins: [props, GMixinInput],
   data() {
@@ -165,7 +165,6 @@ export default {
       :is-editing.sync="unitPriceIsEditing"
       label="回収単価"
       :model="model"
-      :value="unitPrices"
       :table-props="{
         headers: [
           { text: '回収品目', value: 'itemId' },
@@ -179,10 +178,11 @@ export default {
           },
         ],
       }"
+      :value="unitPrices"
       @input="$emit('update:unitPrices', $event)"
     >
-      <template #default="{ dialog, table, editor }">
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
+      <template #default="{ card, dialog, editor, form, input, table }">
+        <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
             <div class="d-flex justify-end">
               <v-btn v-bind="attrs" color="primary" text small v-on="on">
@@ -191,19 +191,24 @@ export default {
               </v-btn>
             </div>
           </template>
-          <template #form>
-            <g-input-unit-price
-              v-bind="editor.attrs"
-              :hide-price="claimFixedCharge"
-              v-on="editor.on"
-            />
-          </template>
-        </g-dialog-editor>
-        <g-data-table-unit-prices
-          v-bind="table.attrs"
-          :hide-price="claimFixedCharge"
-          v-on="table.on"
-        />
+          <g-edit-card v-bind="card.attrs" v-on="card.on">
+            <v-form v-bind="form.attrs" v-on="form.on">
+              <g-input-unit-price
+                v-bind="editor.attrs"
+                :hide-price="claimFixedCharge"
+                v-on="editor.on"
+              />
+            </v-form>
+          </g-edit-card>
+        </v-dialog>
+        <v-input v-bind="input.attrs" v-on="input.on">
+          <g-data-table-unit-prices
+            style="width: 100%"
+            v-bind="table.attrs"
+            :hide-price="claimFixedCharge"
+            v-on="table.on"
+          />
+        </v-input>
       </template>
     </a-array-controller>
   </div>

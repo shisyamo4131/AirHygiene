@@ -37,6 +37,12 @@ export default class Site extends FireModel {
         condition: '==',
         type: 'collection',
       },
+      {
+        collection: `Routes`,
+        field: 'siteIds',
+        condition: 'array-contains',
+        type: 'collection',
+      },
     ]
     Object.defineProperties(this, {
       fullAddress: {

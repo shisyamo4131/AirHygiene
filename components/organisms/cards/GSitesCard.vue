@@ -2,24 +2,24 @@
 import { where } from 'firebase/firestore'
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
-import GDialogEditor from '~/components/molecules/dialogs/GDialogEditor.vue'
 import GInputSite from '~/components/molecules/inputs/GInputSite.vue'
 import GTextFieldSearch from '~/components/molecules/inputs/GTextFieldSearch.vue'
 import GPagination from '~/components/molecules/paginations/GPagination.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 import GChipSiteStatus from '~/components/molecules/chips/GChipSiteStatus.vue'
 import GSwitch from '~/components/molecules/inputs/GSwitch.vue'
+import GEditCard from '~/components/molecules/cards/GEditCard.vue'
 export default {
   components: {
     ACollectionController,
     GTextFieldSearch,
     GDataTable,
-    GDialogEditor,
     GInputSite,
     GBtnRegistIcon,
     GPagination,
     GChipSiteStatus,
     GSwitch,
+    GEditCard,
   },
   props: {
     actions: {
@@ -119,7 +119,7 @@ export default {
 
 <template>
   <a-collection-controller
-    v-slot="{ dialog, editor, pagination, table }"
+    v-slot="{ card, dialog, editor, form, pagination, table }"
     v-bind="{ ...$props, ...$attrs }"
     :default-item="{ customerId }"
     :items="internalItems"
@@ -133,14 +133,16 @@ export default {
       >
       <v-toolbar dense flat>
         <g-text-field-search v-model="search" />
-        <g-dialog-editor v-bind="dialog.attrs" v-on="dialog.on">
+        <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
           <template #activator="{ attrs, on }">
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
-          <template #form>
-            <g-input-site v-bind="editor.attrs" v-on="editor.on" />
-          </template>
-        </g-dialog-editor>
+          <g-edit-card v-bind="card.attrs" v-on="card.on">
+            <v-form v-bind="form.attrs" v-on="form.on">
+              <g-input-site v-bind="editor.attrs" v-on="editor.on" />
+            </v-form>
+          </g-edit-card>
+        </v-dialog>
       </v-toolbar>
       <v-toolbar dense flat class="d-flex justify-end">
         <g-switch v-model="onlyActive" label="契約中のみ表示" hide-details />

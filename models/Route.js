@@ -5,6 +5,11 @@ const props = {
   props: {
     code: { type: String, default: '', required: false },
     name: { type: String, default: '', required: false },
+    /**
+     * Types of items to be collected.
+     * { id: string, itemId: string, unitId: string, forReport: boolean }
+     */
+    itemUnits: { type: Array, default: () => [], required: false },
     sun: { type: Array, default: () => [], required: false },
     mon: { type: Array, default: () => [], required: false },
     tue: { type: Array, default: () => [], required: false },

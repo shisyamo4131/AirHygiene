@@ -56,6 +56,8 @@ export default {
    ***************************************************************************/
   data() {
     return {
+      /* A card object. */
+      card: null,
       /* An boolean to control the dialog. */
       dialog: false,
       /* A string used to control the edit-mode. */
@@ -89,7 +91,9 @@ export default {
     initialize() {
       this.dialog = false
       this.model.initialize(this.defaultModel)
+      this.editMode = 'REGIST'
       if (this.form) this.form.resetValidation()
+      if (this.card && 'scrollToTop' in this.card) this.card.scrollToTop()
     },
     async defaultSubmit(mode) {
       if (mode === 'REGIST') await this.model.create()
@@ -106,6 +110,7 @@ export default {
       this.editMode = 'DELETE'
       this.model.initialize(item)
       await this.submit('DELETE')
+      this.initialize()
     },
     onClickDetail(item) {
       this.$emit('click:detail', item)
@@ -121,6 +126,7 @@ export default {
         return
       }
       await this.submit(this.editMode)
+      this.initialize()
     },
     async submit(mode) {
       try {
@@ -129,10 +135,10 @@ export default {
           await this.customSubmit({ model: this.model, editMode: mode })
         if (!this.customSubmit) await this.defaultSubmit(mode)
         this.$emit(`submit:${mode.toLowerCase()}`, structuredClone(this.model))
-        this.dialog = false
-        this.model.initialize(this.defaultModel)
-        this.editMode = 'REGIST'
-        if (this.form) this.form.resetValidation()
+        // this.dialog = false
+        // this.model.initialize(this.defaultModel)
+        // this.editMode = 'REGIST'
+        // if (this.form) this.form.resetValidation()
       } catch (err) {
         // eslint-disable-next-line
         console.error(err)
@@ -151,11 +157,22 @@ export default {
       'div',
       {},
       this.$scopedSlots.default({
-        dialog: {
+        card: {
           attrs: {
             editMode: this.editMode,
             label: this.label,
-            loading: this.loading,
+            ref: (el) => (this.card = el),
+          },
+          on: {
+            'click:cancel': this.onClickCancel,
+            'click:submit': this.onClickSubmit,
+          },
+        },
+        dialog: {
+          attrs: {
+            editMode: this.editMode,
+            persistent: true,
+            scrollable: true,
             value: this.dialog,
             ...this.dialogProps,
           },

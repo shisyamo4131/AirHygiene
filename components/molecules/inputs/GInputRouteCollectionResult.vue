@@ -6,8 +6,6 @@
 import GTextarea from './GTextarea.vue'
 import GNumeric from './GNumeric.vue'
 import GDate from './GDate.vue'
-import GAutocompleteItem from './GAutocompleteItem.vue'
-import GAutocompleteUnit from './GAutocompleteUnit.vue'
 import GMixinInput from '~/components/mixins/GMixinInput'
 import { props } from '~/models/RouteCollectionResult'
 export default {
@@ -18,8 +16,6 @@ export default {
     GTextarea,
     GNumeric,
     GDate,
-    GAutocompleteItem,
-    GAutocompleteUnit,
   },
   /***************************************************************************
    * MIXINS
@@ -27,6 +23,30 @@ export default {
   mixins: [props, GMixinInput],
   props: {
     hideDate: { type: Boolean, default: false, required: false },
+    regulatedItemId: { type: String, required: true },
+    regulatedItemizationUnitIds: {
+      type: Array,
+      required: true,
+    },
+    additionalItemUnits: {
+      type: Array,
+      default: () => [],
+      required: false,
+    },
+  },
+  computed: {
+    itemIds() {
+      return [
+        this.regulatedItemId,
+        ...this.additionalItemUnits.map(({ itemId }) => itemId),
+      ]
+    },
+    unitIds() {
+      return [
+        ...this.regulatedItemizationUnitIds,
+        ...this.additionalItemUnits.map(({ unitId }) => unitId),
+      ]
+    },
   },
 }
 </script>
@@ -41,32 +61,24 @@ export default {
       picker-only
       @input="$emit('update:date', $event)"
     />
-    <g-autocomplete-item
-      :value="itemId"
-      label="回収品目"
-      required
-      @input="$emit('update:itemId', $event)"
+    <g-numeric
+      v-for="(unitId, index) of regulatedItemizationUnitIds"
+      :key="index"
+      :label="$store.getters['Items/get'](regulatedItemId).abbr"
+      :suffix="$store.getters['Units/get'](unitId).abbr"
     />
-    <v-row dense>
-      <v-col cols="6">
-        <g-numeric
-          class="right-input"
-          :value="amount"
-          label="数量"
-          :decimal-places="2"
-          required
-          @input="$emit('update:amount', $event)"
-        />
-      </v-col>
-      <v-col cols="6">
-        <g-autocomplete-unit
-          :value="unitId"
-          label="回収単位"
-          required
-          @input="$emit('update:unitId', $event)"
-        />
-      </v-col>
-    </v-row>
+    <g-numeric
+      :label="$store.getters['Items/get'](regulatedItemId).abbr"
+      suffix="kg"
+    />
+    <div>
+      <g-numeric
+        v-for="(itemUnit, index) of additionalItemUnits"
+        :key="index"
+        :label="$store.getters['Items/get'](itemUnit.itemId).abbr"
+        :suffix="$store.getters['Units/get'](itemUnit.unitId).abbr"
+      />
+    </div>
     <g-textarea
       :value="remarks"
       label="備考"

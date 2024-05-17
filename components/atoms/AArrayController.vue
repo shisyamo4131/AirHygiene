@@ -25,6 +25,8 @@ export default {
       },
       required: true,
     },
+    /* An array provided to input slot */
+    rules: { type: Array, default: () => [], required: false },
     /* An object provided to the table component. */
     tableProps: { type: Object, default: () => ({}), required: false },
     /* An array provided to the table component. */
@@ -32,9 +34,13 @@ export default {
   },
   data() {
     return {
+      /* A card object. */
+      card: null,
       dialog: false,
       editMode: 'REGIST',
       editKey: null,
+      /* A form object. */
+      form: null,
       /* A string used for searching items provided to table-props. */
       internalSearch: null,
     }
@@ -55,22 +61,10 @@ export default {
     },
     /**
      * Defines the behavior the action when the 'dialog' is changed or this component is mounted.
-     * If the 'dialog' is changed to FALSE,
-     * - The 'editMode' is changed to 'REGIST'.
-     * - The 'editKey' is changed to null.
-     * - The 'initialize' function of the 'model' is called with the 'defaultItem' as an argument.
-     * - The 'resetValidation' function of the 'form' is called if it was already mounted.
-     * then, emit the 'update:isEditing' event with the value of 'dialog' as an argument.
+     * Emit the 'update:isEditing' event with the value of 'dialog' as an argument.
      */
     dialog: {
       handler(v) {
-        if (!v) {
-          this.editMode = 'REGIST'
-          this.editKey = null
-          this.model.initialize(this.defaultItem)
-          const form = this.$refs[`air-form-${this._uid}`]
-          if (form) form.resetValidation()
-        }
         this.$emit('update:isEditing', v)
       },
       immediate: true,
@@ -80,6 +74,14 @@ export default {
    * METHODS
    ****************************************************************************/
   methods: {
+    initialize() {
+      this.dialog = false
+      this.model.initialize(this.defaultModel)
+      this.editMode = 'REGIST'
+      this.editKey = null
+      if (this.form) this.form.resetValidation()
+      if (this.card && 'scrollToTop' in this.card) this.card.scrollToTop()
+    },
     /**
      * Defines the behavior of the action when the regist-button is clicked.
      * Simply change the 'dialog' to true.
@@ -90,8 +92,6 @@ export default {
      * This is because this component privides the 'ACTIVATOR' slot of the dialog component.
      */
     onClickRegist() {
-      // this.model.initialize(this.defaultItem)
-      // this.editMode = 'REGIST'
       this.dialog = true
     },
     /**
@@ -121,7 +121,6 @@ export default {
       this.editKey = this.model[this.itemKey]
       this.editMode = 'DELETE'
       if (this.directDelete) {
-        this.dialog = false
         const answer = window.confirm('削除してもよろしいですか？')
         if (!answer) return
         this.submit(this.editMode)
@@ -134,7 +133,7 @@ export default {
      * Simply change the 'dialog' to false.
      */
     onClickCancel() {
-      this.dialog = false
+      this.initialize()
     },
     /**
      * Defines the behavior of the action when the submit-button is clicked.
@@ -148,7 +147,8 @@ export default {
      * Returns boolean as the validate() result.
      */
     validate() {
-      const result = this.$refs[`air-form-${this._uid}`].validate()
+      if (!this.form) return true
+      const result = this.form.validate()
       if (!result) alert('入力に不備があります。')
       return result
     },
@@ -170,7 +170,7 @@ export default {
         if (mode === 'UPDATE') result = this.update()
         if (mode === 'DELETE') result = this.delete()
         this.$emit('input', result)
-        this.dialog = false
+        this.initialize()
       } catch (err) {
         alert(err.message)
       }
@@ -216,27 +216,33 @@ export default {
    ****************************************************************************/
   render(createElement) {
     return createElement(
-      'v-form',
-      {
-        attrs: {
-          disabled: this.editMode === 'DELETE',
-        },
-        ref: `air-form-${this._uid}`,
-      },
+      'div',
       this.$scopedSlots.default({
-        dialog: {
+        card: {
           attrs: {
             editMode: this.editMode,
             label: this.label,
+            ref: (el) => (this.card = el),
+          },
+          on: {
+            'click:cancel': this.onClickCancel,
+            'click:submit': this.onClickSubmit,
+          },
+        },
+        dialog: {
+          attrs: {
+            editMode: this.editMode,
+            persistent: true,
+            scrollable: true,
             value: this.dialog,
             ...this.dialogProps,
           },
           on: {
             input: (v) => (this.dialog = v),
-            'click:cancel': this.onClickCancel,
-            'click:submit': this.onClickSubmit,
           },
         },
+        editKey: this.editKey,
+        editMode: this.editMode,
         editor: {
           attrs: { ...structuredClone(this.model), editMode: this.editMode },
           on: Object.keys(this.model).reduce((sum, i) => {
@@ -248,10 +254,36 @@ export default {
             return sum
           }, {}),
         },
-        editKey: this.editKey,
-        editMode: this.editMode,
+        form: {
+          attrs: {
+            disabled: this.editMode === 'DELETE',
+            ref: (el) => (this.form = el),
+            ...this.formProps,
+          },
+          on: {},
+        },
+        input: {
+          attrs: {
+            rules: this.rules,
+            value: this.value,
+          },
+          on: Object.keys(this.model).reduce((sum, i) => {
+            sum[`update:${i}`] = ($event) =>
+              this.model.initialize({
+                ...structuredClone(this.model),
+                [i]: $event,
+              })
+            return sum
+          }, {}),
+        },
         /* The model is editing if dialog is true. */
         isEditing: this.dialog,
+        registBtn: {
+          attrs: {},
+          on: {
+            click: this.onClickRegist,
+          },
+        },
         search: {
           attrs: { value: this.internalSearch },
           on: { input: (v) => (this.internalSearch = v) },
@@ -271,22 +303,6 @@ export default {
             'click:regist': this.onClickRegist,
             'click:edit': this.onClickEdit,
             'click:delete': this.onClickDelete,
-            // 'click:detail': this.onClickDetail,
-          },
-        },
-        btns: {
-          regist: {
-            on: {
-              click: this.dialog ? this.submit : this.onClickRegist,
-            },
-          },
-          cancel: {
-            attrs: {
-              disabled: !this.dialog,
-            },
-            on: {
-              click: this.onClickCancel,
-            },
           },
         },
       })

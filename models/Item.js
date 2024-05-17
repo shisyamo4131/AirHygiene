@@ -22,6 +22,26 @@ export default class Item extends FireModel {
     super(context, item)
     this.collection = `Items`
     this.tokenFields = ['abbr']
+    this.hasMany = [
+      {
+        collection: `Routes`,
+        field: 'itemIds',
+        condition: 'array-contains',
+        type: 'collection',
+      },
+      {
+        collection: `RouteCollectionResults`,
+        field: 'itemId',
+        condition: '==',
+        type: 'collection',
+      },
+      {
+        collection: `CollectionResults`,
+        field: 'itemId',
+        condition: '==',
+        type: 'collectionGroup',
+      },
+    ]
   }
 
   initialize(item) {
