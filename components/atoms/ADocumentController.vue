@@ -113,6 +113,7 @@ export default {
           attrs: {
             editMode: 'UPDATE',
             label: this.label,
+            loading: this.loading,
             ref: (el) => (this.editCard = el),
           },
           on: {
@@ -135,8 +136,6 @@ export default {
         dialog: {
           attrs: {
             editMode: 'UPDATE',
-            // label: this.label,
-            // loading: this.loading,
             persistent: true,
             scrollable: true,
             value: this.dialog,
@@ -144,8 +143,6 @@ export default {
           },
           on: {
             input: (v) => (this.dialog = v),
-            // 'click:cancel': this.onClickCancel,
-            // 'click:submit': this.onClickSubmit,
           },
         },
         editor: {
@@ -161,7 +158,7 @@ export default {
         },
         form: {
           attrs: {
-            disabled: this.editMode === 'DELETE',
+            disabled: this.editMode === 'DELETE' || this.loading,
             ref: (el) => (this.form = el),
             ...this.formProps,
           },
