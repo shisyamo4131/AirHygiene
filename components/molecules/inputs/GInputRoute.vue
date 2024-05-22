@@ -4,7 +4,7 @@
  * @author shisyamo4131
  */
 import GDataTableItemUnits from '../tables/GDataTableItemUnits.vue'
-import GEditCard from '../cards/GEditCard.vue'
+import GCardEditor from '../cards/GCardEditor.vue'
 import GTextField from './GTextField.vue'
 import GInputItemUnit from './GInputItemUnit.vue'
 import { props } from '~/models/Route'
@@ -19,7 +19,7 @@ export default {
     AArrayController,
     GInputItemUnit,
     GDataTableItemUnits,
-    GEditCard,
+    GCardEditor,
   },
   /***************************************************************************
    * MIXINS
@@ -75,11 +75,11 @@ export default {
               </v-btn>
             </div>
           </template>
-          <g-edit-card v-bind="card.attrs" v-on="card.on">
+          <g-card-editor v-bind="card.attrs" v-on="card.on">
             <v-form v-bind="form.attrs" v-on="form.on">
               <g-input-item-unit v-bind="editor.attrs" v-on="editor.on" />
             </v-form>
-          </g-edit-card>
+          </g-card-editor>
         </v-dialog>
         <v-input v-bind="input.attrs" v-on="input.on">
           <g-data-table-item-units

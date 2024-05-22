@@ -8,7 +8,7 @@ import GPagination from '~/components/molecules/paginations/GPagination.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 import GChipSiteStatus from '~/components/molecules/chips/GChipSiteStatus.vue'
 import GSwitch from '~/components/molecules/inputs/GSwitch.vue'
-import GEditCard from '~/components/molecules/cards/GEditCard.vue'
+import GCardEditor from '~/components/molecules/cards/GCardEditor.vue'
 export default {
   components: {
     ACollectionController,
@@ -19,7 +19,7 @@ export default {
     GPagination,
     GChipSiteStatus,
     GSwitch,
-    GEditCard,
+    GCardEditor,
   },
   props: {
     actions: {
@@ -137,11 +137,11 @@ export default {
           <template #activator="{ attrs, on }">
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
-          <g-edit-card v-bind="card.attrs" v-on="card.on">
+          <g-card-editor v-bind="card.attrs" v-on="card.on">
             <v-form v-bind="form.attrs" v-on="form.on">
               <g-input-site v-bind="editor.attrs" v-on="editor.on" />
             </v-form>
-          </g-edit-card>
+          </g-card-editor>
         </v-dialog>
       </v-toolbar>
       <v-toolbar dense flat class="d-flex justify-end">

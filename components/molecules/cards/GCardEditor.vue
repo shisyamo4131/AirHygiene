@@ -16,11 +16,6 @@ export default {
    * PROPS
    ***************************************************************************/
   props: {
-    editMode: {
-      type: String,
-      validator: (v) => ['REGIST', 'UPDATE', 'DELETE'].includes(v),
-      required: true,
-    },
     label: { type: String, default: undefined, required: false },
     loading: { type: Boolean, default: false, required: false },
   },
@@ -39,9 +34,9 @@ export default {
    * METHODS
    ***************************************************************************/
   methods: {
-    scrollToTop() {
-      const el = document.getElementById(`scroll-container-${this._uid}`)
-      if (el) el.scrollTop = 0
+    scrollTo({ top = 0, left = 0, behavior = 'instant' } = {}) {
+      const target = this.$refs[`scroll-container`]
+      if (target) target.scrollTo({ top, left, behavior })
     },
   },
 }
@@ -49,10 +44,12 @@ export default {
 
 <template>
   <v-card v-bind="$attrs" v-on="$listeners">
-    <v-card-title class="justify-space-between">
-      <span>{{ `${label}${mode}` }}</span>
-    </v-card-title>
-    <v-card-text :id="`scroll-container-${_uid}`" class="py-5 px-6">
+    <v-toolbar flat color="primary" dark dense>
+      <v-toolbar-title>
+        <span>{{ `${label}${mode}` }}</span>
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-card-text ref="scroll-container" class="py-5 px-6">
       <slot name="default" v-bind="{ editMode, loading }" />
     </v-card-text>
     <v-card-actions class="justify-space-between">

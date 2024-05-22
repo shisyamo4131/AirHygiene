@@ -55,8 +55,9 @@ export default {
     dialog(v) {
       if (!v) {
         this.model.initialize(this.currentModel)
-        if (this.editCard && 'scrollToTop' in this.editCard)
-          this.editCard.scrollToTop()
+        if (this.editCard && 'scrollTo' in this.editCard) {
+          this.editCard.scrollTo()
+        }
       }
     },
   },

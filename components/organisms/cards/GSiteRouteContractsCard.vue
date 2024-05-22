@@ -1,7 +1,7 @@
 <script>
 import ACollectionController from '~/components/atoms/ACollectionController.vue'
 import GBtnRegistIcon from '~/components/molecules/btns/GBtnRegistIcon.vue'
-import GEditCard from '~/components/molecules/cards/GEditCard.vue'
+import GCardEditor from '~/components/molecules/cards/GCardEditor.vue'
 import GInputSiteRouteContract from '~/components/molecules/inputs/GInputSiteRouteContract.vue'
 import GDataTable from '~/components/molecules/tables/GDataTable.vue'
 export default {
@@ -10,7 +10,7 @@ export default {
     GDataTable,
     GInputSiteRouteContract,
     GBtnRegistIcon,
-    GEditCard,
+    GCardEditor,
   },
   props: {
     actions: {
@@ -89,14 +89,14 @@ export default {
           <template #activator="{ attrs, on }">
             <g-btn-regist-icon v-bind="attrs" v-on="on" />
           </template>
-          <g-edit-card v-bind="card.attrs" v-on="card.on">
+          <g-card-editor v-bind="card.attrs" v-on="card.on">
             <v-form v-bind="form.attrs" v-on="form.on">
               <g-input-site-route-contract
                 v-bind="editor.attrs"
                 v-on="editor.on"
               />
             </v-form>
-          </g-edit-card>
+          </g-card-editor>
         </v-dialog>
       </v-card-title>
       <v-container>

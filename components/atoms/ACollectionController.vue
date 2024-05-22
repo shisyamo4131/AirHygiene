@@ -93,7 +93,9 @@ export default {
       this.model.initialize(this.defaultModel)
       this.editMode = 'REGIST'
       if (this.form) this.form.resetValidation()
-      if (this.card && 'scrollToTop' in this.card) this.card.scrollToTop()
+      if (this.card && 'scrollTo' in this.card) {
+        this.card.scrollTo()
+      }
     },
     async defaultSubmit(mode) {
       if (mode === 'REGIST') await this.model.create()

@@ -1,7 +1,7 @@
 <script>
 import ACollectionController from '../atoms/ACollectionController.vue'
 import GBtnRegistIcon from '../molecules/btns/GBtnRegistIcon.vue'
-import GEditCard from '../molecules/cards/GEditCard.vue'
+import GCardEditor from '../molecules/cards/GCardEditor.vue'
 import GTextFieldSearch from '../molecules/inputs/GTextFieldSearch.vue'
 import GPagination from '../molecules/paginations/GPagination.vue'
 export default {
@@ -13,7 +13,7 @@ export default {
     GPagination,
     ACollectionController,
     GBtnRegistIcon,
-    GEditCard,
+    GCardEditor,
   },
   /***************************************************************************
    * PROPS
@@ -134,14 +134,14 @@ export default {
               v-on="on"
             />
           </template>
-          <g-edit-card v-bind="card.attrs" v-on="card.on">
+          <g-card-editor v-bind="card.attrs" v-on="card.on">
             <v-form v-bind="form.attrs" v-on="form.on">
               <slot
                 name="form"
                 v-bind="{ attrs: editor.attrs, on: editor.on }"
               />
             </v-form>
-          </g-edit-card>
+          </g-card-editor>
         </v-dialog>
         <slot name="append-search" />
       </v-toolbar>

@@ -1,6 +1,6 @@
 <script>
 import GDataTableUnitPrices from '../tables/GDataTableUnitPrices.vue'
-import GEditCard from '../cards/GEditCard.vue'
+import GCardEditor from '../cards/GCardEditor.vue'
 import GDate from './GDate.vue'
 import GNumeric from './GNumeric.vue'
 import GSwitch from './GSwitch.vue'
@@ -20,7 +20,7 @@ export default {
     GInputUnitPrice,
     AArrayController,
     GDataTableUnitPrices,
-    GEditCard,
+    GCardEditor,
   },
   mixins: [props, GMixinInput],
   data() {
@@ -191,7 +191,7 @@ export default {
               </v-btn>
             </div>
           </template>
-          <g-edit-card v-bind="card.attrs" v-on="card.on">
+          <g-card-editor v-bind="card.attrs" v-on="card.on">
             <v-form v-bind="form.attrs" v-on="form.on">
               <g-input-unit-price
                 v-bind="editor.attrs"
@@ -199,7 +199,7 @@ export default {
                 v-on="editor.on"
               />
             </v-form>
-          </g-edit-card>
+          </g-card-editor>
         </v-dialog>
         <v-input v-bind="input.attrs" v-on="input.on">
           <g-data-table-unit-prices

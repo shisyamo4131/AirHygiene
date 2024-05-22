@@ -80,7 +80,9 @@ export default {
       this.editMode = 'REGIST'
       this.editKey = null
       if (this.form) this.form.resetValidation()
-      if (this.card && 'scrollToTop' in this.card) this.card.scrollToTop()
+      if (this.card && 'scrollTo' in this.card) {
+        this.card.scrollTo()
+      }
     },
     /**
      * Defines the behavior of the action when the regist-button is clicked.

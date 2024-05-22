@@ -1,14 +1,14 @@
 <script>
 import ADocumentController from '~/components/atoms/ADocumentController.vue'
 import GActionCardDetailCustomer from '~/components/molecules/cards/GActionCardDetailCustomer.vue'
-import GEditCard from '~/components/molecules/cards/GEditCard.vue'
+import GCardEditor from '~/components/molecules/cards/GCardEditor.vue'
 import GInputCustomer from '~/components/molecules/inputs/GInputCustomer.vue'
 export default {
   components: {
     ADocumentController,
     GInputCustomer,
     GActionCardDetailCustomer,
-    GEditCard,
+    GCardEditor,
   },
   props: {
     actions: {
@@ -54,11 +54,11 @@ export default {
     v-on="$listeners"
   >
     <v-dialog v-bind="dialog.attrs" v-on="dialog.on">
-      <g-edit-card v-bind="editCard.attrs" v-on="editCard.on">
+      <g-card-editor v-bind="editCard.attrs" v-on="editCard.on">
         <v-form v-bind="form.attrs" v-on="form.on">
           <g-input-customer v-bind="editor.attrs" v-on="editor.on" />
         </v-form>
-      </g-edit-card>
+      </g-card-editor>
     </v-dialog>
     <g-action-card-detail-customer v-bind="card.attrs" v-on="card.on" />
   </a-document-controller>
