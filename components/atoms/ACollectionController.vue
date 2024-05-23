@@ -163,6 +163,7 @@ export default {
           attrs: {
             editMode: this.editMode,
             label: this.label,
+            loading: this.loading,
             ref: (el) => (this.card = el),
           },
           on: {

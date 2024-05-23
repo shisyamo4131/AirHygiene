@@ -9,7 +9,7 @@ export default {}
 </script>
 
 <template>
-  <v-icon v-bind="$attrs" color="primary" v-on="$listeners">mdi-check</v-icon>
+  <v-icon v-bind="$attrs" v-on="$listeners">mdi-check</v-icon>
 </template>
 
 <style></style>

@@ -7,6 +7,9 @@ import EditMode from '~/components/mixins/EditMode.js'
  * @author shisyamo4131
  */
 export default {
+  /***************************************************************************
+   * COMPONENTS
+   ***************************************************************************/
   components: { AIconClose, AIconSubmit },
   /***************************************************************************
    * MIXINS
@@ -20,23 +23,45 @@ export default {
     loading: { type: Boolean, default: false, required: false },
   },
   /***************************************************************************
+   * DATA
+   ***************************************************************************/
+  data() {
+    return {}
+  },
+  /***************************************************************************
    * COMPUTED
    ***************************************************************************/
   computed: {
     mode() {
-      if (!this.editMode) return 'undefined'
       if (this.editMode === 'REGIST') return '登録'
       if (this.editMode === 'UPDATE') return '変更'
-      return '削除'
+      if (this.editMode === 'DELETE') return '削除'
+      return undefined
     },
+  },
+  /***************************************************************************
+   * UPDATED
+   ***************************************************************************/
+  updated() {
+    /* Reset scroll position when DOM was updated. */
+    this.scrollTo()
   },
   /***************************************************************************
    * METHODS
    ***************************************************************************/
   methods: {
+    onClickSubmit() {
+      if (!this.validate()) return
+      this.$emit('click:submit')
+    },
     scrollTo({ top = 0, left = 0, behavior = 'instant' } = {}) {
       const target = this.$refs[`scroll-container`]
       if (target) target.scrollTo({ top, left, behavior })
+    },
+    validate() {
+      const result = this.$refs.form.validate()
+      if (!result) alert('入力に不備があります。')
+      return result
     },
   },
 }
@@ -46,24 +71,28 @@ export default {
   <v-card v-bind="$attrs" v-on="$listeners">
     <v-toolbar flat color="primary" dark dense>
       <v-toolbar-title>
-        <span>{{ `${label}${mode}` }}</span>
+        <span>{{ `${label}[${mode}]` }}</span>
       </v-toolbar-title>
+      <v-spacer />
+      <v-btn icon @click="$emit('click:cancel')"><a-icon-close /></v-btn>
     </v-toolbar>
     <v-card-text ref="scroll-container" class="py-5 px-6">
-      <slot name="default" v-bind="{ editMode, loading }" />
+      <v-form ref="form" :disabled="loading">
+        <slot name="default" v-bind="{ editMode, loading }" />
+      </v-form>
     </v-card-text>
     <v-card-actions class="justify-space-between">
-      <v-btn icon :disabled="loading" @click="$emit('click:cancel')">
-        <a-icon-close />
-      </v-btn>
+      <v-btn small :disabled="loading" @click="$emit('click:cancel')"
+        ><a-icon-close left small />cancel</v-btn
+      >
       <v-btn
-        icon
         :disabled="loading"
         :loading="loading"
-        @click="$emit('click:submit')"
+        color="primary"
+        small
+        @click="onClickSubmit"
+        ><a-icon-submit left small />submit</v-btn
       >
-        <a-icon-submit />
-      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
