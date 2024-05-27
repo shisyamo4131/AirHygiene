@@ -4,11 +4,17 @@ import GInputAutonumber from '../molecules/inputs/GInputAutonumber.vue'
 import GDataTableAutonumber from '../molecules/tables/GDataTableAutonumber.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
+  /***************************************************************************
+   * COMPONETS
+   ***************************************************************************/
   components: {
     GTemplateIndexPage,
     GInputAutonumber,
     GDataTableAutonumber,
   },
+  /***************************************************************************
+   * DATA
+   ***************************************************************************/
   data() {
     return {
       items: [],
@@ -17,9 +23,15 @@ export default {
       search: null,
     }
   },
+  /***************************************************************************
+   * MOUNTED
+   ***************************************************************************/
   mounted() {
     this.items = this.listener.subscribe(undefined, [orderBy('collectionId')])
   },
+  /***************************************************************************
+   * DESTROYED
+   ***************************************************************************/
   destroyed() {
     this.listener.unsubscribe()
   },
@@ -36,8 +48,8 @@ export default {
     :search.sync="search"
     :table-props="{ search: search }"
   >
-    <template #form="{ attrs, on }">
-      <g-input-autonumber v-bind="attrs" v-on="on" />
+    <template #form="{ ref }">
+      <g-input-autonumber :ref="ref" />
     </template>
     <template #table="{ attrs, on }">
       <g-data-table-autonumber v-bind="attrs" v-on="on" />

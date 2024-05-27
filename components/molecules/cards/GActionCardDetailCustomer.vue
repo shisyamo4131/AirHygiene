@@ -28,7 +28,6 @@ export default {
         <span class="text-truncate">{{ item.name1 }}</span>
       </v-card-title>
       <v-card-subtitle>{{ item.name2 }}</v-card-subtitle>
-      <v-toolbar flat> </v-toolbar>
       <v-tabs v-model="tab" fixed-tabs>
         <v-tab>基本情報</v-tab>
         <v-tab>請求情報</v-tab>

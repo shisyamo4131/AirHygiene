@@ -19,6 +19,7 @@ export default {
    * PROPS
    ***************************************************************************/
   props: {
+    formProps: { type: Object, default: () => ({}), required: false },
     label: { type: String, default: undefined, required: false },
     loading: { type: Boolean, default: false, required: false },
   },
@@ -26,7 +27,9 @@ export default {
    * DATA
    ***************************************************************************/
   data() {
-    return {}
+    return {
+      formRef: null,
+    }
   },
   /***************************************************************************
    * COMPUTED
@@ -40,19 +43,15 @@ export default {
     },
   },
   /***************************************************************************
-   * UPDATED
-   ***************************************************************************/
-  updated() {
-    /* Reset scroll position when DOM was updated. */
-    this.scrollTo()
-  },
-  /***************************************************************************
    * METHODS
    ***************************************************************************/
   methods: {
     onClickSubmit() {
       if (!this.validate()) return
       this.$emit('click:submit')
+    },
+    resetValidation() {
+      this.$refs.form.resetValidation()
     },
     scrollTo({ top = 0, left = 0, behavior = 'instant' } = {}) {
       const target = this.$refs[`scroll-container`]
@@ -77,8 +76,8 @@ export default {
       <v-btn icon @click="$emit('click:cancel')"><a-icon-close /></v-btn>
     </v-toolbar>
     <v-card-text ref="scroll-container" class="py-5 px-6">
-      <v-form ref="form" :disabled="loading">
-        <slot name="default" v-bind="{ editMode, loading }" />
+      <v-form ref="form" v-bind="{ disabled: loading, ...formProps }">
+        <slot name="default" />
       </v-form>
     </v-card-text>
     <v-card-actions class="justify-space-between">

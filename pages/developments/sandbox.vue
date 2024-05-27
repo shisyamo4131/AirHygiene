@@ -1,12 +1,9 @@
 <template>
-  <g-template-index-page />
+  <div>sandbox</div>
 </template>
 
 <script>
-import GTemplateIndexPage from '~/components/templates/GTemplateIndexPage.vue'
-export default {
-  components: { GTemplateIndexPage },
-}
+export default {}
 </script>
 
 <style></style>

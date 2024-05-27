@@ -13,13 +13,13 @@ export default {
 <template>
   <g-template-detail-page v-bind="$attrs">
     <v-row>
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="5">
         <g-customer-card
           :doc-id="customerId"
           @submit:delete="$router.replace(`/customers`)"
         />
       </v-col>
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="7">
         <g-sites-card
           :customer-id="customerId"
           @click:detail="$router.push(`${$route.path}/${$event.docId}`)"

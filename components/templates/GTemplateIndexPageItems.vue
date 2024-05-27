@@ -3,11 +3,17 @@ import GInputItem from '../molecules/inputs/GInputItem.vue'
 import GDataTable from '../molecules/tables/GDataTable.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
+  /***************************************************************************
+   * COMPONENTS
+   ***************************************************************************/
   components: {
     GTemplateIndexPage,
     GInputItem,
     GDataTable,
   },
+  /***************************************************************************
+   * DATA
+   ***************************************************************************/
   data() {
     return {
       items: this.$store.state.Items.items,
@@ -25,6 +31,7 @@ export default {
     :items="items"
     label="回収品目"
     :model="model"
+    :search.sync="search"
     :table-props="{
       'group-by': 'group',
       headers: [
@@ -32,14 +39,15 @@ export default {
         { text: '品目名', value: 'name', groupable: false },
         { text: '種別', value: 'group' },
       ],
+      search,
       'sort-by': 'code',
     }"
   >
-    <template #form="{ attrs, on }">
-      <g-input-item v-bind="attrs" v-on="on" />
+    <template #form>
+      <g-input-item v-bind.sync="model" />
     </template>
     <template #table="{ attrs, on }">
-      <g-data-table v-bind="attrs" :search="search" v-on="on">
+      <g-data-table v-bind="attrs" v-on="on">
         <template #[`group.header`]="{ headers, group, toggle, isOpen }">
           <td :colspan="headers.length" class="text-start">
             <v-btn icon small @click="toggle">

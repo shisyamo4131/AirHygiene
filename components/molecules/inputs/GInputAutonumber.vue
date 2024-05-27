@@ -12,30 +12,16 @@ export default {
   /***************************************************************************
    * COMPONENTS
    ***************************************************************************/
-  components: {
-    GTextField,
-    GNumeric,
-    GSwitch,
-  },
+  components: { GTextField, GNumeric, GSwitch },
   /***************************************************************************
    * MIXINS
    ***************************************************************************/
   mixins: [props, GMixinInput],
-  /***************************************************************************
-   * METHODS
-   ***************************************************************************/
-  methods: {
-    loaded(e) {
-      this.$emit('update:pref', e.pref)
-      this.$emit('update:city', e.city)
-      this.$emit('update:address1', e.addr)
-    },
-  },
 }
 </script>
 
 <template>
-  <div>
+  <div v-bind="$attrs" v-on="$listeners">
     <g-text-field
       :value="collectionId"
       label="コレクション名"

@@ -1,13 +1,30 @@
 <script>
 import GTemplateDetailPageCustomer from '~/components/templates/GTemplateDetailPageCustomer.vue'
 export default {
+  /***************************************************************************
+   * COMPONENTS
+   ***************************************************************************/
   components: {
     GTemplateDetailPageCustomer,
   },
-  asyncData({ route }) {
+  /***************************************************************************
+   * ASYNCDATA
+   ***************************************************************************/
+  async asyncData({ app, route }) {
     const docId = route.params.docId
-    return { docId }
+    const model = {
+      customer: app.$Customer(),
+    }
+    await model.customer.fetch(docId)
+    const listener = {
+      customer: app.$Customer(),
+    }
+    listener.customer.subscribeDoc(docId)
+    return { docId, model, listener }
   },
+  /***************************************************************************
+   * COMPUTED
+   ***************************************************************************/
   computed: {
     breadcrumbs() {
       return [

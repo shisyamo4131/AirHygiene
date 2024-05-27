@@ -1,24 +1,29 @@
 <script>
 import { where } from 'firebase/firestore'
-import GActionCardSimpleCustomer from '../molecules/cards/GActionCardSimpleCustomer.vue'
-import GDataIterator from '../molecules/tables/GDataIterator.vue'
 import GInputCustomer from '../molecules/inputs/GInputCustomer.vue'
 import GTemplateIndexPage from './GTemplateIndexPage.vue'
 export default {
+  /***************************************************************************
+   * COMPONETS
+   ***************************************************************************/
   components: {
     GTemplateIndexPage,
-    GDataIterator,
-    GActionCardSimpleCustomer,
     GInputCustomer,
   },
+  /***************************************************************************
+   * DATA
+   ***************************************************************************/
   data() {
     return {
       items: [],
       lazySearch: null,
-      listener: this.$Customer(),
+      loading: false,
       model: this.$Customer(),
     }
   },
+  /***************************************************************************
+   * COMPUTED
+   ***************************************************************************/
   computed: {
     noDataText() {
       if (this.lazySearch) {
@@ -28,26 +33,46 @@ export default {
       }
     },
   },
+  /***************************************************************************
+   * WATCH
+   ***************************************************************************/
   watch: {
     lazySearch: {
       handler(newVal, oldVal) {
-        if (newVal !== oldVal) this.subscribe()
+        if (newVal !== oldVal) this.fetchDocs()
       },
       immediate: true,
     },
   },
-  destroyed() {
-    this.listener.unsubscribe()
-  },
+  /***************************************************************************
+   * DESTROYED
+   ***************************************************************************/
+  destroyed() {},
+  /***************************************************************************
+   * METHODS
+   ***************************************************************************/
   methods: {
-    subscribe() {
-      if (!this.lazySearch) {
-        this.items = this.listener.subscribe(undefined, [
-          where('favorite', '==', true),
-        ])
-      } else {
-        this.items = this.listener.subscribe(this.lazySearch)
+    async fetchDocs() {
+      this.items.splice(0)
+      try {
+        this.loading = true
+        if (!this.lazySearch) {
+          this.items = await this.model.fetchDocs(undefined, [
+            where('favorite', '==', true),
+          ])
+        } else {
+          this.items = await this.model.fetchDocs(this.lazySearch)
+        }
+      } catch (err) {
+        // eslint-disable-next-line
+        console.error(err)
+        alert(err.message)
+      } finally {
+        this.loading = false
       }
+    },
+    onSubmit(mode) {
+      this.$router.push(`/customers/${this.model.docId}`)
     },
   },
 }
@@ -55,30 +80,25 @@ export default {
 
 <template>
   <g-template-index-page
+    :alert="!lazySearch ? 'お気に入りを表示しています。' : null"
     :dialog-props="{ maxWidth: 600 }"
     :items="items"
     label="取引先"
+    :lazy-search.sync="lazySearch"
     :model="model"
     :table-props="{
-      cols: { cols: 12, md: 6, lg: 4, xl: 3 },
-      sortBy: 'code',
+      headers: [
+        { text: 'CODE', value: 'code' },
+        { text: '取引先名', value: 'abbr' },
+      ],
+      loading,
+      noDataText,
     }"
-    :lazy-search.sync="lazySearch"
+    @submit:complete="onSubmit"
     @click:detail="$router.push(`/customers/${$event.docId}`)"
   >
     <template #form="{ attrs, on }">
       <g-input-customer v-bind="attrs" v-on="on" />
-    </template>
-    <template #table="{ attrs, on }">
-      <g-data-iterator :no-data-text="noDataText" v-bind="attrs" v-on="on">
-        <template #col="colProps">
-          <g-action-card-simple-customer
-            v-bind="colProps.attrs"
-            outlined
-            v-on="colProps.on"
-          />
-        </template>
-      </g-data-iterator>
     </template>
   </g-template-index-page>
 </template>
