@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app :style="{ background: $vuetify.theme.themes.light.background }">
     <g-navigation-drawer v-model="drawer" app fixed bottom />
     <v-app-bar app color="primary" dark dense fixed flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -50,5 +50,18 @@ export default {
 
 .right-input input {
   text-align: right;
+}
+.v-card__title:before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  /*bottom: -15px; /*線の上下位置*/
+  display: inline-block;
+  width: 5px; /*線の長さ*/
+  height: 24px; /*線の太さ*/
+  /* -webkit-transform: translateX(-50%);
+  /* transform: translateX(-50%); /*位置調整*/
+  background-color: #0d47a1; /*線の色*/
+  border-radius: 2px; /*線の丸み*/
 }
 </style>
